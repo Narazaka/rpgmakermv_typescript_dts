@@ -295,6 +295,84 @@ declare module MV
         isSomeoneCollided(): boolean;
     }
 
+    export class Game_Vehicle extends Game_Character
+    {
+        initialize(): void;
+        initMembers(): void;
+        isBoat(): boolean;
+        isShip(): boolean;
+        isAirship: boolean;
+        resetDirection(): void;
+        initMoveSpeed(): void;
+        vehicle(): Game_Vehicle;
+        loadSystemSettings(): void;
+        refresh(): void;
+        setLocation(mapId: number, x: number, y: number): void;
+        pos(x: number, y: number): boolean;
+        isMapPassable(x: number, y: number, d: number): boolean;
+        getOn(): void;
+        getOff(): void;
+        setBgm(bgm: any): void; // TODO
+        playBgm(): void;
+        syncWithPlayer(): void;
+        screenY(): number;
+        shadowX(): number;
+        shadowY(): number;
+        shadowOpacity(): number;
+        canMove(): boolean;
+        update(): void;
+        updateAirship(): void;
+        updateAirshipAltitude(): void;
+        maxAltitude(): number;
+        isLowest(): boolean;
+        isHighest(): boolean;
+        isTakeoffOk(): boolean;
+        isLandOk(x: number, y: number, d: number): boolean;
+    }
+
+    export class Game_Event extends Game_Character
+    {
+        initialize();
+        initialize(mapId: number, eventId: number): void;
+        initMembers(): void;
+        eventId(): number;
+        event(): any; // TODO
+        page(): any; // TODO
+        list(): any; // TODO
+        isCollidedWithCharacters(): boolean;
+        isCollidedWithEvents(): boolean;
+        isCollidedWithPlayerCharacters(): boolean;
+        lock(): void;
+        unlock(): void;
+        updateStop(): void;
+        updateSelfMovement(): void;
+        stopCountThreshold(): number;
+        moveTypeRandom(): void;
+        moveTypeTowardPlayer(): void;
+        isNearThePlayer(): number;
+        moveTypeCustom(): void;
+        isStarting(): boolean;
+        clearStartingFlag(): void;
+        isTriggerIn(triggers: number[]): boolean;
+        start(): void;
+        erase(): void;
+        refresh(): void;
+        findProperPageIndex(): number;
+        meetsConditions(page: any): boolean;
+        setupPage(): void;
+        clearPageSettings(): void;
+        setupPageSettings(): void;
+        isOriginalPattern(): boolean;
+        resetPattern(): void;
+        checkEventTriggerTouch(x: number, y: number): void;
+        checkEventTriggerTouch(x: number, y: number): boolean;
+        checkEventTriggerAuto(): void;
+        update(): void;
+        updateParallel(): void;
+        locate(x: number, y: number): void;
+        forceMoveRoute(moveRoute: any): void; // TODO
+    }
+
     export class Game_Interpreter
     {
         initialize(depth: number): void;
