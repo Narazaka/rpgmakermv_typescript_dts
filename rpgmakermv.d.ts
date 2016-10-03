@@ -104,6 +104,89 @@ declare module MV
         endBalloon(): void;
     }
 
+    export class Game_Character extends Game_CharacterBase
+    {
+        static ROUTE_END: number;
+        static ROUTE_MOVE_DOWN: number;
+        static ROUTE_MOVE_LEFT: number;
+        static ROUTE_MOVE_RIGHT: number;
+        static ROUTE_MOVE_UP: number;
+        static ROUTE_MOVE_LOWER_L: number;
+        static ROUTE_MOVE_LOWER_R: number;
+        static ROUTE_MOVE_UPPER_L: number;
+        static ROUTE_MOVE_UPPER_R: number;
+        static ROUTE_MOVE_RANDOM: number;
+        static ROUTE_MOVE_TOWARD: number;
+        static ROUTE_MOVE_AWAY: number;
+        static ROUTE_MOVE_FORWARD: number;
+        static ROUTE_MOVE_BACKWARD: number;
+        static ROUTE_JUMP: number;
+        static ROUTE_WAIT: number;
+        static ROUTE_TURN_DOWN: number;
+        static ROUTE_TURN_LEFT: number;
+        static ROUTE_TURN_RIGHT: number;
+        static ROUTE_TURN_UP: number;
+        static ROUTE_TURN_90D_R: number;
+        static ROUTE_TURN_90D_L: number;
+        static ROUTE_TURN_180D: number;
+        static ROUTE_TURN_90D_R_L: number;
+        static ROUTE_TURN_RANDOM: number;
+        static ROUTE_TURN_TOWARD: number;
+        static ROUTE_TURN_AWAY: number;
+        static ROUTE_SWITCH_ON: number;
+        static ROUTE_SWITCH_OFF: number;
+        static ROUTE_CHANGE_SPEED: number;
+        static ROUTE_CHANGE_FREQ: number;
+        static ROUTE_WALK_ANIME_ON: number;
+        static ROUTE_WALK_ANIME_OFF: number;
+        static ROUTE_STEP_ANIME_ON: number;
+        static ROUTE_STEP_ANIME_OFF: number;
+        static ROUTE_DIR_FIX_ON: number;
+        static ROUTE_DIR_FIX_OFF: number;
+        static ROUTE_THROUGH_ON: number;
+        static ROUTE_THROUGH_OFF: number;
+        static ROUTE_TRANSPARENT_ON: number;
+        static ROUTE_TRANSPARENT_OFF: number;
+        static ROUTE_CHANGE_IMAGE: number;
+        static ROUTE_CHANGE_OPACITY: number;
+        static ROUTE_CHANGE_BLEND_MODE: number;
+        static ROUTE_PLAY_SE: number;
+        static ROUTE_SCRIPT: number;
+
+        initialize(): void;
+        initMembers(): void;
+        memorizeMoveRoute(); void;
+        restoreMoveRoute(): void;
+        isMoveRouteForcing(): boolean;
+        setMoveRoute(moveRoute: any): void; // TODO
+        forceMoveRoute(moveRoute: any): void; // TODO
+        updateStop(): void;
+        updateRoutineMove(): void;
+        processMoveCommand(command: any): void // TODO
+        deltaXFrom(x: number): number;
+        deltaYFrom(y: number): number;
+        moveRandom(): void;
+        moveTowardCharacter(character: any): void; // TODO
+        moveAwayFromCharacter(character: any): void; // TODO
+        turnTowardCharacter(character: any): void; // TODO
+        turnAwayFromCharacter(character: any): void; // TODO
+        turnTowardPlayer(): void;
+        turnAwayFromPlayer(): void;
+        moveTowardPlayer(): void;
+        moveAwayFromPlayer(): void;
+        moveForward(): void;
+        moveBackward(): void;
+        processRouteEnd(): void;
+        advanceMoveRouteIndex(): void;
+        turnRight90(): void;
+        turnLeft90(): void;
+        turn180(): void;
+        turnRightOrLeft90(): void;
+        turnRandom(): void;
+        findDirectionTo(goalX: number, goalY: number): number;
+        searchLimit(): number;
+    }
+
     export class Game_Interpreter
     {
         initialize(depth: number): void;
