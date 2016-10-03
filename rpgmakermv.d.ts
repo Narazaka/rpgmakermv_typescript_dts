@@ -1,5 +1,109 @@
 declare module MV
 {
+    export class Game_CharacterBase
+    {
+        x: number;
+        y: number;
+        initialize(): void;
+        initMembers(): void;
+        pos(x: number, y: number): boolean;
+        posNt(x: number, y: number): boolean;
+        moveSpeed(): number;
+        setMoveSpeed(moveSpeed: number): void;
+        moveFrequency(): number;
+        setMoveFrequency(moveFrequency: number): void;
+        opacity(): number;
+        setOpacity(opacity: number): void;
+        blendMode(): any; // TODO
+        setBlendMode(blendMode: any): void; // TODO
+        isNormalPriority(): boolean;
+        setPriorityType(priorityType: number): void;
+        isMoving(): boolean;
+        isJumping(): boolean;
+        jumpHeight(): number;
+        isStopping(): boolean;
+        checkStop(threshold: number): boolean;
+        resetStopCount(): void;
+        realMoveSpeed(): number;
+        distancePerFrame(): number;
+        isDashing(): boolean;
+        isDebugThrough(): boolean;
+        straighten(): void;
+        reverseDir(d: number): number;
+        canPass(x: number, y: number, d: number): boolean;
+        canPassDiagonally(x: number, y: number, horz: number, vert: number): boolean;
+        isMapPassable(x: number, y: number, d: number): boolean;
+        isCollidedWithCharacters(x: number, y: number): boolean;
+        isCollidedWithEvents(x: number, y: number): boolean;
+        isCollidedWithVehicles(x: number, y: number): boolean;
+        setPosition(x: number, y: number): void;
+        copyPosition(character: any): void; // TODO
+        locate(x: number, y: number): void;
+        direction(): number;
+        setDirection(d: number): void;
+        isTile(): boolean;
+        isObjectCharacter(): boolean;
+        shiftY(): number;
+        scrolledX(): number;
+        scrolledY(): number;
+        screenX(): number;
+        screenY(): number;
+        screenZ(): number;
+        isNearTheScreen: boolean;
+        update(): void;
+        updateStop(): void;
+        updateJump(): void;
+        updateMove(): void;
+        updateAnimation(): void;
+        animationWait(): number;
+        updateAnimationCount(): void;
+        updatePattern(): void;
+        maxPattern(): number;
+        pattern(): number;
+        setPattern(pattern: number): void;
+        isOriginalPattern(): boolean;
+        resetPattern(): void;
+        refreshBushDepth(): void;
+        isOnLadder(): boolean;
+        isOnBush(): boolean;
+        terrainTag(): boolean;
+        regionId(): boolean;
+        increaseSteps(): void;
+        tileId(): void;
+        characterName(): string;
+        characterIndex(): number;
+        setImage(characterName: string, characterIndex: number): void;
+        setTileImage(tileId: number): void;
+        checkEventTriggerTouchFront(d: number): void;
+        checkEventTriggerTouch(x: number, y: number): boolean;
+        isMovementSucceeded(x: number, y: number): boolean;
+        setMovementSuccess(success: boolean): void;
+        moveStraight(d: number): void;
+        moveDiagonally(horz: number, vert: number): void;
+        jump(xPlus: number, yPlus: number): void;
+        hasWalkAnime(): boolean;
+        setWalkAnime(walkAnime: boolean): void;
+        hasStepAnime(): boolean;
+        setStepAnime(stepAnime: boolean): void;
+        isDirectionFixed(): boolean;
+        setDirectionFix(directionFix: boolean): void;
+        isThrough(): boolean;
+        setThrough(through: boolean): void;
+        isTransparent(): boolean;
+        bushDepth(): number;
+        setTransparent(transparent: boolean): void;
+        requestAnimation(animationId: number): void;
+        requestBalloon(balloonId: number): void;
+        animationId(): number;
+        balloonId(): number;
+        startAnimation(): void;
+        startBalloon(): void;
+        isAnimationPlaying(): boolean;
+        isBalloonPlaying(): boolean;
+        endAnimation(): void;
+        endBalloon(): void;
+    }
+
     export class Game_Interpreter
     {
         initialize(depth: number): void;
