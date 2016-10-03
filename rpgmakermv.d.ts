@@ -1,5 +1,128 @@
 declare module MV
 {
+    export class Game_Temp
+    {
+        initialize(): void;
+        isPlaytest(): boolean;
+        reserveCommonEvent(commonEventId: number): void;
+        clearCommonEvent(): void;
+        isCommonEventReserved(): boolean;
+        reservedCommonEvent(): any; // TODO
+        setDestination(x: number, y: number): void;
+        clearDestination(): void;
+        isDestinationValid(): void;
+        destinationX(): number;
+        destinationY(): number;
+    }
+
+    export class Game_System
+    {
+        initialize(): void;
+        isJapanese(): boolean;
+        isChinese(): boolean;
+        isKorean(): boolean;
+        isCJK(): boolean;
+        isRussian(): boolean;
+        isSideView(): boolean;
+        isSaveEnabled(): boolean;
+        disableSave(): void;
+        enableSave(): void;
+        isMenuEnabled(): boolean;
+        disableMenu(): void;
+        enableMenu(): void;
+        isEncounterEnabled(): boolean;
+        disableEncounter(): void;
+        enableEncounter(): void;
+        isFormationEnabled(): boolean;
+        disableFormation(): void;
+        enableFormation(): void;
+        battleCount(): number;
+        winCount(): number;
+        escapeCount(): number;
+        saveCount(): number;
+        versionId(): number;
+        windowTone(): any; // TODO
+        setWindowTone(value: any): void; // TODO
+        battleBgm(): any; // TODO
+        setBattleBgm(value: any): void; // TODO
+        victoryMe(): any; // TODO
+        setVictoryMe(value: any): void; // TODO
+        defeatMe(): any; // TODO
+        setDefeatMe(value: any): void; // TODO
+        onBattleStart(): void;
+        onBattleWin(): void;
+        onBattleEscape(): void;
+        onBeforeSave(): void;
+        onAfterLoad(): void;
+        playtime(): number;
+        playtimeText(): string;
+        saveBgm(): void;
+        replayBgm(): void;
+        saveWalkingBgm(): void;
+        replayWalkingBgm(): void;
+    }
+
+    export class Game_Timer
+    {
+        initialize(): void;
+        update(sceneActive: boolean): void;
+        start(count: number): void;
+        stop(): void;
+        isWorking(): boolean;
+        seconds(): number;
+        onExpire(): void;
+    }
+
+    export class Game_Message
+    {
+        initialize(): void;
+        clear(): void;
+        choices(): any; // TODO
+        faceName(): string;
+        faceIndex(): number;
+        background(): number;
+        positionType(): number;
+        choiceDefaultType(): number;
+        choiceCancelType(): number;
+        choiceBackground(): number;
+        choicePositionType(): number;
+        numInputVariableId(): number;
+        numInputMaxDigits(): number;
+        itemChoiceVariableId(): number;
+        itemChoiceItypeId(): number;
+        scrollMode(): boolean;
+        scrollSpeed(): number;
+        scrollNoFast(): boolean;
+        add(text: string): void;
+        setFaceImage(faceName: string, faceIndex: number): void;
+        setBackground(background: number): void;
+        setPositionType(positionType: number): void;
+        setChoices(choices: any, defaultType: number, cancelType: number): void;
+        setChoiceBackground(background: number): void;
+        setChoicePositionType(positionType: number): void;
+        setNumberInput(variableId: number, maxDigits: number): void;
+        setItemChoice(variableId: number, itemType: number): void;
+        setScroll(speed: number, noFast: boolean);
+        setChoiceCallback(callback: Function): void;
+        onChoice(n: any): void; // TODO
+        hasText(): boolean;
+        isChoice(): boolean;
+        isNumberInput(): boolean;
+        isItemChoice(): boolean;
+        isBusy(): boolean;
+        newPage(): void;
+        allText(): string;
+    }
+
+    export class Game_Switches
+    {
+        initialize(): void;
+        clear(): void;
+        value(switchId: Array<any>): any; // TODO
+        setValue(switchId: Array<any>, value: boolean): void;
+        onChange(): void;
+    }
+
     export class Game_CharacterBase
     {
         x: number;
