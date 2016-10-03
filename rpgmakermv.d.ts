@@ -187,6 +187,114 @@ declare module MV
         searchLimit(): number;
     }
 
+    export class Game_Player extends Game_Character
+    {
+        initialize(): void;
+        initMembers(): void;
+        clearTransferInfo(): void;
+        followers(): Game_Followers;
+        refresh(): void;
+        isStopping(): boolean;
+        reserveTransfer(mapId: number, x: number, y: number, d: number, fadeType: number): void;
+        requestMapReload(): void;
+        isTransferring(): boolean;
+        newMapId(): number;
+        fadeType(): number;
+        performTransfer(): void;
+        isMapPassable(x: number, y: number, d: number): boolean;
+        vehicle(): any; // TODO
+        isInBoat(): boolean;
+        isInShip(): boolean;
+        isInAirship(): boolean;
+        isInVehicle(): boolean;
+        isNormal(): boolean;
+        isDashing(): boolean;
+        isDebugThrough(): boolean;
+        isCollided(x: number, y: number): boolean;
+        centerX(): number;
+        centerY(): number;
+        center(x: number, y: number): void;
+        locate(x: number, y: number): void;
+        increaseSteps(): void;
+        makeEncounterCount(): void;
+        makeEncounterTroopId(): number;
+        meetsEncounterConditions(encounter: any): boolean; // TODO
+        executeEncounter(): boolean;
+        startMapEvent(x: number, y: number, triggers: number[], normal: boolean): void;
+        moveByInput(): void;
+        canMove(): boolean;
+        getInputDirection(): number; // TODO 要検証
+        executeMove(direction: number): void;
+        update(): void;
+        update(sceneActive: boolean): void;
+        updateDashing(): void;
+        isDashButtonPressed(): boolean;
+        updateScroll(lastScrolledX: number, lastScrolledY: number): void;
+        updateVehicle(): void;
+        updateVehicleGetOn(): void;
+        updateVehicleGetOff(): void;
+        updateNonmoving(wasMoving: boolean): void;
+        triggerAction(): boolean;
+        triggerButtonAction(): boolean;
+        triggerTouchAction(): boolean;
+        triggerTouchActionD1(x1: number, y1: number): boolean;
+        triggerTouchActionD2(x2: number, y2: number): boolean;
+        triggerTouchActionD3(x2: number, y2: number): boolean;
+        updateEncounterCount(): void;
+        canEncounter(): boolean;
+        encounterProgressValue(): number;
+        checkEventTriggerHere(triggers: number[]): void;
+        checkEventTriggerThere(triggers: number[]): void;
+        checkEventTriggerTouch(x: number, y: number): boolean;
+        checkEventTriggerTouch(x: number, y: number): void;
+        canStartLocalEvents(): boolean;
+        getOnOffVehicle(): boolean;
+        getOnVehicle(): boolean;
+        getOffVehicle(): boolean;
+        forceMoveForward(): void;
+        isOnDamageFloor(): boolean;
+        moveStraight(): void;
+        moveDiagonally(): void;
+        jump(xPlus: number, yPlus: number): void;
+        showFollowers(): void;
+        hideFollowers(): void;
+        gatherFollowers(): void;
+        areFollowersGathering(): boolean;
+        areFollowersGathered(): boolean;
+    }
+
+    export class Game_Follower extends Game_Character
+    {
+        initialize(): void;
+        refresh(): void;
+        actor(): any; // TODO
+        isVisible(): boolean;
+        update(): void;
+        chaseCharacter(character: any): void; // TODO
+    }
+
+    export class Game_Followers extends Game_Character
+    {
+        initialize(): void;
+        isVisible(): boolean;
+        show(): void;
+        hide(): void;
+        follower(index: number): Game_Follower;
+        forEach(callback: Function, thisObject: this);
+        reverseEach(callback: Function, thisObject: this);
+        refresh(): void;
+        update(): void;
+        updateMove(): void;
+        jumpAll(): void;
+        synchronize(x: number, y: number, d: number);
+        gather(): void;
+        areGathering(): boolean;
+        visibleFollowers(): boolean;
+        areMoving(): boolean;
+        areGathered(): boolean;
+        isSomeoneCollided(): boolean;
+    }
+
     export class Game_Interpreter
     {
         initialize(depth: number): void;
