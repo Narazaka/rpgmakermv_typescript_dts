@@ -3628,3 +3628,110 @@ declare class Spriteset_Battle extends Spriteset_Base
     isAnyoneMoving(): boolean;
     isBusy(): boolean;
 }
+
+declare class Window_Base extends Window
+{
+    initialize(): void;
+    initialize(x: number, y: number, width: number, height: number): void;
+
+    static _iconWidth: number
+    static _iconHeight: number
+    static _faceWidth: number
+    static _faceHeight: number
+
+    lineHeight(): number;
+    standardFontFace(): string;
+    standardPadding(): number;
+    textPadding(): number;
+    standardBackOpacity(): number;
+    loadWindowskin(): void;
+    updatePadding(): void;
+    updateBackOpacity(): void;
+    contentsWidth(): number;
+    contentsHeight(): number;
+    fittingHeight(): number;
+    updateTone(): void;
+    createContents(): void;
+    resetFontSettings(): void;
+    resetTextColor(): void;
+    update(): void;
+    updateOpen(): void;
+    updateClose(): void;
+    open(url?: string, target?: string, features?: string, replace?: boolean): Window;
+    open(): void;
+    close(): void;
+    isOpening(): boolean;
+    isClosing(): boolean;
+    show(): void;
+    hide(): void;
+    activate(): void;
+    deactivate(): void;
+    textColor(n: number): any; // TODO
+    normalColor(): any; // TODO
+    systemColor(): any; // TODO
+    crisisColor(): any; // TODO
+    deathColor(): any; // TODO
+    gaugeBackColor(): any; // TODO
+    hpGaugeColor1(): any; // TODO
+    hpGaugeColor2(): any; // TODO
+    mpGaugeColor1(): any; // TODO
+    mpGaugeColor2(): any; // TODO
+    mpCostColor(): any; // TODO
+    powerUpColor(): any; // TODO
+    powerDownColor(): any; // TODO
+    tpGaugeColor1(): any; // TODO
+    tpGaugeColor2(): any; // TODO
+    tpCostColor(): any; // TODO
+    pendingColor(): any; // TODO
+    translucentOpacity(): number;
+    changeTextColor(color: any): void; // TODO
+    changePaintOpacity(enabled: boolean): void;
+    drawText(text: string, x: number, y: number, maxWidth: number, align: string): void;
+    textWidth(text: string): number;
+    drawTextEx(text: string, x: number, y: number): number;
+    convertEscapeCharacters(text: string): string;
+    actorName(n: number): string;
+    partyMemberName(n: number): string;
+    processCharacter(textState: any): void; // TODO
+    processNormalCharacter(textState: any): void; // TODO
+    processNewLine(textState: any): void; // TODO
+    processNewPage(textState: any): void; // TODO
+    obtainEscapeCode(textState: any): string; // TODO
+    obtainEscapeParam(textState: any): string; // TODO
+    processEscapeCharacter(code : string, textState: any): void; // TODO
+    processDrawIcon(iconIndex: number, textState: any): void; // TODO
+    makeFontBigger(): void;
+    makeFontSmaller(): void;
+    calcTextHeight(textState: any, all: boolean): number; // TODO
+    drawIcon(iconIndex: number, x: number, y: number): void;
+    drawFace(faceName: string, faceIndex: number, x: number, y: number, width: number, height: number): void;
+    drawCharacter(characterName: string, characterIndex: number, x: number, y: number): void;
+    drawGauge(x: number, y: number, width: number, rate: number, color1: any, color2: any): void; // TODO
+    hpColor(actor: any): any; // TODO
+    mpColor(actor: any): any; // TODO
+    tpColor(actor: any): any; // TODO
+    drawActorCharacter(actor: any, x: number, y: number): void; // TODO
+    drawActorFace(actor: any, x: number, y: number, width: number, height: number): void; // TODO
+    drawActorName(actor: any, x: number, y: number, width: number): void; // TODO
+    drawActorClass(actor: any, x: number, y: number, width: number): void; // TODO
+    drawActorNickname(actor: any, x: number, y: number, width: number): void; // TODO
+    drawActorLevel(actor: any, x: number, y: number): void; // TODO
+    drawActorIcons(actor: any, x: number, y: number, width: number): void; // TODO
+    drawCurrentAndMax(current: number, max: number, x: number, y: number, width: number, color1: any, color2: any): void; // TODO
+    drawActorHp(actor: any, x: number, y: number, width: number): void; // TODO
+    drawActorMp(actor: any, x: number, y: number, width: number): void; // TODO
+    drawActorTp(actor: any, x: number, y: number, width: number): void; // TODO
+    drawActorSimpleStatus(actor: any, x: number, y: number, width: number): void; // TODO
+    drawItemName(item: any, x: number, y: number, width: number): void; // TODO
+    drawCurrencyValue(value: number, unit: string, x: number, y: number, width: number): void;
+    paramchangeTextColor(change: number): any; // TODO
+    setBackgroundType(type: number): void;
+    showBackgroundDimmer(): void;
+    hideBackgroundDimmer(): void;
+    updateBackgroundDimmer(): void;
+    refreshDimmerBitmap(): void;
+    dimColor1(): string;
+    dimColor2(): string;
+    canvasToLocalX(x: number): number;
+    canvasToLocalY(y: number): number;
+}
