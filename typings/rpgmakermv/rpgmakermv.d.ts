@@ -554,7 +554,7 @@ declare class Stage extends PIXI.Container
     initialize(): void;
 }
 
-declare class WebAudio89
+declare class WebAudio
 {
     initialize(url: string): void;
 
@@ -818,6 +818,392 @@ declare class StorageManager
     static webStorageKey(savefileId: number): string;
 }
 
+declare class ImageManager
+{
+    static cache: CacheMap;
+
+    static loadAnimation(filename: string, hue: number): Bitmap;
+    static loadBattleback1(filename: string, hue: number): Bitmap;
+    static loadBattleback2(filename: string, hue: number): Bitmap;
+    static loadEnemy(filename: string, hue: number): Bitmap;
+    static loadCharacter(filename: string, hue: number): Bitmap;
+    static loadFace(filename: string, hue: number): Bitmap;
+    static loadParallax(filename: string, hue: number): Bitmap;
+    static loadPicture(filename: string, hue: number): Bitmap;
+    static loadSvActor(filename: string, hue: number): Bitmap;
+    static loadSvEnemy(filename: string, hue: number): Bitmap;
+    static loadSystem(filename: string, hue: number): Bitmap;
+    static loadTileset(filename: string, hue: number): Bitmap;
+    static loadTitle1(filename: string, hue: number): Bitmap;
+    static loadTitle2(filename: string, hue: number): Bitmap;
+    static loadBitmap(folder: string, filename: string, hue: number, smooth: boolean): Bitmap;
+    static loadEmptyBitmap(): Bitmap;
+    static loadNormalBitmap(path: string, hue: number): Bitmap;
+    static clear(): void;
+    static isReady(): boolean;
+    static isObjectCharacter: boolean;
+    static isBigCharacter: boolean;
+    static isZeroParallax: boolean;
+}
+
+interface AudioObject
+{
+    name: string;
+    volume: number;
+    pitch: number;
+}
+
+interface BGM extends AudioObject
+{
+    pan: number;
+    pos: number;
+}
+
+interface BGS extends AudioObject
+{
+    pan: number;
+    pos: number;
+}
+
+declare class AudioManager
+{
+    static _bgmVolume      : number;
+    static _bgsVolume      : number;
+    static _meVolume       : number;
+    static _seVolume       : number;
+    static _currentBgm     : BGM;
+    static _currentBgs     : BGS;
+    static _bgmBuffer      : any; // TODO
+    static _bgsBuffer      : any; // TODO
+    static _meBuffer       : any; // TODO
+    static _seBuffers      : any[]; // TODO
+    static _staticBuffers  : any[]; // TODO
+    static _replayFadeTime : number;
+    static _path           : string;
+    static _blobUrl        : string;
+
+    static bgmVolume: number;
+    static bgsVolume: number;
+    static meVolume: number;
+    static seVolume: number;
+
+    static playBgm(bgm: BGM, pos: number): void;
+    static playEncryptedBgm(bgm: BGM, pos: number): void;
+    static createDecryptBuffer(url: string, bgm: BGM, pos: number): void;
+    static replayBgm(bgm: BGM): void;
+    static isCurrentBgm(bgm: BGM): boolean;
+    static updateBgmParameters(bgm: BGM): void;
+    static updateCurrentBgm(bgm: BGM, pos: number): void;
+    static stopBgm(): void;
+    static fadeOutBgm(duration: number): void;
+    static fadeInBgm(duration: number): void;
+    static playBgs(bgs: BGS, pos: number): void;
+    static replayBgs(bgs: BGS): void;
+    static isCurrentBgs(bgs: BGS): boolean;
+    static updateBgsParameters(bgs: BGS): void;
+    static updateCurrentBgs(bgs: BGS, pos: number): void;
+    static stopBgs(): void;
+    static fadeOutBgs(duration: number): void;
+    static fadeInBgs(duration: number): void;
+    static playMe(me: any): void; // TODO
+    static updateMeParameters(me: any): void; // TODO
+    static fadeOutMe(duration: number): void;
+    static stopMe(): void;
+    static playSe(se: any): void; // TODO
+    static updateSeParameters(buffer: any, se: any): void; // TODO
+    static stopSe(): void;
+    static playStaticSe(se: any): void; // TODO
+    static loadStaticSe(se: any): void; // TODO
+    static isStaticSe(se: any): boolean; // TODO
+    static stopAll(): void;
+    static saveBgm(): AudioObject | BGM;
+    static saveBgs(): AudioObject | BGS;
+    static makeEmptyAudioObject(): AudioObject;
+    static createBuffer(folder: number, name: string): Html5Audio | WebAudio;
+    static updateBufferParameters(buffer: AudioObject, configVolume: number, audio: AudioObject): void;
+    static audioFileExt(): string;
+    static shouldUseHtml5Audio(): boolean;
+    static checkErrors(): void;
+    static checkWebAudioError(webAudio: WebAudio): void;
+}
+
+declare class SoundManager
+{
+    static preloadImportantSounds(): void;
+    static loadSystemSound(n: number): void;
+    static playSystemSound(n: number): void;
+    static playCursor(): void;
+    static playOk(): void;
+    static playCancel(): void;
+    static playBuzzer(): void;
+    static playEquip(): void;
+    static playSave(): void;
+    static playLoad(): void;
+    static playBattleStart(): void;
+    static playEscapeion(): void;
+    static playEnemyAttack(): void;
+    static playEnemyDamage(): void;
+    static playEnemyCollapse(): void;
+    static playBossCollapse1(): void;
+    static playBossCollapse2(): void;
+    static playActorDamage(): void;
+    static playActorCollapse(): void;
+    static playRecoveryion(): void;
+    static playMiss(): void;
+    static playEvasionion(): void;
+    static playMagicEvasion(): void;
+    static playReflectioni(): void;
+    static playShop(): void;
+    static playUseItem(): void;
+    static playUseSkill(): void;
+}
+
+declare class TextManager
+{
+    static basic(basicId: number): string;
+    static param(paramId: number): string;
+    static command(commandId: number): string;
+    static message(messageId: number): string;
+    static getter(method: Function, param: any): Function;
+
+    static currencyUnit: string;
+    static level: string;
+    static levelA: string;
+    static hp: string;
+    static hpA: string;
+    static mp: string;
+    static mpA: string;
+    static tp: string;
+    static tpA: string;
+    static exp: string;
+    static expA: string;
+    static fight: string;
+    static escape: string;
+    static attack: string;
+    static guard: string;
+    static item: string;
+    static skill: string;
+    static equip: string;
+    static status: string;
+    static formation: string;
+    static save: string;
+    static gameEnd: string;
+    static options: string;
+    static weapon: string;
+    static armor: string;
+    static keyItem: string;
+    static equip2: string;
+    static optimize: string;
+    static clear: string;
+    static newGame: string;
+    static continue_: string;
+    static toTitle: string;
+    static cancel: string;
+    static buy: string;
+    static sell: string;
+    static alwaysDash: string;
+    static commandRemember: string;
+    static bgmVolume: string;
+    static bgsVolume: string;
+    static meVolume: string;
+    static seVolume: string;
+    static possession: string;
+    static expTotal: string;
+    static expNext: string;
+    static saveMessage: string;
+    static loadMessage: string;
+    static file: string;
+    static partyName: string;
+    static emerge: string;
+    static preemptive: string;
+    static surprise: string;
+    static escapeStart: string;
+    static escapeFailure: string;
+    static victory: string;
+    static defeat: string;
+    static obtainExp: string;
+    static obtainGold: string;
+    static obtainItem: string;
+    static levelUp: string;
+    static obtainSkill: string;
+    static useItem: string;
+    static criticalToEnemy: string;
+    static criticalToActor: string;
+    static actorDamage: string;
+    static actorRecovery: string;
+    static actorGain: string;
+    static actorLoss: string;
+    static actorDrain: string;
+    static actorNoDamage: string;
+    static actorNoHit: string;
+    static enemyDamage: string;
+    static enemyRecovery: string;
+    static enemyGain: string;
+    static enemyLoss: string;
+    static enemyDrain: string;
+    static enemyNoDamage: string;
+    static enemyNoHit: string;
+    static evasion: string;
+    static magicEvasion: string;
+    static magicReflection: string;
+    static counterAttack: string;
+    static substitute: string;
+    static buffAdd: string;
+    static debuffAdd: string;
+    static buffRemove: string;
+    static actionFailure: string;
+}
+
+declare class SceneManager
+{
+    static _getTimeInMs: number;
+    static _scene: any; // TODO
+    static _nextScene: any; // TODO
+    static _stack: any[]; // TODO
+    static _stopped: boolean;
+    static _sceneStarted: boolean;
+    static _exiting: boolean;
+    static _previousClass: any; // TODO
+    static _backgroundBitmap: Bitmap;
+    static _screenWidth: number;
+    static _screenHeight: number;
+    static _boxWidth: number;
+    static _boxHeight: number;
+    static _deltaTime: number;
+    static _currentTime: number;
+    static _accumulator: number;
+
+    static run(sceneClass: any): void; // TODO
+    static initialize(): void;
+    static initGraphics(): void;
+    static preferableRendererType(): string;
+    static shouldUseCanvasRenderer(): boolean;
+    static checkWebGL(): void;
+    static checkFileAccess(): void;
+    static initAudio(): void;
+    static initInput(): void;
+    static initNwjs(): void;
+    static checkPluginErrors(): void;
+    static setupErrorHandlers(): void;
+    static requestUpdate(): void;
+    static update(): void;
+    static terminate(): void;
+    static onError(e: any): void; // TODO
+    static onKeyDown(event: KeyboardEvent): void;
+    static catchException(e: any): void; // TODO
+    static tickStart(): void;
+    static tickEnd(): void;
+    static updateInputData(): void;
+    static updateMain(): void;
+    static updateManagers(ticks: number, delta: number): void;
+    static changeScene(): void;
+    static updateScene(): void;
+    static renderScene(): void;
+    static onSceneCreate(): void;
+    static onSceneStart(): void;
+    static onSceneLoading(): void;
+    static isSceneChanging(): boolean;
+    static isCurrentSceneBusy(): boolean;
+    static isCurrentSceneStarted(): boolean;
+    static isNextScene(sceneClass: any): boolean; // TODO
+    static isPreviousScene(sceneClass: any): boolean; // TODO
+    static goto(sceneClass: any): void; // TODO
+    static push(sceneClass: any): void; // TODO
+    static pop(): void;
+    static exit(): void;
+    static clearStack(): void;
+    static stop(): void;
+    static prepareNextScene(): void;
+    static snap(): void;
+    static snapForBackground(): void;
+    static backgroundBitmap(): Bitmap;
+}
+
+declare class BattleManager
+{
+    static setup(troopId: number, canEscape: boolean, canLose: boolean): void;
+    static initMembers(): void;
+    static isBattleTest(): boolean;
+    static setBattleTest(battleTest: any): void; // TODO
+    static setEventCallback(callback: Function): void;
+    static setLogWindow(logWindow: any): void; // TODO
+    static setStatusWindow(statusWindow: any): void; // TODO
+    static setSpriteset(spriteset: any): void; // TODO
+    static onEncounter(): void;
+    static ratePreemptive(): number;
+    static rateSurprise(): number;
+    static saveBgmAndBgs(): void;
+    static playBattleBgm(): void;
+    static playVictoryMe(): void;
+    static playDefeatMe(): void;
+    static replayBgmAndBgs(): void;
+    static makeEscapeRatio(): void;
+    static update(): void;
+    static updateEvent(): boolean;
+    static updateEventMain(): boolean;
+    static isBusy(): boolean;
+    static isInputting(): boolean;
+    static isInTurn(): boolean;
+    static isTurnEnd(): boolean;
+    static isAborting(): boolean;
+    static isBattleEnd(): boolean;
+    static canEscape(): boolean;
+    static canLose(): boolean;
+    static isEscaped(): boolean;
+    static actor(): any; // TODO
+    static clearActor(): void;
+    static changeActor(newActorIndex: number, lastActorActionState: any): void; // TODO
+    static startBattle(): void;
+    static displayStartMessages(): void;
+    static startInput(): void;
+    static inputtingAction(): any; // TODO
+    static selectNextCommand(): void;
+    static selectPreviousCommand(): void;
+    static refreshStatus(): void;
+    static startTurn(): void;
+    static updateTurn(): void;
+    static processTurn(): void;
+    static endTurn(): void;
+    static updateTurnEnd(): void;
+    static getNextSubject(): void;
+    static allBattleMembers(): any; // TODO
+    static makeActionOrders(): void;
+    static startAction(): void;
+    static updateAction(): void;
+    static endAction(): void;
+    static invokeAction(subject: any, target: any): void; // TODO
+    static invokeNormalAction(subject: any, target: any): void; // TODO
+    static invokeCounterAttack(subject: any, target: any): void; // TODO
+    static invokeMagicReflection(subject: any, target: any): void; // TODO
+    static applySubstitute(target: any): any; // TODO
+    static checkSubstitute(target: any): any; // TODO
+    static isActionForced(): boolean;
+    static forceAction(battler: any): void; // TODO
+    static processForcedAction(): void;
+    static abort(): void;
+    static checkBattleEnd(): boolean;
+    static checkAbort(): boolean;
+    static processVictory(): void;
+    static processEscape(): boolean;
+    static processAbort(): void;
+    static processDefeat(): void;
+    static endBattle(result: number): void;
+    static updateBattleEnd(): void;
+    static makeRewards(): void;
+    static displayVictoryMessage(): void;
+    static displayDefeatMessage(): void;
+    static makeRewadisplayEscapeSuccessMessagerds(): void;
+    static displayEscapeFailureMessage(): void;
+    static displayRewards(): void;
+    static displayExp(): void;
+    static displayGold(): void;
+    static displayDropItems(): void;
+    static gainRewards(): void;
+    static gainExp(): void;
+    static gainGold(): void;
+    static gainDropItems(): void;
+}
+
 declare class PluginManager
 {
     static _path: string;
@@ -831,12 +1217,6 @@ declare class PluginManager
     static setParameters(name: string, parameters: any): void; // TODO
     static loadScript(name: string): void;
     static onError(e: any): void; // TODO
-}
-
-declare class ImageManager
-{
-    static cache: CacheMap;
-    // 途中
 }
 
 declare class Game_Temp
