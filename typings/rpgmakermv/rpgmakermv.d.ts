@@ -1105,10 +1105,10 @@ declare class SceneManager
     static isSceneChanging(): boolean;
     static isCurrentSceneBusy(): boolean;
     static isCurrentSceneStarted(): boolean;
-    static isNextScene(sceneClass: any): boolean; // TODO
-    static isPreviousScene(sceneClass: any): boolean; // TODO
-    static goto(sceneClass: any): void; // TODO
-    static push(sceneClass: any): void; // TODO
+    static isNextScene(sceneClass: Scene_Base): boolean;
+    static isPreviousScene(sceneClass: Scene_Base): boolean;
+    static goto(sceneClass: Scene_Base): void;
+    static push(sceneClass: Scene_Base): void;
     static pop(): void;
     static exit(): void;
     static clearStack(): void;
@@ -2845,4 +2845,408 @@ declare class Game_Interpreter
     command355(): boolean;
     command356(): boolean;
     pluginCommand(command: string, args: string[]): void;
+}
+
+declare class Scene_Base extends Stage
+{
+    initialize(): void;
+    create(): void;
+    isActive(): boolean;
+    isReady(): boolean;
+    start(): void;
+    update(): void;
+    stop(): void;
+    isBusy(): boolean;
+    terminate(): void;
+    createWindowLayer(): void;
+    addWindow(window: any): void; // TODO
+    startFadeIn(duration: number, white: boolean): void;
+    startFadeOut(duration: number, white: boolean): void;
+    createFadeSprite(white: boolean): void;
+    updateFade(): void;
+    updateChildren(): void;
+    popScene(): void;
+    checkGameover(): void;
+    fadeOutAll(): void;
+    fadeSpeed(): number;
+    slowFadeSpeed(): number;
+}
+
+declare class Scene_Boot extends Scene_Base
+{
+    initialize(): void;
+    create(): void;
+    loadSystemWindowImage(): void;
+
+    static loadSystemImages(): void;
+
+    isReady(): boolean;
+    isGameFontLoaded(): boolean;
+    start(): void;
+    updateDocumentTitle(): void;
+    checkPlayerLocation(): void;
+}
+
+declare class Scene_Title extends Scene_Base
+{
+    initialize(): void;
+    create(): void;
+    start(): void;
+    update(): void;
+    isBusy(): boolean;
+    terminate(): void;
+    createBackground(): void;
+    createForeground(): void;
+    drawGameTitle(): void;
+    centerSprite(sprite: any): void; // TODO
+    createCommandWindow(): void;
+    commandNewGame(): void;
+    commandContinue(): void;
+    commandOptions(): void;
+    playTitleMusic(): void;
+}
+
+declare class Scene_Map extends Scene_Base
+{
+    initialize(): void;
+    create(): void;
+    isReady(): boolean;
+    onMapLoaded(): void;
+    start(): void;
+    update(): void;
+    updateMainMultiply(): void;
+    updateMain(): void;
+    isFastForward(): boolean;
+    stop(): void;
+    isBusy(): boolean;
+    terminate(): void;
+    needsFadeIn(): boolean;
+    needsSlowFadeOut(): boolean;
+    updateWaitCount(): boolean;
+    updateDestination(): void;
+    isMapTouchOk(): boolean;
+    processMapTouch(): void;
+    isSceneChangeOk(): boolean;
+    updateScene(): void;
+    createDisplayObjects(): void;
+    createSpriteset(): void;
+    createAllWindows(): void;
+    createMapNameWindow(): void;
+    createMessageWindow(): void;
+    createScrollTextWindow(): void;
+    updateTransferPlayer(): void;
+    updateEncounter(): void;
+    updateCallMenu(): void;
+    isMenuEnabled(): boolean;
+    isMenuCalled(): boolean;
+    callMenu(): void;
+    updateCallDebug(): void;
+    isDebugCalled(): boolean;
+    fadeInForTransfer(): void;
+    fadeOutForTransfer(): void;
+    launchBattle(): void;
+    stopAudioOnBattleStart(): void;
+    startEncounterEffect(): void;
+    updateEncounterEffect(): void;
+    snapForBattleBackground(): void;
+    startFlashForEncounter(duration: number): void;
+    encounterEffectSpeed(): number;
+}
+
+declare class Scene_MenuBase extends Scene_Base
+{
+    initialize(): void;
+    create(): void;
+    actor(): any; // TODO
+    updateActor(): void;
+    createBackground(): void;
+    setBackgroundOpacity(opacity: number): void;
+    createHelpWindow(): void;
+    nextActor(): void;
+    previousActor(): void;
+    onActorChange(): void;
+}
+
+declare class Scene_Menu extends Scene_MenuBase
+{
+    initialize(): void;
+    create(): void;
+    start(): void;
+    createCommandWindow(): void;
+    createGoldWindow(): void;
+    createStatusWindow(): void;
+    commandItem(): void;
+    commandPersonal(): void;
+    commandFormation(): void;
+    commandOptions(): void;
+    commandSave(): void;
+    commandGameEnd(): void;
+    onPersonalOk(): void;
+    onPersonalCancel(): void;
+    onFormationOk(): void;
+    onFormationCancel(): void;
+}
+
+declare class Scene_ItemBase extends Scene_MenuBase
+{
+    initialize(): void;
+    create(): void;
+    createActorWindow(): void;
+    item(): any; // TODO
+    user(): any; // TODO
+    isCursorLeft(): boolean;
+    showSubWindow(window: any): void; // TODO
+    hideSubWindow(window: any): void; // TODO
+    onActorOk(): void;
+    onActorCancel(): void;
+    determineItem(): void;
+    useItem(): void;
+    activateItemWindow(): void;
+    itemTargetActors(): void;
+    canUse(): boolean;
+    isItemEffectsValid(): boolean;
+    applyItem(): void;
+    checkCommonEvent(): void;
+}
+
+declare class Scene_Item extends Scene_ItemBase
+{
+    initialize(): void;
+    create(): void;
+    createCategoryWindow(): void;
+    createItemWindow(): void;
+    user(): any; // TODO
+    onCategoryOk(): void;
+    onItemOk(): void;
+    onItemCancel(): void;
+    playSeForItem(): void;
+    useItem(): void;
+}
+
+declare class Scene_Skill extends Scene_ItemBase
+{
+    initialize(): void;
+    create(): void;
+    createSkillTypeWindow(): void;
+    createStatusWindow(): void;
+    createItemWindow(): void;
+    refreshActor(): void;
+    user(): any; // TODO
+    commandSkill(): void;
+    onItemOk(): void;
+    onItemCancel(): void;
+    playSeForItem(): void;
+    useItem(): void;
+    onActorChange(): void;
+}
+
+declare class Scene_Equip extends Scene_ItemBase
+{
+    initialize(): void;
+    create(): void;
+    createStatusWindow(): void;
+    createCommandWindow(): void;
+    createSlotWindow(): void;
+    createItemWindow(): void;
+    refreshActor(): void;
+    commandEquip(): void;
+    commandOptimize(): void;
+    commandClear(): void;
+    onSlotOk(): void;
+    onSlotCancel(): void;
+    onItemOk(): void;
+    onItemCancel(): void;
+    onActorChange(): void;
+}
+
+declare class Scene_Status extends Scene_ItemBase
+{
+    initialize(): void;
+    create(): void;
+    refreshActor(): void;
+    onActorChange(): void;
+}
+
+declare class Scene_Options extends Scene_ItemBase
+{
+    initialize(): void;
+    create(): void;
+    terminate(): void;
+    createOptionsWindow(): void;
+}
+
+declare class Scene_File extends Scene_ItemBase
+{
+    initialize(): void;
+    create(): void;
+    start(): void;
+    savefileId(): number;
+    createHelpWindow(): void;
+    createListWindow(): void;
+    mode(): string;
+    activateListWindow(): void;
+    helpWindowText(): string;
+    firstSavefileIndex(): number;
+    onSavefileOk(): void;
+}
+
+declare class Scene_Save extends Scene_File
+{
+    initialize(): void;
+    mode(): string;
+    helpWindowText(): string;
+    firstSavefileIndex(): number;
+    onSavefileOk(): void;
+    onSaveSuccess(): void;
+    onSaveFailure(): void;
+}
+
+declare class Scene_Load extends Scene_File
+{
+    initialize(): void;
+    terminate(): void;
+    mode(): string;
+    helpWindowText(): string;
+    firstSavefileIndex(): number;
+    onSavefileOk(): void;
+    onSaveSuccess(): void;
+    onSaveFailure(): void;
+    reloadMapIfUpdated(): void;
+}
+
+declare class Scene_GameEnd extends Scene_MenuBase
+{
+    initialize(): void;
+    create(): void;
+    stop(): void;
+    createBackground(): void;
+    createCommandWindow(): void;
+    commandToTitle(): void;
+}
+
+declare class Scene_Shop extends Scene_MenuBase
+{
+    initialize(): void;
+    prepare(goods: any, purchaseOnly: boolean): void; // TODO
+    create(): void;
+    createGoldWindow(): void;
+    createCommandWindow(): void;
+    createDummyWindow(): void;
+    createNumberWindow(): void;
+    createStatusWindow(): void;
+    createBuyWindow(): void;
+    createCategoryWindow(): void;
+    createSellWindow(): void;
+    activateBuyWindow(): void;
+    activateSellWindow(): void;
+    commandBuy(): void;
+    commandSell(): void;
+    onBuyOk(): void;
+    onBuyCancel(): void;
+    onCategoryOk(): void;
+    onCategoryCancel(): void;
+    onSellOk(): void;
+    onSellCancel(): void;
+    onNumberOk(): void;
+    onNumberCancel(): void;
+    doBuy(number: number): void;
+    doSell(number: number): void;
+    endNumberInput(): void;
+    maxBuy(): number;
+    maxSell(): number;
+    money(): number;
+    currencyUnit(): string;
+    buyingPrice(): number;
+    sellingPrice(): number;
+}
+
+declare class Scene_Name extends Scene_MenuBase
+{
+    initialize(): void;
+    prepare(actorId: number, maxLength: number): void;
+    create(): void;
+    start(): void;
+    createEditWindow(): void;
+    createInputWindow(): void;
+    onInputOk(): void;
+}
+
+declare class Scene_Debug extends Scene_MenuBase
+{
+    initialize(): void;
+    create(): void;
+    createRangeWindow(): void;
+    createEditWindow(): void;
+    createDebugHelpWindow(): void;
+    onRangeOk(): void;
+    onEditCancel(): void;
+    refreshHelpWindow(): void;
+    helpText(): string;
+}
+
+declare class Scene_Battle extends Scene_MenuBase
+{
+    initialize(): void;
+    create(): void;
+    start(): void;
+    update(): void;
+    updateBattleProcess(): void;
+    isAnyInputWindowActive(): boolean;
+    changeInputWindow(): void;
+    stop(): void;
+    terminate(): void;
+    needsSlowFadeOut(): boolean;
+    updateStatusWindow(): void;
+    updateWindowPositions(): void;
+    createDisplayObjects(): void;
+    createSpriteset(): void;
+    createAllWindows(): void;
+    createLogWindow(): void;
+    createStatusWindow(): void;
+    createPartyCommandWindow(): void;
+    createActorCommandWindow(): void;
+    createHelpWindow(): void;
+    createSkillWindow(): void;
+    createItemWindow(): void;
+    createActorWindow(): void;
+    createEnemyWindow(): void;
+    createMessageWindow(): void;
+    createScrollTextWindow(): void;
+    refreshStatus(): void;
+    startPartyCommandSelection(): void;
+    commandFight(): void;
+    commandEscape(): void;
+    startActorCommandSelection(): void;
+    commandAttack(): void;
+    commandSkill(): void;
+    commandGuard(): void;
+    commandItem(): void;
+    selectNextCommand(): void;
+    selectPreviousCommand(): void;
+    selectActorSelection(): void;
+    onActorOk(): void;
+    onActorCancel(): void;
+    selectEnemySelection(): void;
+    onEnemyOk(): void;
+    onEnemyCancel(): void;
+    onSkillOk(): void;
+    onSkillCancel(): void;
+    onItemOk(): void;
+    onItemCancel(): void;
+    onSelectAction(): void;
+    endCommandSelection(): void;
+}
+
+declare class Scene_Gameover extends Scene_Base
+{
+    initialize(): void;
+    create(): void;
+    start(): void;
+    update(): void;
+    stop(): void;
+    terminate(): void;
+    playGameoverMusic(): void;
+    createBackground(): void;
+    isTriggered(): boolean;
+    gotoTitle(): void;
 }
