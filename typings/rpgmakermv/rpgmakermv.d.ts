@@ -45,7 +45,7 @@ declare class Utils
 
 declare class CacheEntry
 {
-    constructor(cache: any, key: any, item: any); // TODO
+    constructor(cache: CacheMap, key: string, item: Bitmap | Html5Audio | WebAudio);
     free(byTTL: boolean): void;
     allocate(): CacheEntry;
     setTimeToLive(ticks: number, seconds: number): CacheEntry;
@@ -55,11 +55,11 @@ declare class CacheEntry
 
 declare class CacheMap
 {
-    constructor(manager: any); // TODO
+    constructor(manager: typeof DataManager | typeof ConfigManager | typeof StorageManager | typeof ImageManager | typeof AudioManager | typeof SoundManager | typeof TextManager | typeof SceneManager | typeof BattleManager | typeof PluginManager);
     checkTTL(): void;
-    getItem(key: any): any; // TODO
+    getItem(key: string): any;
     clear(): void;
-    setItem(key: any, item: any): CacheEntry;
+    setItem(key: string, item: any): CacheEntry;
     update(ticks: number, delta: number): void;
 }
 
@@ -81,7 +81,7 @@ declare class Bitmap
     initialize(width: number, height: number): void;
     
     static load(url: string): Bitmap;
-    static snap(stage: any): Bitmap;
+    static snap(stage: Stage): Bitmap;
 
     isReady(): boolean;
     isError(): boolean;
@@ -145,7 +145,7 @@ declare class Graphics
     static hasWebGL(): boolean;
     static canUseDifferenceBlend(): boolean;
     static canUseSaturationBlend(): boolean;
-    static setLoadingImage(src: any): void; // TODO
+    static setLoadingImage(src: string): void;
     static startLoading(): void;
     static updateLoading(): void;
     static printError(name: string, message: string): void;
@@ -336,7 +336,7 @@ declare class Tilemap extends PIXI.Container
     tileWidth: number;
     tileHeight: number;
     
-    setData(width: number, height: number, data: any[]): void; // TODO
+    setData(width: number, height: number, data: number[]): void;
     isReady(): boolean;
     update(): void;
     refresh(): void;
@@ -347,8 +347,8 @@ declare class Tilemap extends PIXI.Container
     protected _updateLayerPositions(startX: number, startY: number): void;
     protected _paintAllTiles(startX: number, startY: number): void;
     protected _paintTiles(startX: number, startY: number, x: number, y: number): void;
-    protected _readLastTiles(i: number, x: number, y: number): any[]; // TODO
-    protected _writeLastTiles(i: number, x: number, y: number, tiles: any[]): void; // TODO
+    protected _readLastTiles(i: number, x: number, y: number): number[];
+    protected _writeLastTiles(i: number, x: number, y: number, tiles: number[]): void;
     protected _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
     protected _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
     protected _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
@@ -359,7 +359,7 @@ declare class Tilemap extends PIXI.Container
     protected _isTableTile(tileId: number): boolean;
     protected _isOverpassPosition(mx: number, my: number): boolean;
     protected _sortChildren(): void;
-    protected _compareChildOrder(a: any, b: any): number; // TODO
+    protected _compareChildOrder(a: Sprite, b: Sprite): number;
 
     static TILE_ID_B: number;
     static TILE_ID_C: number;
@@ -402,10 +402,10 @@ declare class Tilemap extends PIXI.Container
 
 declare class ShaderTilemap extends Tilemap
 {
-    protected _hackRenderer(renderer: any): any; // TODO
+    protected _hackRenderer(renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer): PIXI.WebGLRenderer | PIXI.CanvasRenderer;
 
-    renderCanvas(renderer: any): void; // TODO
-    renderWebGL(renderer: any): void; // TODO
+    renderCanvas(renderer: PIXI.CanvasRenderer): void; // TODO
+    renderWebGL(renderer: PIXI.WebGLRenderer): void; // TODO
     refresh(): void;
     refreshTileset(): void;
     updateTransform(): void;
@@ -515,11 +515,11 @@ declare class WindowLayer extends PIXI.Container
 
     move(x: number, y: number, width: number, height: number): void;
     update(): void;
-    renderCanvas(renderer: any): void; // TODO
+    renderCanvas(renderer: PIXI.CanvasRenderer): void; // TODO
 
     protected _canvasClearWindowRect(renderSession: any, window: Window): void; // TODO
 
-    renderWebGL(renderer: any): void; // TODO
+    renderWebGL(renderer: PIXI.WebGLRenderer): void; // TODO
 
     protected _maskWindow(window: Window): void;
 }
@@ -555,8 +555,8 @@ declare class ToneSprite extends PIXI.Container
     clear(): void;
     setTone(r: number, g: number, b: number, gray: number): void;
 
-    protected _renderCanvas(renderer: any): void; // TODO
-    protected _renderWebGL(renderer: any): void; // TODO
+    protected _renderCanvas(renderer: PIXI.CanvasRenderer): void;
+    protected _renderWebGL(renderer: PIXI.WebGLRenderer): void;
 }
 
 declare class Stage extends PIXI.Container
@@ -714,21 +714,591 @@ declare class Decrypter
     static readEncryptionkey(): void;
 }
 
-declare var $dataActors      : any; // TODO
-declare var $dataClasses     : any; // TODO
-declare var $dataSkills      : any; // TODO
-declare var $dataItems       : any; // TODO
-declare var $dataWeapons     : any; // TODO
-declare var $dataArmors      : any; // TODO
-declare var $dataEnemies     : any; // TODO
-declare var $dataTroops      : any; // TODO
-declare var $dataStates      : any; // TODO
-declare var $dataAnimations  : any; // TODO
-declare var $dataTilesets    : any; // TODO
-declare var $dataCommonEvents: any; // TODO
-declare var $dataSystem      : any; // TODO
-declare var $dataMapInfos    : any; // TODO
-declare var $dataMap         : any; // TODO
+declare interface IDataActor
+{
+    id?: number;
+    battlerName?: string;
+    characterIndex?: number;
+    characterName?: string;
+    classId?: number;
+    equips?: number[];
+    faceIndex?: number;
+    faceName?: string;
+    traits?: {
+        code?: number;
+        dataId?: number;
+        value?: number;
+    }[];
+    initialLevel?: number;
+    maxLevel?: number;
+    name?: string;
+    nickname?: string;
+    note?: string;
+    profile?: string;
+}
+
+declare interface IClass
+{
+    id?: number;
+    expParams?: number[];
+    traits?: {
+        code?: number;
+        dataId?: number;
+        value?: number;
+    }[];
+    learnings?: {
+        level?: number;
+        note?: string;
+        skillId?: number;
+    }[];
+    name?: string;
+    note?: string;
+    params?: number[][];
+}
+
+declare interface ISkill
+{
+    id?: number;
+    animationId?: number;
+    damage?: {
+        critical?: boolean;
+        elementId?: number;
+        formula?: string;
+        type?: number;
+        variance?: number;
+    }
+    description?: string;
+    effects?: {
+        code?: number;
+        dataId?: number;
+        value1?: number;
+        value2?: number;
+    }[];
+    hitType?: number;
+    iconIndex?: number;
+    message1?: string;
+    message2?: string;
+    mpCost?: number;
+    name?: string;
+    note?: string;
+    occasion?: number;
+    repeats?: number;
+    requiredWtypeId1?: number;
+    requiredWtypeId2?: number;
+    scope?: number;
+    speed?: number;
+    stypeId?: number;
+    successRate?: number;
+    tpCost?: number;
+    tpGain?: number;
+}
+
+declare interface IItem
+{
+    id?: number;
+    animationId?: number;
+    consumable?: boolean;
+    damage?: {
+        critical?: boolean;
+        elementId?: number;
+        formula?: string;
+        type?: number;
+        variance?: number;
+    }
+    description?: string;
+    effects?: {
+        code?: number;
+        dataId?: number;
+        value1?: number;
+        value2?: number;
+    }[];
+    hitType?: number;
+    iconIndex?: number;
+    itypeId?: number;
+    name?: string;
+    note?: string;
+    occasion?: number;
+    price?: number;
+    repeats?: number;
+    scope?: number;
+    speed?: number;
+    successRate?: number;
+    tpGain?: number;
+}
+
+declare interface IWeapon
+{
+    id?: number;
+    animationId?: number;
+    description?: string;
+    etypeId?: number;
+    traits?: {
+        code?: number;
+        dataId?: number;
+        value?: number;
+    }[];
+    iconIndex?: number;
+    name?: string;
+    note?: string;
+    params?: number[];
+    price?: number;
+    wtypeId?: number;
+}
+
+declare interface IArmor
+{
+    id?: number;
+    atypeId?: number;
+    description?: string;
+    etypeId?: number;
+    traits?: {
+        code?: number;
+        dataId?: number;
+        value?: number;
+    }[];
+    iconIndex?: number;
+    name?: string;
+    note?: string;
+    params?: number[];
+    price?: number;
+}
+
+declare interface IEnemy
+{
+    id?: number;
+    actions?: {
+        conditionParam1?: number;
+        conditionParam2?: number;
+        conditionType?: number;
+        rating?: number;
+        skillId?: number;
+    }[];
+    battlerHue?: number;
+    battlerName?: string;
+    dropItems?: {
+        kind?: number;
+        dataId?: number;
+        denominator?: number;
+    }[];
+    exp?: number;
+    traits?: {
+        code?: number;
+        dataId?: number;
+        value?: number;
+    }[];
+    gold?: number;
+    name?: string;
+    note?: string;
+    params?: number[];
+}
+
+declare interface ITroop
+{
+    id?: number;
+    members?: {
+        enemyId?: number;
+        x?: number;
+        y?: number;
+        hidden?: boolean;
+    }[];
+    name?: string;
+    pages?: {
+        conditions?: {
+            actorHP?: number;
+            actorId?: number;
+            actorValid?: boolean;
+            enemyHp?: number;
+            enemyIndex?: number;
+            enemyValid?: boolean;
+            switchId?: number;
+            switchValid?: boolean;
+            turnA?: number;
+            turnB?: number;
+            turnEnding?: boolean;
+            turnValid?: boolean;
+        };
+        list?: {
+            code?: number;
+            indent?: number;
+            parameters?: number[];
+        }[];
+        span?: number;
+    }[];
+}
+
+declare interface IState
+{
+    id?: number;
+    autoRemovalTiming?: number;
+    chanceByDamage?: number;
+    iconIndex?: number;
+    maxTurns?: number;
+    message1?: string;
+    message2?: string;
+    message3?: string;
+    message4?: string;
+    minTurns?: number;
+    motion?: number;
+    name?: string;
+    note?: string;
+    overlay?: number;
+    priority?: number;
+    releaseByDamage?: boolean;
+    removeAtBattleEnd?: boolean;
+    removeByDamage?: boolean;
+    removeByRestriction?: boolean;
+    removeByWalking?: boolean;
+    restriction?: number;
+    stepsToRemove?: number;
+    traits?: {
+        code?: number;
+        dataId?: number;
+        value?: number;
+    }[];
+}
+
+declare interface IAnimation
+{
+    id?: number;
+    animation1Hue?: number;
+    animation1Name?: string;
+    animation2Hue?: number;
+    animation2Name?: string;
+    frames?: number[][][];
+    name?: string;
+    position?: number;
+    timings?: {
+        flashColor?: number[];
+        flashDuration?: number;
+        flashScope?: number;
+        frame?: number;
+        se?: {
+            name?: string;
+            pan?: number;
+            pitch?: number;
+            volume?: string;
+        }
+    }[];
+}
+
+declare interface ITileset
+{
+    id?: number;
+    flags?: number[];
+    mode?: number;
+    name?: string;
+    note?: string;
+    tilesetNames?: string[];
+}
+
+declare interface ICommonEvent
+{
+    id?: number;
+    list?: {
+        code?: number;
+        indent?: number;
+        parameters?: number[];
+    }[];
+    name: string;
+    switchId: number;
+    trigger: number;
+}
+
+declare interface ISystem
+{
+    airship?: {
+        bgm?: {
+            name?: string;
+            pan?: number;
+            pitch?: number;
+            volume?: number;
+        };
+        characterIndex?: number;
+        characterName?: string;
+        startMapId?: number;
+        startX?: number;
+        startY?: number;
+    };
+    armorTypes?: string[];
+    attackMotions?: {
+        type?: number;
+        weaponImageId?: number;
+    }[];
+    battleBgm?: {
+        name?: string;
+        pan?: number;
+        pitch?: number;
+        volume?: number;
+    };
+    battleback1Name?: string;
+    battleback2Name?: string;
+    battlerHue?: number;
+    battlerName?: string;
+    boat?: {
+        bgm?: {
+            name?: string;
+            pan?: number;
+            pitch?: number;
+            volume?: number;
+        };
+        characterIndex?: number;
+        characterName?: string;
+        startMapId?: number;
+        startX?: number;
+        startY?: number;
+    };
+    currencyUnit?: string;
+    defeatMe?: {
+        name?: string;
+        pan?: number;
+        pitch?: number;
+        volume?: number;
+    };
+    editMapId?: number;
+    elements?: string[];
+    equipTypes?: string[];
+    gameTitle?: string;
+    gameoverMe?: {
+        name?: string;
+        pan?: number;
+        pitch?: number;
+        volume?: number;
+    };
+    locale?: string;
+    magicSkills?: number[];
+    menuCommands?: boolean[];
+    optDisplayTp?: boolean;
+    optDrawTitle?: boolean;
+    optExtraExp?: boolean;
+    optFloorDeath?: boolean;
+    optFollowers?: boolean;
+    optSideView?: boolean;
+    optSlipDeath?: boolean;
+    optTransparent?: boolean;
+    partyMembers?: number[];
+    ship?: {
+        bgm?: {
+            name?: string;
+            pan?: number;
+            pitch?: number;
+            volume?: number;
+        };
+        characterIndex?: number;
+        characterName?: string;
+        startMapId?: number;
+        startX?: number;
+        startY?: number;
+    };
+    skillTypes?: string[];
+    sounds?: {
+        name?: string;
+        pan?: number;
+        pitch?: number;
+        volume?: number;
+    }[];
+    startMapId?: number;
+    startX?: number;
+    startY?: number;
+    switches?: string[];
+    terms?: {
+        basic?: string[];
+        commands: string[];
+        params: string[];
+        messages: {
+            possession: string;
+            expTotal: string;
+            expNext: string;
+            saveMessage: string;
+            loadMessage: string;
+            file?: string;
+            partyName?: string;
+            emerge?: string;
+            preemptive?: string;
+            surprise?: string;
+            escapeStart?: string;
+            escapeFailure?: string;
+            victory?: string;
+            defeat?: string;
+            obtainExp?: string;
+            obtainGold?: string;
+            obtainItem?: string;
+            levelUp?: string;
+            obtainSkill?: string;
+            useItem?: string;
+            criticalToEnemy?: string;
+            criticalToActor?: string;
+            actorDamage?: string;
+            actorRecovery?: string;
+            actorGain?: string;
+            actorLoss?: string;
+            actorDrain?: string;
+            actorNoDamage?: string;
+            actorNoHit?: string;
+            enemyDamage?: string;
+            enemyRecovery?: string;
+            enemyGain?: string;
+            enemyLoss?: string;
+            enemyDrain?: string;
+            enemyNoDamage?: string;
+            enemyNoHit?: string;
+            evasion?: string;
+            magicEvasion?: string;
+            magicReflection?: string;
+            counterAttack?: string;
+            substitute?: string;
+            buffAdd?: string;
+            debuffAdd?: string;
+            buffRemove?: string;
+            actionFailure?: string;
+            bgmVolume?: string;
+            bgsVolume?: string;
+            meVolume?: string;
+            seVolume?: string;
+            alwaysDash?: string;
+            commandRemember?: string;
+        };
+    };
+    testBattlers?: {
+        actorId?: number;
+        equips?: number[];
+        level?: number;
+    }[];
+    testTroopId?: number;
+    title1Name?: string;
+    title2Name?: string;
+    titleBgm?: {
+        name?: string;
+        pan?: number;
+        pitch?: number;
+        volume?: number;
+    };
+    variables?: string[];
+    versionId?: number;
+    victoryMe?: {
+        name?: string;
+        pan?: number;
+        pitch?: number;
+        volume?: number;
+    };
+    weaponTypes?: string;
+    windowTone?: number[];
+}
+
+declare interface IMapInfo
+{
+    id?: number;
+    expanded?: boolean;
+    name?: string;
+    order?: number;
+    parentId?: number;
+    scrollX?: number;
+    scrollY?: number;
+}
+
+declare interface IMap
+{
+    autoplayBgm?: boolean;
+    autoplayBgs?: boolean;
+    battleback1Name?: string;
+    battleback2Name?: string;
+    bgm?: {
+        name?: string;
+        pan?: number;
+        pitch?: number;
+        volume?: number;
+    };
+    bgs?: {
+        name?: string;
+        pan?: number;
+        pitch?: number;
+        volume?: number;
+    };
+    disableDashing?: boolean;
+    displayName?: string;
+    encounterList?: any[];
+    encounterStep?: number;
+    height?: number;
+    note?: string;
+    parallaxLoopX?: boolean;
+    parallaxLoopY?: boolean;
+    parallaxName?: string;
+    parallaxShow?: boolean;
+    parallaxSx?: number;
+    parallaxSy?: number;
+    scrollType?: number;
+    specifyBattleback?: boolean;
+    tilesetId?: number;
+    width?: number;
+    data?: number[];
+    events?: {
+        id?: number;
+        name?: string;
+        note?: string;
+        pages?: {
+            conditions?: {
+                actorId?: number;
+                actorValid?: boolean;
+                itemId?: number;
+                itemValid?: boolean;
+                selfSwitchCh?: string;
+                selfSwitchValid: boolean;
+                switch1Id?: number;
+                switch1Valid?: boolean;
+                switch2Id?: number;
+                switch2Valid?: boolean;
+                variableId?: number;
+                variableValid?: boolean;
+                variableValue?: number;
+            };
+            directionFix?: boolean;
+            image?: {
+                tileId?: number;
+                characterName?: string;
+                direction?: number;
+                pattern?: number;
+                characterIndex?: number;
+            }
+            list?: {
+                code?: number;
+                indent?: number;
+                parameters?: any[]; // TODO codeによってパラメータの中身が変わるので、とりあえずany[]で妥協。
+            }[];
+            moveFrequency?: number;
+            moveRoute?: {
+                list?: {
+                    code?: number;
+                    parameters?: number[];
+                }[];
+                repeat?: boolean;
+                skippable?: boolean;
+                wait?: boolean;
+            };
+            moveSpeed?: number;
+            moveType?: number;
+            priorityType?: number;
+            stepAnime?: boolean;
+            through?: boolean;
+            trigger?: number;
+            walkAnime?: boolean;
+        }[];
+    }[];
+}
+
+declare var $dataActors      : IDataActor[];
+declare var $dataClasses     : IClass[];
+declare var $dataSkills      : ISkill[];
+declare var $dataItems       : IItem[];
+declare var $dataWeapons     : IWeapon[];
+declare var $dataArmors      : IArmor[];
+declare var $dataEnemies     : IEnemy[];
+declare var $dataTroops      : ITroop[];
+declare var $dataStates      : IState[];
+declare var $dataAnimations  : IAnimation[];
+declare var $dataTilesets    : ITileset[];
+declare var $dataCommonEvents: ICommonEvent[];
+declare var $dataSystem      : ISystem[];
+declare var $dataMapInfos    : IMapInfo[];
+declare var $dataMap         : IMap[];
 declare var $gameTemp        : Game_Temp;
 declare var $gameSystem      : Game_System;
 declare var $gameScreen      : Game_Screen;
