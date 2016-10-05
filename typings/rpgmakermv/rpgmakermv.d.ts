@@ -565,6 +565,7 @@ declare class Stage extends PIXI.Container
 
 declare class WebAudio
 {
+    constructor(url: string);
     initialize(url: string): void;
 
     static _context: any; // TODO
@@ -1256,6 +1257,7 @@ declare class PluginManager
 
 declare class Game_Temp
 {
+    constructor();
     initialize(): void;
     isPlaytest(): boolean;
     reserveCommonEvent(commonEventId: number): void;
@@ -1271,6 +1273,7 @@ declare class Game_Temp
 
 declare class Game_System
 {
+    constructor();
     initialize(): void;
     isJapanese(): boolean;
     isChinese(): boolean;
@@ -1318,6 +1321,7 @@ declare class Game_System
 
 declare class Game_Timer
 {
+    constructor();
     initialize(): void;
     update(sceneActive: boolean): void;
     start(count: number): void;
@@ -1329,6 +1333,7 @@ declare class Game_Timer
 
 declare class Game_Message
 {
+    constructor();    
     initialize(): void;
     clear(): void;
     choices(): any; // TODO
@@ -1370,6 +1375,7 @@ declare class Game_Message
 
 declare class Game_Switches
 {
+    constructor();
     initialize(): void;
     clear(): void;
     value(switchId: any): any; // TODO
@@ -1379,6 +1385,7 @@ declare class Game_Switches
 
 declare class Game_Variables
 {
+    constructor();
     initialize(): void;
     clear(): void;
     value(variableId: number): number;
@@ -1388,6 +1395,7 @@ declare class Game_Variables
 
 declare class Game_SelfSwitches
 {
+    constructor();
     initialize(): void;
     clear(): void;
     value(key: number[]): boolean;
@@ -1397,6 +1405,7 @@ declare class Game_SelfSwitches
 
 declare class Game_Screen
 {
+    constructor();
     initialize(): void;
     clear(): void;
     onBattleStart(): void;
@@ -1447,6 +1456,7 @@ declare class Game_Screen
 
 declare class Game_Picture
 {
+    constructor();
     initialize(): void;
     name(): string;
     origin(): number;
@@ -1475,6 +1485,7 @@ declare class Game_Picture
 
 declare class Game_Item
 {
+    constructor(item?: Game_Item);
     initialize(item: Game_Item): void;
     isSkill(): boolean;
     isItem(): boolean;
@@ -1491,6 +1502,8 @@ declare class Game_Item
 
 declare class Game_Action
 {
+    constructor(subject: any, forcing: boolean); // TODO
+
     static EFFECT_RECOVER_HP: number;
     static EFFECT_RECOVER_MP: number;
     static EFFECT_GAIN_TP: number;
@@ -1608,6 +1621,7 @@ declare class Game_Action
 
 declare class Game_ActionResult
 {
+    constructor();
     initialize(): void;
     clear(): void;
     addedStateObjects(): any; // TODO
@@ -1628,6 +1642,8 @@ declare class Game_ActionResult
 
 declare class Game_BattlerBase
 {
+    constructor();
+
     static TRAIT_ELEMENT_RATE: number;
     static TRAIT_DEBUFF_RATE: number;
     static TRAIT_STATE_RATE: number;
@@ -2099,12 +2115,14 @@ declare class Game_Enemy extends Game_Battler
 
 declare class Game_Actors
 {
+    constructor();
     initialize(): void;
     actor(actorId: number): Game_Actor;
 }
 
 declare class Game_Unit
 {
+    constructor();
     initialize(): void;
     inBattle(): boolean;
     members(): any[]; // TODO
@@ -2233,6 +2251,7 @@ declare class Game_Troop extends Game_Unit
 
 declare class Game_Map
 {
+    constructor();
     initialize(): void;
     setup(mapId: number): void;
     isEventRunning(): boolean;
@@ -2346,7 +2365,8 @@ declare class Game_Map
 
 declare class Game_CommonEvent
 {
-    initialize(commonEventId: void): void;
+    constructor(commonEventId: number);
+    initialize(commonEventId: number): void;
     event(): any; // TODO
     list(): any; // TODO
     refresh(): void;
@@ -2356,6 +2376,8 @@ declare class Game_CommonEvent
 
 declare class Game_CharacterBase
 {
+    constructor();
+
     x: number;
     y: number;
     initialize(): void;
@@ -2729,6 +2751,7 @@ declare class Game_Event extends Game_Character
 
 declare class Game_Interpreter
 {
+    constructor(depth?: number);
     initialize(depth: number): void;
     checkOverflow(): void;
     clear(): void;
