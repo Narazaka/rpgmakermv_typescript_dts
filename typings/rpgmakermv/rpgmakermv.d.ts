@@ -1,5 +1,6 @@
 declare class JsExtensions
 {
+    private constructor();
 }
 
 declare interface Number
@@ -29,6 +30,8 @@ declare interface Math
 
 declare class Utils
 {
+    private constructor();
+
     static RPGMAKER_NAME: string;
     static RPGMAKER_VERSION: string;
     static isOptionValid(name: string): boolean;
@@ -124,8 +127,9 @@ declare class Bitmap
 
 declare class Graphics
 {
-    initialize(width: number, height: number, type: string): void;
+    private constructor();
 
+    static initialize(width: number, height: number, type: string): void;
     static frameCount: number;
 
     static BLEND_NORMAL: number;
@@ -207,6 +211,8 @@ declare class Graphics
 
 declare class Input
 {
+    private constructor();
+
     static initialize(): void;
 
     static keyRepeatWait: number;
@@ -242,6 +248,8 @@ declare class Input
 
 declare class TouchInput
 {
+    private constructor();
+
     static initialize(): void;
 
     static keyRepeatWait: number;
@@ -619,6 +627,8 @@ declare class WebAudio
 
 declare class Html5Audio
 {
+    private constructor();
+
     static _initialized: boolean;
     static _unlocked: boolean;
     static _audioElement: any; // TODO
@@ -669,6 +679,8 @@ declare class Html5Audio
 
 declare class JsonEx
 {
+    private constructor();
+
     static maxDepth: number;
     static stringify(object: any): string;
     static parse(json: string): any;
@@ -677,6 +689,8 @@ declare class JsonEx
 
 declare class Decrypter
 {
+    private constructor();
+
     static hasEncryptedImages: boolean;
     static hasEncryptedAudio: boolean;
     static _requestImgFile: any[]; // TODO
@@ -730,6 +744,8 @@ declare var $testEvent       : any; // TODO
 
 declare class DataManager
 {
+    private constructor();
+
     static _globalId       : number;
     static _lastAccessedId : number;
     static _errorUrl       : string;
@@ -776,6 +792,8 @@ declare class DataManager
 
 declare class ConfigManager
 {
+    private constructor();
+
     static alwaysDash: boolean;
     static commandRemember: boolean;
 
@@ -793,6 +811,8 @@ declare class ConfigManager
 
 declare class StorageManager
 {
+    private constructor();
+
     static save(savefileId: number, json: any): void; // TODO
     static load(savefileId: number): any; // TODO
     static exists(savefileId: number): any; // TODO
@@ -821,6 +841,8 @@ declare class StorageManager
 
 declare class ImageManager
 {
+    private constructor();
+
     static cache: CacheMap;
 
     static loadAnimation(filename: string, hue: number): Bitmap;
@@ -868,6 +890,8 @@ interface BGS extends AudioObject
 
 declare class AudioManager
 {
+    private constructor();
+
     static _bgmVolume      : number;
     static _bgsVolume      : number;
     static _meVolume       : number;
@@ -930,6 +954,8 @@ declare class AudioManager
 
 declare class SoundManager
 {
+    private constructor();
+
     static preloadImportantSounds(): void;
     static loadSystemSound(n: number): void;
     static playSystemSound(n: number): void;
@@ -961,6 +987,8 @@ declare class SoundManager
 
 declare class TextManager
 {
+    private constructor();
+
     static basic(basicId: number): string;
     static param(paramId: number): string;
     static command(commandId: number): string;
@@ -1057,6 +1085,8 @@ declare class TextManager
 
 declare class SceneManager
 {
+    private constructor();
+
     static _getTimeInMs: number;
     static _scene: any; // TODO
     static _nextScene: any; // TODO
@@ -1122,6 +1152,8 @@ declare class SceneManager
 
 declare class BattleManager
 {
+    private constructor();
+
     static setup(troopId: number, canEscape: boolean, canLose: boolean): void;
     static initMembers(): void;
     static isBattleTest(): boolean;
@@ -1207,6 +1239,8 @@ declare class BattleManager
 
 declare class PluginManager
 {
+    private constructor();
+
     static _path: string;
     static _scripts: string[];
     static _errorUrls: string[];
