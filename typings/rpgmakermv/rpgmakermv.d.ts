@@ -115,13 +115,14 @@ declare class Bitmap
     blur(): void;
     addLoadListener(listener: Function): void;
 
-    _makeFontNameText(): string;
-    _drawTextOutline(text: string, tx: number, ty: number, maxWidth: number): void;
-    _drawTextBody(text: string, tx: number, ty: number, maxWidth: number): void;
-    _onLoad(): void;
-    _callLoadListeners(): void;
-    _onError(): void;
-    _setDirty(): void;
+    protected _makeFontNameText(): string;
+    protected _drawTextOutline(text: string, tx: number, ty: number, maxWidth: number): void;
+    protected _drawTextBody(text: string, tx: number, ty: number, maxWidth: number): void;
+    protected _onLoad(): void;
+    protected _callLoadListeners(): void;
+    protected _onError(): void;
+    protected _setDirty(): void;
+
     checkDirty(): void;
 }
 
@@ -309,21 +310,21 @@ declare class Sprite extends PIXI.Sprite
     getColorTone(): number[];
     setColorTone(tone: number[]): void;
 
-    _onBitmapLoad(): void;
-    _refresh(): void;
-    _isInBitmapRect(x: number, y: number, w: number, h: number): boolean;
-    _needsTint(): boolean;
-    _createTinter(w: number, h: number): void;
-    _executeTint(x: number, y: number, w: number, h: number): void;
+    protected _onBitmapLoad(): void;
+    protected _refresh(): void;
+    protected _isInBitmapRect(x: number, y: number, w: number, h: number): boolean;
+    protected _needsTint(): boolean;
+    protected _createTinter(w: number, h: number): void;
+    protected _executeTint(x: number, y: number, w: number, h: number): void;
 
     updateTransform(): void;
 
-    _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
-    _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
+    protected _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
+    protected _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
 
-    _renderCanvas(renderer: PIXI.CanvasRenderer): void;
-    _speedUpCustomBlendModes(renderer: PIXI.CanvasRenderer): void; // TODO
-    _renderWebGL(renderer: PIXI.WebGLRenderer): void;
+    protected _renderCanvas(renderer: PIXI.CanvasRenderer): void;
+    protected _speedUpCustomBlendModes(renderer: PIXI.CanvasRenderer): void; // TODO
+    protected _renderWebGL(renderer: PIXI.WebGLRenderer): void;
 }
 
 declare class Tilemap extends PIXI.Container
@@ -342,23 +343,23 @@ declare class Tilemap extends PIXI.Container
     refreshTileset(): void;
     updateTransform(): void;
 
-    _createLayers(): void;
-    _updateLayerPositions(startX: number, startY: number): void;
-    _paintAllTiles(startX: number, startY: number): void;
-    _paintTiles(startX: number, startY: number, x: number, y: number): void;
-    _readLastTiles(i: number, x: number, y: number): any[]; // TODO
-    _writeLastTiles(i: number, x: number, y: number, tiles: any[]): void; // TODO
-    _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
-    _readMapData(x: number, y: number, z: number): number;
-    _isHigherTile(tileId: number): boolean;
-    _isTableTile(tileId: number): boolean;
-    _isOverpassPosition(mx: number, my: number): boolean;
-    _sortChildren(): void;
-    _compareChildOrder(a: any, b: any): number; // TODO
+    protected _createLayers(): void;
+    protected _updateLayerPositions(startX: number, startY: number): void;
+    protected _paintAllTiles(startX: number, startY: number): void;
+    protected _paintTiles(startX: number, startY: number, x: number, y: number): void;
+    protected _readLastTiles(i: number, x: number, y: number): any[]; // TODO
+    protected _writeLastTiles(i: number, x: number, y: number, tiles: any[]): void; // TODO
+    protected _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    protected _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    protected _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    protected _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    protected _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
+    protected _readMapData(x: number, y: number, z: number): number;
+    protected _isHigherTile(tileId: number): boolean;
+    protected _isTableTile(tileId: number): boolean;
+    protected _isOverpassPosition(mx: number, my: number): boolean;
+    protected _sortChildren(): void;
+    protected _compareChildOrder(a: any, b: any): number; // TODO
 
     static TILE_ID_B: number;
     static TILE_ID_C: number;
@@ -401,7 +402,7 @@ declare class Tilemap extends PIXI.Container
 
 declare class ShaderTilemap extends Tilemap
 {
-    _hackRenderer(renderer: any): any; // TODO
+    protected _hackRenderer(renderer: any): any; // TODO
 
     renderCanvas(renderer: any): void; // TODO
     renderWebGL(renderer: any): void; // TODO
@@ -409,30 +410,30 @@ declare class ShaderTilemap extends Tilemap
     refreshTileset(): void;
     updateTransform(): void;
 
-    _createLayers(): void;
-    _updateLayerPositions(startX: number, startY: number): void;
-    _paintAllTiles(startX: number, startY: number): void;
-    _paintTiles(startX: number, startY: number, x: number, y: number): void;
-    _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawTile(layer: any[], tileId: number, dx: number, dy: number): void;
-    _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawNormalTile(layer: any[], tileId: number, dx: number, dy: number): void;
-    _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawAutotile(layer: any[], tileId: number, dx: number, dy: number): void;
-    _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawTableEdge(layer: any[], tileId: number, dx: number, dy: number): void;
-    _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
-    _drawShadow(layer: any[], shadowBits: number, dx: number, dy: number): void;
+    protected _createLayers(): void;
+    protected _updateLayerPositions(startX: number, startY: number): void;
+    protected _paintAllTiles(startX: number, startY: number): void;
+    protected _paintTiles(startX: number, startY: number, x: number, y: number): void;
+    protected _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    protected _drawTile(layer: any[], tileId: number, dx: number, dy: number): void;
+    protected _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    protected _drawNormalTile(layer: any[], tileId: number, dx: number, dy: number): void;
+    protected _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    protected _drawAutotile(layer: any[], tileId: number, dx: number, dy: number): void;
+    protected _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    protected _drawTableEdge(layer: any[], tileId: number, dx: number, dy: number): void;
+    protected _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
+    protected _drawShadow(layer: any[], shadowBits: number, dx: number, dy: number): void;
 }
 
 declare class TilingSprite extends PIXI.extras.TilingSprite
 {
     initialize(bitmap: Bitmap): void;
 
-    _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
-    _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
-    _renderCanvas(renderer: PIXI.CanvasRenderer): void;
-    _renderWebGL(renderer: PIXI.WebGLRenderer): void;
+    protected _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
+    protected _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
+    protected _renderCanvas(renderer: PIXI.CanvasRenderer): void;
+    protected _renderWebGL(renderer: PIXI.WebGLRenderer): void;
 
     bitmap: Bitmap;
     opacity: number;
@@ -443,8 +444,8 @@ declare class TilingSprite extends PIXI.extras.TilingSprite
     updateTransform(): void;
     updateTransformTS(): void;
 
-    _onBitmapLoad(): void;
-    _refresh(): void;
+    protected _onBitmapLoad(): void;
+    protected _refresh(): void;
 }
 
 declare class ScreenSprite extends PIXI.Container
@@ -488,19 +489,19 @@ declare class Window extends PIXI.Container
     addChildToBack(child: any): any; // TODO
     updateTransform(): void;
 
-    _createAllParts(): void;
-    _onWindowskinLoad(): void;
-    _refreshAllParts(): void;
-    _refreshBack(): void;
-    _refreshFrame(): void;
-    _refreshCursor(): void;
-    _refreshContents(): void;
-    _refreshArrows(): void;
-    _refreshPauseSign(): void;
-    _updateCursor(): void;
-    _updateContents(): void;
-    _updateArrows(): void;
-    _updatePauseSign(): void;
+    protected _createAllParts(): void;
+    protected _onWindowskinLoad(): void;
+    protected _refreshAllParts(): void;
+    protected _refreshBack(): void;
+    protected _refreshFrame(): void;
+    protected _refreshCursor(): void;
+    protected _refreshContents(): void;
+    protected _refreshArrows(): void;
+    protected _refreshPauseSign(): void;
+    protected _updateCursor(): void;
+    protected _updateContents(): void;
+    protected _updateArrows(): void;
+    protected _updatePauseSign(): void;
 }
 
 declare class WindowLayer extends PIXI.Container
@@ -516,11 +517,11 @@ declare class WindowLayer extends PIXI.Container
     update(): void;
     renderCanvas(renderer: any): void; // TODO
 
-    _canvasClearWindowRect(renderSession: any, window: Window): void; // TODO
+    protected _canvasClearWindowRect(renderSession: any, window: Window): void; // TODO
 
     renderWebGL(renderer: any): void; // TODO
 
-    _maskWindow(window: Window): void;
+    protected _maskWindow(window: Window): void;
 }
 
 declare class Weather extends PIXI.Container
@@ -528,17 +529,17 @@ declare class Weather extends PIXI.Container
     initialize(): void;
     update(): void;
 
-    _createBitmaps(): void;
-    _createDimmer(): void;
-    _updateDimmer(): void;
-    _updateAllSprites(): void;
-    _addSprite(): void;
-    _removeSprite(): void;
-    _updateSprite(sprite: Sprite): void;
-    _updateRainSprite(sprite: Sprite): void;
-    _updateStormSprite(sprite: Sprite): void;
-    _updateSnowSprite(sprite: Sprite): void;
-    _rebornSprite(sprite: Sprite): void;
+    protected _createBitmaps(): void;
+    protected _createDimmer(): void;
+    protected _updateDimmer(): void;
+    protected _updateAllSprites(): void;
+    protected _addSprite(): void;
+    protected _removeSprite(): void;
+    protected _updateSprite(sprite: Sprite): void;
+    protected _updateRainSprite(sprite: Sprite): void;
+    protected _updateStormSprite(sprite: Sprite): void;
+    protected _updateSnowSprite(sprite: Sprite): void;
+    protected _rebornSprite(sprite: Sprite): void;
 }
 
 declare class ToneFilter extends PIXI.filters.ColorMatrixFilter
@@ -554,8 +555,8 @@ declare class ToneSprite extends PIXI.Container
     clear(): void;
     setTone(r: number, g: number, b: number, gray: number): void;
 
-    _renderCanvas(renderer: any): void; // TODO
-    _renderWebGL(renderer: any): void; // TODO
+    protected _renderCanvas(renderer: any): void; // TODO
+    protected _renderWebGL(renderer: any): void; // TODO
 }
 
 declare class Stage extends PIXI.Container
@@ -607,23 +608,23 @@ declare class WebAudio
     addLoadListener(listener: Function): void;
     addStopListener(listener: Function): void;
 
-    _load(url: string): void;
-    _onXhrLoad(xhr: XMLHttpRequest): void;
-    _startPlaying(loop: boolean, offset: number): void;
-    _createNodes(): void;
-    _connectNodes(): void;
-    _removeNodes(): void;
-    _createEndTimer(): void;
-    _removeEndTimer(): void;
-    _updatePanner(): void;
-    _onLoad(): void;
-    _readLoopComments(array: Uint8Array): void;
-    _readOgg(array: Uint8Array): void;
-    _readMp4(array: Uint8Array): void;
-    _readMetaData(array: Uint8Array, index: number, size: number): void;
-    _readLittleEndian(array: Uint8Array, index: number): void;
-    _readBigEndian(array: Uint8Array, index: number): void;
-    _readFourCharacters(array: Uint8Array, index: number): void;
+    protected _load(url: string): void;
+    protected _onXhrLoad(xhr: XMLHttpRequest): void;
+    protected _startPlaying(loop: boolean, offset: number): void;
+    protected _createNodes(): void;
+    protected _connectNodes(): void;
+    protected _removeNodes(): void;
+    protected _createEndTimer(): void;
+    protected _removeEndTimer(): void;
+    protected _updatePanner(): void;
+    protected _onLoad(): void;
+    protected _readLoopComments(array: Uint8Array): void;
+    protected _readOgg(array: Uint8Array): void;
+    protected _readMp4(array: Uint8Array): void;
+    protected _readMetaData(array: Uint8Array, index: number, size: number): void;
+    protected _readLittleEndian(array: Uint8Array, index: number): void;
+    protected _readBigEndian(array: Uint8Array, index: number): void;
+    protected _readFourCharacters(array: Uint8Array, index: number): void;
 }
 
 declare class Html5Audio
@@ -3643,7 +3644,7 @@ declare class Spriteset_Map extends Spriteset_Base
     createWeather(): void;
     updateTileset(): void;
 
-    _canvasReAddParallax(): void;
+    protected _canvasReAddParallax(): void;
 
     updateParallax(): void;
     updateTilemap(): void;
