@@ -609,7 +609,7 @@ declare class WebAudio
     addStopListener(listener: Function): void;
 
     protected _load(url: string): void;
-    protected _onXhrLoad(xhr: XMLHttpRequest): void;
+    protected _onXhrLoad(xhr: any): void; // TODO
     protected _startPlaying(loop: boolean, offset: number): void;
     protected _createNodes(): void;
     protected _connectNodes(): void;
@@ -714,6 +714,21 @@ declare class Decrypter
     static readEncryptionkey(): void;
 }
 
+declare interface ISound
+{
+    name?: string;
+    pan?: number;
+    pitch?: number;
+    volume?: number;
+}
+
+declare interface ITrait
+{
+    code?: number;
+    dataId?: number;
+    value?: number;
+}
+
 declare interface IDataActor
 {
     id?: number;
@@ -724,11 +739,7 @@ declare interface IDataActor
     equips?: number[];
     faceIndex?: number;
     faceName?: string;
-    traits?: {
-        code?: number;
-        dataId?: number;
-        value?: number;
-    }[];
+    traits?: ITrait[];
     initialLevel?: number;
     maxLevel?: number;
     name?: string;
@@ -737,15 +748,11 @@ declare interface IDataActor
     profile?: string;
 }
 
-declare interface IClass
+declare interface IDataClass
 {
     id?: number;
     expParams?: number[];
-    traits?: {
-        code?: number;
-        dataId?: number;
-        value?: number;
-    }[];
+    traits?: ITrait[];
     learnings?: {
         level?: number;
         note?: string;
@@ -756,7 +763,7 @@ declare interface IClass
     params?: number[][];
 }
 
-declare interface ISkill
+declare interface IDataSkill
 {
     id?: number;
     animationId?: number;
@@ -793,9 +800,18 @@ declare interface ISkill
     tpGain?: number;
 }
 
-declare interface IItem
+declare interface IDataAllItem
 {
     id?: number;
+    description?: string;
+    name?: string;
+    note?: string;
+    iconIndex?: number;
+    price?: number;
+}
+
+declare interface IDataItem extends IDataAllItem
+{
     animationId?: number;
     consumable?: boolean;
     damage?: {
@@ -805,7 +821,6 @@ declare interface IItem
         type?: number;
         variance?: number;
     }
-    description?: string;
     effects?: {
         code?: number;
         dataId?: number;
@@ -813,12 +828,8 @@ declare interface IItem
         value2?: number;
     }[];
     hitType?: number;
-    iconIndex?: number;
     itypeId?: number;
-    name?: string;
-    note?: string;
     occasion?: number;
-    price?: number;
     repeats?: number;
     scope?: number;
     speed?: number;
@@ -826,44 +837,25 @@ declare interface IItem
     tpGain?: number;
 }
 
-declare interface IWeapon
+declare interface IDataEquipItem extends IDataAllItem
 {
-    id?: number;
-    animationId?: number;
-    description?: string;
     etypeId?: number;
-    traits?: {
-        code?: number;
-        dataId?: number;
-        value?: number;
-    }[];
-    iconIndex?: number;
-    name?: string;
-    note?: string;
+    traits?: ITrait[];
     params?: number[];
-    price?: number;
+}
+
+declare interface IDataWeapon extends IDataEquipItem
+{
+    animationId?: number;
     wtypeId?: number;
 }
 
-declare interface IArmor
+declare interface IDataArmor extends IDataEquipItem
 {
-    id?: number;
     atypeId?: number;
-    description?: string;
-    etypeId?: number;
-    traits?: {
-        code?: number;
-        dataId?: number;
-        value?: number;
-    }[];
-    iconIndex?: number;
-    name?: string;
-    note?: string;
-    params?: number[];
-    price?: number;
 }
 
-declare interface IEnemy
+declare interface IDataEnemy
 {
     id?: number;
     actions?: {
@@ -881,18 +873,38 @@ declare interface IEnemy
         denominator?: number;
     }[];
     exp?: number;
-    traits?: {
-        code?: number;
-        dataId?: number;
-        value?: number;
-    }[];
+    traits?: ITrait[];
     gold?: number;
     name?: string;
     note?: string;
     params?: number[];
 }
 
-declare interface ITroop
+declare interface IDataPage
+{
+    conditions?: {
+        actorHP?: number;
+        actorId?: number;
+        actorValid?: boolean;
+        enemyHp?: number;
+        enemyIndex?: number;
+        enemyValid?: boolean;
+        switchId?: number;
+        switchValid?: boolean;
+        turnA?: number;
+        turnB?: number;
+        turnEnding?: boolean;
+        turnValid?: boolean;
+    };
+    list?: {
+        code?: number;
+        indent?: number;
+        parameters?: number[];
+    }[];
+    span?: number;
+}
+
+declare interface IDataTroop
 {
     id?: number;
     members?: {
@@ -902,31 +914,10 @@ declare interface ITroop
         hidden?: boolean;
     }[];
     name?: string;
-    pages?: {
-        conditions?: {
-            actorHP?: number;
-            actorId?: number;
-            actorValid?: boolean;
-            enemyHp?: number;
-            enemyIndex?: number;
-            enemyValid?: boolean;
-            switchId?: number;
-            switchValid?: boolean;
-            turnA?: number;
-            turnB?: number;
-            turnEnding?: boolean;
-            turnValid?: boolean;
-        };
-        list?: {
-            code?: number;
-            indent?: number;
-            parameters?: number[];
-        }[];
-        span?: number;
-    }[];
+    pages?: IDataPage[];
 }
 
-declare interface IState
+declare interface IDataState
 {
     id?: number;
     autoRemovalTiming?: number;
@@ -950,14 +941,10 @@ declare interface IState
     removeByWalking?: boolean;
     restriction?: number;
     stepsToRemove?: number;
-    traits?: {
-        code?: number;
-        dataId?: number;
-        value?: number;
-    }[];
+    traits?: ITrait[];
 }
 
-declare interface IAnimation
+declare interface IDataAnimation
 {
     id?: number;
     animation1Hue?: number;
@@ -972,16 +959,11 @@ declare interface IAnimation
         flashDuration?: number;
         flashScope?: number;
         frame?: number;
-        se?: {
-            name?: string;
-            pan?: number;
-            pitch?: number;
-            volume?: string;
-        }
+        se?: ISound;
     }[];
 }
 
-declare interface ITileset
+declare interface IDataTileset
 {
     id?: number;
     flags?: number[];
@@ -991,7 +973,7 @@ declare interface ITileset
     tilesetNames?: string[];
 }
 
-declare interface ICommonEvent
+declare interface IDataCommonEvent
 {
     id?: number;
     list?: {
@@ -1004,15 +986,10 @@ declare interface ICommonEvent
     trigger: number;
 }
 
-declare interface ISystem
+declare interface IDataSystem
 {
     airship?: {
-        bgm?: {
-            name?: string;
-            pan?: number;
-            pitch?: number;
-            volume?: number;
-        };
+        bgm?: ISound;
         characterIndex?: number;
         characterName?: string;
         startMapId?: number;
@@ -1024,23 +1001,13 @@ declare interface ISystem
         type?: number;
         weaponImageId?: number;
     }[];
-    battleBgm?: {
-        name?: string;
-        pan?: number;
-        pitch?: number;
-        volume?: number;
-    };
+    battleBgm?: ISound;
     battleback1Name?: string;
     battleback2Name?: string;
     battlerHue?: number;
     battlerName?: string;
     boat?: {
-        bgm?: {
-            name?: string;
-            pan?: number;
-            pitch?: number;
-            volume?: number;
-        };
+        bgm?: ISound;
         characterIndex?: number;
         characterName?: string;
         startMapId?: number;
@@ -1048,22 +1015,12 @@ declare interface ISystem
         startY?: number;
     };
     currencyUnit?: string;
-    defeatMe?: {
-        name?: string;
-        pan?: number;
-        pitch?: number;
-        volume?: number;
-    };
+    defeatMe?: ISound;
     editMapId?: number;
     elements?: string[];
     equipTypes?: string[];
     gameTitle?: string;
-    gameoverMe?: {
-        name?: string;
-        pan?: number;
-        pitch?: number;
-        volume?: number;
-    };
+    gameoverMe?: ISound;
     locale?: string;
     magicSkills?: number[];
     menuCommands?: boolean[];
@@ -1077,12 +1034,7 @@ declare interface ISystem
     optTransparent?: boolean;
     partyMembers?: number[];
     ship?: {
-        bgm?: {
-            name?: string;
-            pan?: number;
-            pitch?: number;
-            volume?: number;
-        };
+        bgm?: ISound;
         characterIndex?: number;
         characterName?: string;
         startMapId?: number;
@@ -1090,12 +1042,7 @@ declare interface ISystem
         startY?: number;
     };
     skillTypes?: string[];
-    sounds?: {
-        name?: string;
-        pan?: number;
-        pitch?: number;
-        volume?: number;
-    }[];
+    sounds?: ISound[];
     startMapId?: number;
     startX?: number;
     startY?: number;
@@ -1166,25 +1113,15 @@ declare interface ISystem
     testTroopId?: number;
     title1Name?: string;
     title2Name?: string;
-    titleBgm?: {
-        name?: string;
-        pan?: number;
-        pitch?: number;
-        volume?: number;
-    };
+    titleBgm?: ISound;
     variables?: string[];
     versionId?: number;
-    victoryMe?: {
-        name?: string;
-        pan?: number;
-        pitch?: number;
-        volume?: number;
-    };
+    victoryMe?: ISound;
     weaponTypes?: string;
     windowTone?: number[];
 }
 
-declare interface IMapInfo
+declare interface IDataMapInfo
 {
     id?: number;
     expanded?: boolean;
@@ -1195,27 +1132,24 @@ declare interface IMapInfo
     scrollY?: number;
 }
 
-declare interface IMap
+declare interface IDataEncounterList
+{
+    regionSet: number[];
+    troopId: number;
+    weight: number;
+}
+
+declare interface IDataMap
 {
     autoplayBgm?: boolean;
     autoplayBgs?: boolean;
     battleback1Name?: string;
     battleback2Name?: string;
-    bgm?: {
-        name?: string;
-        pan?: number;
-        pitch?: number;
-        volume?: number;
-    };
-    bgs?: {
-        name?: string;
-        pan?: number;
-        pitch?: number;
-        volume?: number;
-    };
+    bgm?: ISound;
+    bgs?: ISound;
     disableDashing?: boolean;
     displayName?: string;
-    encounterList?: any[];
+    encounterList?: IDataEncounterList[];
     encounterStep?: number;
     height?: number;
     note?: string;
@@ -1285,20 +1219,20 @@ declare interface IMap
 }
 
 declare var $dataActors      : IDataActor[];
-declare var $dataClasses     : IClass[];
-declare var $dataSkills      : ISkill[];
-declare var $dataItems       : IItem[];
-declare var $dataWeapons     : IWeapon[];
-declare var $dataArmors      : IArmor[];
-declare var $dataEnemies     : IEnemy[];
-declare var $dataTroops      : ITroop[];
-declare var $dataStates      : IState[];
-declare var $dataAnimations  : IAnimation[];
-declare var $dataTilesets    : ITileset[];
-declare var $dataCommonEvents: ICommonEvent[];
-declare var $dataSystem      : ISystem[];
-declare var $dataMapInfos    : IMapInfo[];
-declare var $dataMap         : IMap[];
+declare var $dataClasses     : IDataClass[];
+declare var $dataSkills      : IDataSkill[];
+declare var $dataItems       : IDataItem[];
+declare var $dataWeapons     : IDataWeapon[];
+declare var $dataArmors      : IDataArmor[];
+declare var $dataEnemies     : IDataEnemy[];
+declare var $dataTroops      : IDataTroop[];
+declare var $dataStates      : IDataState[];
+declare var $dataAnimations  : IDataAnimation[];
+declare var $dataTilesets    : IDataTileset[];
+declare var $dataCommonEvents: IDataCommonEvent[];
+declare var $dataSystem      : IDataSystem[];
+declare var $dataMapInfos    : IDataMapInfo[];
+declare var $dataMap         : IDataMap[];
 declare var $gameTemp        : Game_Temp;
 declare var $gameSystem      : Game_System;
 declare var $gameScreen      : Game_Screen;
@@ -1313,6 +1247,30 @@ declare var $gameParty       : Game_Party;
 declare var $gameTroop       : Game_Troop;
 declare var $gamePlayer      : Game_Player;
 declare var $testEvent       : any; // TODO
+
+declare interface ISavefileInfo
+{
+    globalId?: number;
+    title?: string;
+    characters?: any[]; // TODO [0] string, [1] number
+    faces?: any[]; // TODO [0] string, [1] number
+    playtime?: string;
+    timestamp?: number;
+}
+
+declare interface ISaveContents
+{
+    system?         : Game_System;
+    screen?         : Game_Screen;
+    timer?          : Game_Timer;
+    switches?       : Game_Switches;
+    variables?      : Game_Variables;
+    selfSwitches?   : Game_SelfSwitches;
+    actors?         : Game_Actors;
+    party?          : Game_Party;
+    map?            : Game_Map;
+    player?         : Game_Player;
+}
 
 declare class DataManager
 {
@@ -1329,15 +1287,15 @@ declare class DataManager
     static loadMapData(mapId: number) : void;
     static makeEmptyMap(): void;
     static isMapLoaded(): boolean;
-    static onLoad(object: any): void; // TODO
-    static extractMetadata(data: any): void; // TODO
+    static onLoad(object: IDataActor[] | IDataClass[] | IDataSkill[] | IDataItem[] | IDataWeapon[] | IDataArmor[] | IDataEnemy[] | IDataTroop[] | IDataState[] | IDataAnimation[] | IDataTileset[] | IDataCommonEvent[] | IDataSystem[] | IDataMapInfo[] | IDataMap[]): void;
+    static extractMetadata(data: IDataActor[] | IDataClass[] | IDataSkill[] | IDataItem[] | IDataWeapon[] | IDataArmor[] | IDataEnemy[] | IDataTroop[] | IDataState[] | IDataAnimation[] | IDataTileset[] | IDataCommonEvent[] | IDataSystem[] | IDataMapInfo[] | IDataMap[]): void;
     static checkError(): void;
     static isBattleTest(): boolean;
     static isEventTest(): boolean;
-    static isSkill(item: any): boolean; // TODO
-    static isItem(item: any): boolean; // TODO
-    static isWeapon(item: any): boolean; // TODO
-    static isArmor(item: any): boolean; // TODO
+    static isSkill(item: IDataSkill): boolean;
+    static isItem(item: IDataItem): boolean;
+    static isWeapon(item: IDataWeapon): boolean;
+    static isArmor(item: IDataArmor): boolean;
     static createGameObjects(): void;
     static setupNewGame(): void;
     static setupBattleTest(): void;
@@ -1348,7 +1306,7 @@ declare class DataManager
     static isAnySavefileExists(): boolean;
     static latestSavefileId(): number;
     static loadAllSavefileImages(): void;
-    static loadSavefileImages(info: any): void; // TODO
+    static loadSavefileImages(info: ISavefileInfo): void;
     static maxSavefiles(): number;
     static saveGame(savefileId: number): boolean;
     static loadGame(savefileId: number): boolean;
@@ -1357,9 +1315,19 @@ declare class DataManager
     static saveGameWithoutRescue(savefileId: number): boolean;
     static loadGameWithoutRescue(savefileId: number): boolean;
     static selectSavefileForNewGame(): void;
-    static makeSavefileInfo(): any; // TODO
-    static makeSaveContents(): any; // TODO
-    static extractSaveContents(contents: any): void; // TODO
+    static makeSavefileInfo(): ISavefileInfo;
+    static makeSaveContents(): ISaveContents;
+    static extractSaveContents(contents: ISaveContents): void;
+}
+
+declare interface IConfig
+{
+    alwaysDash?: boolean;
+    commandRemember?: boolean;
+    bgmVolume?: number;
+    bgsVolume?: number;
+    meVolume?: number;
+    seVolume?: number;
 }
 
 declare class ConfigManager
@@ -1375,34 +1343,34 @@ declare class ConfigManager
     static seVolume: number;
     static load(): void;
     static save(): void;
-    static makeData(): any; // TODO
-    static applyData(config: any): void; // TODO
-    static readFlag(config: any, name: string): boolean; // TODO
-    static readVolume(config: any, name: string): number; // TODO
+    static makeData(): IConfig;
+    static applyData(config: IConfig): void;
+    static readFlag(config: IConfig, name: string): boolean;
+    static readVolume(config: IConfig, name: string): number;
 }
 
 declare class StorageManager
 {
     private constructor();
 
-    static save(savefileId: number, json: any): void; // TODO
-    static load(savefileId: number): any; // TODO
-    static exists(savefileId: number): any; // TODO
+    static save(savefileId: number, json: any): void;
+    static load(savefileId: number): any;
+    static exists(savefileId: number): boolean;
     static remove(savefileId: number): void;
     static backup(savefileId: number): void;
     static backupExists(savefileId: number): void;
     static cleanBackup(savefileId: number): void;
     static restoreBackup(savefileId: number): void;
     static isLocalMode(): boolean;
-    static saveToLocalFile(savefileId: number, json: any): void; // TODO
-    static loadFromLocalFile(savefileId: number): any; // TODO
-    static loadFromLocalBackupFile(savefileId: number): any; // TODO
-    static localFileBackupExists(savefileId: number): any; // TODO
-    static localFileExists(savefileId: number): any; // TODO
+    static saveToLocalFile(savefileId: number, json: any): void;
+    static loadFromLocalFile(savefileId: number): any;
+    static loadFromLocalBackupFile(savefileId: number): any;
+    static localFileBackupExists(savefileId: number): boolean;
+    static localFileExists(savefileId: number): boolean;
     static removeLocalFile(savefileId: number): void;
-    static saveToWebStorage(savefileId: number, json: any): void; // TODO
-    static loadFromWebStorage(savefileId: number): any; // TODO
-    static loadFromWebStorageBackup(savefileId: number): any; // TODO
+    static saveToWebStorage(savefileId: number, json: any): void;
+    static loadFromWebStorage(savefileId: number): any;
+    static loadFromWebStorageBackup(savefileId: number): any;
     static webStorageBackupExists(savefileId: number): boolean;
     static webStorageExists(savefileId: number): boolean;
     static removeWebStorage(savefileId: number): void;
@@ -1470,11 +1438,11 @@ declare class AudioManager
     static _seVolume       : number;
     static _currentBgm     : BGM;
     static _currentBgs     : BGS;
-    static _bgmBuffer      : any; // TODO
-    static _bgsBuffer      : any; // TODO
-    static _meBuffer       : any; // TODO
-    static _seBuffers      : any[]; // TODO
-    static _staticBuffers  : any[]; // TODO
+    static _bgmBuffer      : WebAudio | Html5Audio;
+    static _bgsBuffer      : WebAudio;
+    static _meBuffer       : WebAudio;
+    static _seBuffers      : WebAudio[];
+    static _staticBuffers  : WebAudio[];
     static _replayFadeTime : number;
     static _path           : string;
     static _blobUrl        : string;
@@ -1502,16 +1470,16 @@ declare class AudioManager
     static stopBgs(): void;
     static fadeOutBgs(duration: number): void;
     static fadeInBgs(duration: number): void;
-    static playMe(me: any): void; // TODO
-    static updateMeParameters(me: any): void; // TODO
+    static playMe(me: ISound): void;
+    static updateMeParameters(me: ISound): void;
     static fadeOutMe(duration: number): void;
     static stopMe(): void;
-    static playSe(se: any): void; // TODO
-    static updateSeParameters(buffer: any, se: any): void; // TODO
+    static playSe(se: ISound): void;
+    static updateSeParameters(buffer: any, se: ISound): void;
     static stopSe(): void;
-    static playStaticSe(se: any): void; // TODO
-    static loadStaticSe(se: any): void; // TODO
-    static isStaticSe(se: any): boolean; // TODO
+    static playStaticSe(se: ISound): void;
+    static loadStaticSe(se: ISound): void;
+    static isStaticSe(se: ISound): boolean;
     static stopAll(): void;
     static saveBgm(): AudioObject | BGM;
     static saveBgs(): AudioObject | BGS;
@@ -1660,13 +1628,13 @@ declare class SceneManager
     private constructor();
 
     static _getTimeInMs: number;
-    static _scene: any; // TODO
-    static _nextScene: any; // TODO
-    static _stack: any[]; // TODO
+    static _scene: Scene_Base;
+    static _nextScene: Scene_Base;
+    static _stack: typeof Scene_Base[];
     static _stopped: boolean;
     static _sceneStarted: boolean;
     static _exiting: boolean;
-    static _previousClass: any; // TODO
+    static _previousClass: typeof Scene_Base;
     static _backgroundBitmap: Bitmap;
     static _screenWidth: number;
     static _screenHeight: number;
@@ -1676,7 +1644,7 @@ declare class SceneManager
     static _currentTime: number;
     static _accumulator: number;
 
-    static run(sceneClass: any): void; // TODO
+    static run(sceneClass: typeof Scene_Base): void;
     static initialize(): void;
     static initGraphics(): void;
     static preferableRendererType(): string;
@@ -1691,9 +1659,9 @@ declare class SceneManager
     static requestUpdate(): void;
     static update(): void;
     static terminate(): void;
-    static onError(e: any): void; // TODO
+    static onError(e: ErrorEvent): void;
     static onKeyDown(event: KeyboardEvent): void;
-    static catchException(e: any): void; // TODO
+    static catchException(e: ErrorEvent): void;
     static tickStart(): void;
     static tickEnd(): void;
     static updateInputData(): void;
@@ -1729,11 +1697,11 @@ declare class BattleManager
     static setup(troopId: number, canEscape: boolean, canLose: boolean): void;
     static initMembers(): void;
     static isBattleTest(): boolean;
-    static setBattleTest(battleTest: any): void; // TODO
+    static setBattleTest(battleTest: boolean): void;
     static setEventCallback(callback: Function): void;
-    static setLogWindow(logWindow: any): void; // TODO
-    static setStatusWindow(statusWindow: any): void; // TODO
-    static setSpriteset(spriteset: any): void; // TODO
+    static setLogWindow(logWindow: Window_BattleLog): void;
+    static setStatusWindow(statusWindow: Window_BattleStatus): void;
+    static setSpriteset(spriteset: Spriteset_Battle): void;
     static onEncounter(): void;
     static ratePreemptive(): number;
     static rateSurprise(): number;
@@ -2511,7 +2479,7 @@ declare class Game_Actor extends Game_Battler
     initMembers(): void;
     setup(actorId: number): void;
     actorId(): number;
-    actor(): any; // TODO
+    actor(): IDataActor;
     name(): string;
     setName(name: string): void;
     nickname(): string;
@@ -2730,23 +2698,23 @@ declare class Game_Party extends Game_Unit
     exists(): boolean;
     size(): number;
     isEmpty(): boolean;
-    members(): any[]; // TODO
-    allMembers(): any[]; // TODO
-    battleMembers(): any[]; // TODO
+    members(): Game_Actor[];
+    allMembers(): Game_Actor[];
+    battleMembers(): Game_Actor[];
     maxBattleMembers(): number;
-    leader(): any; // TODO
-    reviveBattleMembers(): any[]; // TODO
-    items(): any[]; // TODO
-    weapons(): any[]; // TODO
-    armors(): any[]; // TODO
-    equipItems(): any[]; // TODO
-    allItems(): any[]; // TODO
-    itemContainer(item: any): any; // TODO
-    setupStartingMembers(): any[]; // TODO
+    leader(): Game_Actor;
+    reviveBattleMembers(): Game_Actor[];
+    items(): IDataItem[];
+    weapons(): IDataWeapon[];
+    armors(): IDataArmor[];
+    equipItems(): IDataEquipItem[];
+    allItems(): IDataAllItem[];
+    itemContainer(item: IDataAllItem): IDataItem[] | IDataWeapon[] | IDataArmor[];
+    setupStartingMembers(): void;
     name(): string;
     setupBattleTest(): void;
-    setupBattleTestMembers(): any[]; // TODO
-    setupBattleTestItems(): any[]; // TODO
+    setupBattleTestMembers(): void;
+    setupBattleTestItems(): void;
     highestLevel(): number;
     addActor(actorId: number): void;
     removeActor(actorId: number): void;
@@ -2756,30 +2724,30 @@ declare class Game_Party extends Game_Unit
     maxGold(): number;
     steps(): number;
     increaseSteps(): void;
-    numItems(item: any): number; // TODO
-    maxItems(item: any): number; // TODO
-    hasMaxItems(item: any): boolean; // TODO
-    hasItem(item: any, includeEquip?: boolean): boolean; // TODO
-    isAnyMemberEquipped(item: any): boolean; // TODO
-    gainItem(item: any, amount: number, includeEquip: boolean): void; // TODO
-    discardMembersEquip(item: any, amount: number): void; // TODO
-    loseItem(item: any, amount: number, includeEquip: boolean): void; // TODO
-    consumeItem(item: any): void; // TODO
-    canUse(item: any): boolean; // TODO
+    numItems(item: IDataAllItem): number;
+    maxItems(item: IDataAllItem): number;
+    hasMaxItems(item: IDataAllItem): boolean;
+    hasItem(item: IDataAllItem, includeEquip?: boolean): boolean;
+    isAnyMemberEquipped(item: IDataAllItem): boolean;
+    gainItem(item: IDataAllItem, amount: number, includeEquip: boolean): void;
+    discardMembersEquip(item: IDataAllItem, amount: number): void;
+    loseItem(item: IDataAllItem, amount: number, includeEquip: boolean): void;
+    consumeItem(item: IDataAllItem): void;
+    canUse(item: IDataAllItem): boolean;
     canInput(): boolean;
     isAllDead(): boolean;
     onPlayerWalk(): void;
-    menuActor(): any; // TODO
-    setMenuActor(actor: any): void; // TODO
+    menuActor(): Game_Actor;
+    setMenuActor(actor: Game_Actor): void;
     makeMenuActorNext(): void;
     makeMenuActorPrevious(): void;
-    targetActor(): any; // TODO
-    setTargetActor(actor: any): void; // TODO
-    lastItem(): any; // TODO
-    setLastItem(item: any): void; // TODO
+    targetActor(): Game_Actor;
+    setTargetActor(actor: Game_Actor): void;
+    lastItem(): IDataAllItem;
+    setLastItem(item: IDataAllItem): void;
     swapOrder(index1: number, index2: number): void;
-    charactersForSavefile(): any[]; // TODO
-    facesForSavefile(): any[]; // TODO
+    charactersForSavefile(): any[]; // TODO [0] string, [1] number
+    facesForSavefile(): any[]; // TODO [0] string, [1] number
     partyAbility(abilityId: number): boolean;
     hasEncounterHalf(): boolean;
     hasEncounterNone(): boolean;
@@ -2804,24 +2772,24 @@ declare class Game_Troop extends Game_Unit
     isEventRunning(): boolean;
     updateInterpreter(): void;
     turnCount(): number;
-    members(): any[][]; // TODO
+    members(): Game_Enemy[];
     clear(): void;
-    troop(): any; // TODO
+    troop(): IDataTroop;
     setup(troopId: number): void;
     makeUniqueNames(): void;
     letterTable(): string[];
     enemyNames(): string[];
-    meetsConditions(page: any): boolean; // TODO
+    meetsConditions(page: IDataPage): boolean;
     setupBattleEvent(): void;
     increaseTurn(): void;
     expTotal(): number;
     goldTotal(): number;
     goldRate(): number;
-    makeDropItems(): any; // TODO
+    makeDropItems(): IDataItem[];
 }
 
 declare class Game_Map
-{
+{4
     constructor();
     initialize(): void;
     setup(mapId: number): void;
@@ -2850,24 +2818,24 @@ declare class Game_Map
     events(): Game_Event[];
     event(eventId: number): Game_Event;
     eraseEvent(eventId: number): void;
-    parallelCommonEvents(): any[]; // TODO
+    parallelCommonEvents(): Game_CommonEvent[];
     setupScroll(): void;
     setupParallax(): void;
     setupBattleback(): void;
     setDisplayPos(x: number, y: number): void;
     parallaxOx(): number;
     parallaxOy(): number;
-    tileset(): any; // TODO
-    tilesetFlags(): any[]; // TODO
+    tileset(): IDataTileset;
+    tilesetFlags(): number[];
     displayName(): string;
     width(): number;
     height(): number;
-    data(): any; // TODO
+    data(): number[];
     isLoopHorizontal(): boolean;
     isLoopVertical(): boolean;
     isDashDisabled(): boolean;
-    encounterList(): any; // TODO
-    encounterStep(): any; // TODO
+    encounterList(): IDataEncounterList;
+    encounterStep(): number;
     isOverworld(): boolean;
     screenTileX(): number;
     screenTileY(): number;
@@ -2890,7 +2858,7 @@ declare class Game_Map
     refreshTileEvents(): void;
     eventsXy(x: number, y: number): Game_Event[];
     eventsXyNt(x: number, y: number): Game_Event[];
-    tileEventsXy(x: number, y: number): any[]; // TODO
+    tileEventsXy(x: number, y: number): Game_Event[];
     eventIdXy(x: number, y: number): number;
     scrollDown(distance: number): void;
     scrollLeft(distance: number): void;
@@ -2898,9 +2866,9 @@ declare class Game_Map
     scrollUp(distance: number): void;
     isValid(x: number, y: number): boolean;
     checkPassage(x: number, y: number): boolean;
-    tileId(x: number, y: number, z: number): any; // TODO
-    layeredTiles(x: number, y: number): any; // TODO
-    allTiles(x: number, y: number): any[]; // TODO
+    tileId(x: number, y: number, z: number): number;
+    layeredTiles(x: number, y: number): number[];
+    allTiles(x: number, y: number): number[];
     autotileType(x: number, y: number, z: number): number;
     isPassable(x: number, y: number, d: number): boolean;
     isBoatPassable(x: number, y: number): boolean;
