@@ -3733,7 +3733,7 @@ declare class Scene_GameEnd extends Scene_MenuBase
 declare class Scene_Shop extends Scene_MenuBase
 {
     initialize(): void;
-    prepare(goods: number[][], purchaseOnly: boolean): void; // TODO
+    prepare(goods: number[][], purchaseOnly: boolean): void;
     create(): void;
     createGoldWindow(): void;
     createCommandWindow(): void;
@@ -4075,7 +4075,7 @@ declare class Sprite_StateIcon extends Sprite
 {
     initialize(): void;
     initMembers(): void;
-    setup(battler: any): void; // TODO
+    setup(battler: Game_Battler): void;
     update(): void;
     animationWait(): number;
     updateIcon(): void;
@@ -4087,7 +4087,7 @@ declare class Sprite_StateOverlay extends Sprite_Base
     initialize(): void;
     initMembers(): void;
     loadBitmap(): void;
-    setup(battler: any): void; // TODO
+    setup(battler: Game_Battler): void;
     update(): void;
     animationWait(): number;
     updatePattern(): void;
@@ -4125,7 +4125,7 @@ declare class Sprite_Picture extends Sprite
 {
     initialize(): void;
     initialize(pictureId: number): void;
-    picture(): any; // TODO
+    picture(): Game_Picture;
     update(): void;
     updateBitmap(): void;
     updateOrigin(): void;
@@ -4217,22 +4217,32 @@ declare class Spriteset_Battle extends Spriteset_Base
     overworldBattleback2Name(): string;
     normalBattleback1Name(): string;
     normalBattleback2Name(): string;
-    terrainBattleback1Name(): string;
-    terrainBattleback2Name(): string;
+    terrainBattleback1Name(type: number): string;
+    terrainBattleback2Name(type: number): string;
     defaultBattleback1Name(): string;
     defaultBattleback2Name(): string;
     shipBattleback1Name(): string;
     shipBattleback2Name(): string;
-    autotileType(z: number): any; // TODO
+    autotileType(z: number): number;
     createEnemies(): void;
-    compareEnemySprite(a: any, b: any): number; // TODO
+    compareEnemySprite(a: Sprite_Enemy, b: Sprite_Enemy): number;
     createActors(): void;
     updateActors(): void;
-    battlerSprites(): any; // TODO
+    battlerSprites(): Sprite_Battler[];
     isAnimationPlaying(): boolean;
     isEffecting(): boolean;
     isAnyoneMoving(): boolean;
     isBusy(): boolean;
+}
+
+declare interface ITextMate
+{
+    index: number;
+    x: number;
+    y: number;
+    left: number;
+    text: string;
+    height: number;
 }
 
 declare class Window_Base extends Window
@@ -4240,10 +4250,10 @@ declare class Window_Base extends Window
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
 
-    static _iconWidth: number
-    static _iconHeight: number
-    static _faceWidth: number
-    static _faceHeight: number
+    static _iconWidth: number;
+    static _iconHeight: number;
+    static _faceWidth: number;
+    static _faceHeight: number;
 
     lineHeight(): number;
     standardFontFace(): string;
@@ -4271,25 +4281,25 @@ declare class Window_Base extends Window
     hide(): void;
     activate(): void;
     deactivate(): void;
-    textColor(n: number): any; // TODO
-    normalColor(): any; // TODO
-    systemColor(): any; // TODO
-    crisisColor(): any; // TODO
-    deathColor(): any; // TODO
-    gaugeBackColor(): any; // TODO
-    hpGaugeColor1(): any; // TODO
-    hpGaugeColor2(): any; // TODO
-    mpGaugeColor1(): any; // TODO
-    mpGaugeColor2(): any; // TODO
-    mpCostColor(): any; // TODO
-    powerUpColor(): any; // TODO
-    powerDownColor(): any; // TODO
-    tpGaugeColor1(): any; // TODO
-    tpGaugeColor2(): any; // TODO
-    tpCostColor(): any; // TODO
-    pendingColor(): any; // TODO
+    textColor(n: number): string;
+    normalColor(): string;
+    systemColor(): string;
+    crisisColor(): string;
+    deathColor(): string;
+    gaugeBackColor(): string;
+    hpGaugeColor1(): string;
+    hpGaugeColor2(): string;
+    mpGaugeColor1(): string;
+    mpGaugeColor2(): string;
+    mpCostColor(): string;
+    powerUpColor(): string;
+    powerDownColor(): string;
+    tpGaugeColor1(): string;
+    tpGaugeColor2(): string;
+    tpCostColor(): string;
+    pendingColor(): string;
     translucentOpacity(): number;
-    changeTextColor(color: any): void; // TODO
+    changeTextColor(color: string): void;
     changePaintOpacity(enabled: boolean): void;
     drawText(text: string, x: number, y: number, maxWidth: number, align: string): void;
     textWidth(text: string): number;
@@ -4297,39 +4307,39 @@ declare class Window_Base extends Window
     convertEscapeCharacters(text: string): string;
     actorName(n: number): string;
     partyMemberName(n: number): string;
-    processCharacter(textState: any): void; // TODO
-    processNormalCharacter(textState: any): void; // TODO
-    processNewLine(textState: any): void; // TODO
-    processNewPage(textState: any): void; // TODO
-    obtainEscapeCode(textState: any): string; // TODO
-    obtainEscapeParam(textState: any): string; // TODO
-    processEscapeCharacter(code : string, textState: any): void; // TODO
-    processDrawIcon(iconIndex: number, textState: any): void; // TODO
+    processCharacter(textState: ITextMate): void;
+    processNormalCharacter(textState: ITextMate): void;
+    processNewLine(textState: ITextMate): void;
+    processNewPage(textState: ITextMate): void;
+    obtainEscapeCode(textState: ITextMate): string;
+    obtainEscapeParam(textState: ITextMate): string;
+    processEscapeCharacter(code : string, textState: ITextMate): void;
+    processDrawIcon(iconIndex: number, textState: ITextMate): void;
     makeFontBigger(): void;
     makeFontSmaller(): void;
-    calcTextHeight(textState: any, all: boolean): number; // TODO
+    calcTextHeight(textState: ITextMate, all: boolean): number;
     drawIcon(iconIndex: number, x: number, y: number): void;
     drawFace(faceName: string, faceIndex: number, x: number, y: number, width: number, height: number): void;
     drawCharacter(characterName: string, characterIndex: number, x: number, y: number): void;
-    drawGauge(x: number, y: number, width: number, rate: number, color1: any, color2: any): void; // TODO
-    hpColor(actor: any): any; // TODO
-    mpColor(actor: any): any; // TODO
-    tpColor(actor: any): any; // TODO
-    drawActorCharacter(actor: any, x: number, y: number): void; // TODO
-    drawActorFace(actor: any, x: number, y: number, width: number, height: number): void; // TODO
-    drawActorName(actor: any, x: number, y: number, width: number): void; // TODO
-    drawActorClass(actor: any, x: number, y: number, width: number): void; // TODO
-    drawActorNickname(actor: any, x: number, y: number, width: number): void; // TODO
-    drawActorLevel(actor: any, x: number, y: number): void; // TODO
-    drawActorIcons(actor: any, x: number, y: number, width: number): void; // TODO
-    drawCurrentAndMax(current: number, max: number, x: number, y: number, width: number, color1: any, color2: any): void; // TODO
-    drawActorHp(actor: any, x: number, y: number, width: number): void; // TODO
-    drawActorMp(actor: any, x: number, y: number, width: number): void; // TODO
-    drawActorTp(actor: any, x: number, y: number, width: number): void; // TODO
-    drawActorSimpleStatus(actor: any, x: number, y: number, width: number): void; // TODO
-    drawItemName(item: any, x: number, y: number, width: number): void; // TODO
+    drawGauge(x: number, y: number, width: number, rate: number, color1: string, color2: string): void;
+    hpColor(actor: Game_Battler): string;
+    mpColor(actor: Game_Battler): string;
+    tpColor(actor: Game_Battler): string;
+    drawActorCharacter(actor: Game_Actor, x: number, y: number): void;
+    drawActorFace(actor: Game_Actor, x: number, y: number, width: number, height: number): void;
+    drawActorName(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorClass(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorNickname(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorLevel(actor: Game_Actor, x: number, y: number): void;
+    drawActorIcons(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawCurrentAndMax(current: number, max: number, x: number, y: number, width: number, color1: string, color2: string): void;
+    drawActorHp(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorMp(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorTp(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorSimpleStatus(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawItemName(item: IDataAllItem, x: number, y: number, width: number): void;
     drawCurrencyValue(value: number, unit: string, x: number, y: number, width: number): void;
-    paramchangeTextColor(change: number): any; // TODO
+    paramchangeTextColor(change: number): any;
     setBackgroundType(type: number): void;
     showBackgroundDimmer(): void;
     hideBackgroundDimmer(): void;
@@ -5163,7 +5173,7 @@ declare class Window_BattleActor extends Window_BattleStatus
     show(): void;
     hide(): void;
     select(index: number): void;
-    actor(): any; // TODO
+    actor(): Game_Actor;
 }
 
 declare class Window_BattleEnemy extends Window_Selectable
@@ -5175,7 +5185,7 @@ declare class Window_BattleEnemy extends Window_Selectable
     numVisibleRows(): number;
     maxCols(): number;
     maxItems(): number;
-    enemy(): any; // TODO
+    enemy(): Game_Enemy;
     enemyIndex(): number;
     drawItem(index: number): void;
     show(): void;
@@ -5196,7 +5206,7 @@ declare class Window_BattleItem extends Window_ItemList
 {
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
-    includes(item: any): boolean; // TODO
+    includes(item: IDataAllItem): boolean;
     show(): void;
     hide(): void;
 }
@@ -5205,7 +5215,7 @@ declare class Window_TitleCommand extends Window_Command
 {
     initialize(): void;
 
-    static _lastCommandSymbol: any; // TODO
+    static _lastCommandSymbol: string;
 
     initCommandPosition(): void;
     windowWidth(): number;
@@ -5238,7 +5248,7 @@ declare class Window_DebugRange extends Window_Selectable
     drawItem(index: number): void;
     isCancelTriggered(): boolean;
     processCancel(): void;
-    setEditWindow(editWindow: any): void; // TODO
+    setEditWindow(editWindow: Window_DebugEdit): void;
 }
 
 declare class Window_DebugEdit extends Window_Selectable
