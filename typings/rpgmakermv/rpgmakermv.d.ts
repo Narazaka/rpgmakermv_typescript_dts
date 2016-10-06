@@ -323,7 +323,7 @@ declare class Sprite extends PIXI.Sprite
     protected _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
 
     protected _renderCanvas(renderer: PIXI.CanvasRenderer): void;
-    protected _speedUpCustomBlendModes(renderer: PIXI.CanvasRenderer): void; // TODO
+    protected _speedUpCustomBlendModes(renderer: PIXI.CanvasRenderer): void;
     protected _renderWebGL(renderer: PIXI.WebGLRenderer): void;
 }
 
@@ -404,8 +404,8 @@ declare class ShaderTilemap extends Tilemap
 {
     protected _hackRenderer(renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer): PIXI.WebGLRenderer | PIXI.CanvasRenderer;
 
-    renderCanvas(renderer: PIXI.CanvasRenderer): void; // TODO
-    renderWebGL(renderer: PIXI.WebGLRenderer): void; // TODO
+    renderCanvas(renderer: PIXI.CanvasRenderer): void;
+    renderWebGL(renderer: PIXI.WebGLRenderer): void;
     refresh(): void;
     refreshTileset(): void;
     updateTransform(): void;
@@ -486,7 +486,7 @@ declare class Window extends PIXI.Container
     isClosed(): boolean;
     setCursorRect(x: number, y: number, width: number, height: number): void;
     setTone(r: number, g: number, b: number): void;
-    addChildToBack(child: any): any; // TODO
+    addChildToBack(child: PIXI.DisplayObject): PIXI.DisplayObject;
     updateTransform(): void;
 
     protected _createAllParts(): void;
@@ -515,11 +515,11 @@ declare class WindowLayer extends PIXI.Container
 
     move(x: number, y: number, width: number, height: number): void;
     update(): void;
-    renderCanvas(renderer: PIXI.CanvasRenderer): void; // TODO
+    renderCanvas(renderer: PIXI.CanvasRenderer): void;
 
-    protected _canvasClearWindowRect(renderSession: any, window: Window): void; // TODO
+    protected _canvasClearWindowRect(renderSession: any, window: Window): void;
 
-    renderWebGL(renderer: PIXI.WebGLRenderer): void; // TODO
+    renderWebGL(renderer: PIXI.WebGLRenderer): void;
 
     protected _maskWindow(window: Window): void;
 }
@@ -569,8 +569,8 @@ declare class WebAudio
     constructor(url: string);
     initialize(url: string): void;
 
-    static _context: any; // TODO
-    static _masterGainNode: any; // TODO
+    static _context: AudioContext;
+    static _masterGainNode: GainNode;
     static _initialized: boolean;
     static _unlocked: boolean;
 
@@ -609,7 +609,7 @@ declare class WebAudio
     addStopListener(listener: Function): void;
 
     protected _load(url: string): void;
-    protected _onXhrLoad(xhr: any): void; // TODO
+    protected _onXhrLoad(xhr: XMLHttpRequest): void;
     protected _startPlaying(loop: boolean, offset: number): void;
     protected _createNodes(): void;
     protected _connectNodes(): void;
@@ -633,7 +633,7 @@ declare class Html5Audio
 
     static _initialized: boolean;
     static _unlocked: boolean;
-    static _audioElement: any; // TODO
+    static _audioElement: HTMLAudioElement;
     static _gainTweenInterval: number;
     static _tweenGain: number;
     static _tweenTargetGain: number;
@@ -695,7 +695,7 @@ declare class Decrypter
 
     static hasEncryptedImages: boolean;
     static hasEncryptedAudio: boolean;
-    static _requestImgFile: any[]; // TODO
+    static _requestImgFile: any[]; // TODO おそらく未使用なので具体的な型が分からない。
     static _headerlength: number;
     static _xhrOk: number;
     static _encryptionKey: string;
@@ -706,15 +706,15 @@ declare class Decrypter
 
     static checkImgIgnore(url: string): boolean;
     static decryptImg(url: string, bitmap: Bitmap): void;
-    static decryptHTML5Audio(url: string, bgm: any, pos: number): void; // TODO
-    static cutArrayHeader(arrayBuffer: any, length: number): any; // TODO
-    static decryptArrayBuffer(arrayBuffer: any): any; // TODO
-    static createBlobUrl(arrayBuffer: any): any; // TODO
+    static decryptHTML5Audio(url: string, bgm: IAudioObject, pos: number): void;
+    static cutArrayHeader(arrayBuffer: ArrayBuffer, length: number): ArrayBuffer;
+    static decryptArrayBuffer(arrayBuffer: ArrayBuffer): ArrayBuffer;
+    static createBlobUrl(arrayBuffer: ArrayBuffer): string;
     static extToEncryptExt(url: string): string;
     static readEncryptionkey(): void;
 }
 
-declare interface ISound
+declare interface IDataSound
 {
     name?: string;
     pan?: number;
@@ -722,11 +722,54 @@ declare interface ISound
     volume?: number;
 }
 
-declare interface ITrait
+declare interface IDataTrait
 {
     code?: number;
     dataId?: number;
     value?: number;
+}
+
+declare interface IDataEffect
+{
+    code?: number;
+    dataId?: number;
+    value1?: number;
+    value2?: number;
+}
+
+declare interface IDataAction
+{
+    conditionParam1?: number;
+    conditionParam2?: number;
+    conditionType?: number;
+    rating?: number;
+    skillId?: number;
+}
+
+declare interface IDataList
+{
+    code?: number;
+    indent?: number;
+    parameters?: number[];
+}
+
+declare interface IDataMapEventPageList extends IDataList
+{
+    parameters?: any[];
+}
+
+declare interface IDataMoveRouteCommand
+{
+    code?: number;
+    parameters?: number[];
+}
+
+declare interface IDataMoveRoute
+{
+    list?: IDataMoveRouteCommand[];
+    repeat?: boolean;
+    skippable?: boolean;
+    wait?: boolean;
 }
 
 declare interface IDataActor
@@ -739,7 +782,7 @@ declare interface IDataActor
     equips?: number[];
     faceIndex?: number;
     faceName?: string;
-    traits?: ITrait[];
+    traits?: IDataTrait[];
     initialLevel?: number;
     maxLevel?: number;
     name?: string;
@@ -752,7 +795,7 @@ declare interface IDataClass
 {
     id?: number;
     expParams?: number[];
-    traits?: ITrait[];
+    traits?: IDataTrait[];
     learnings?: {
         level?: number;
         note?: string;
@@ -775,12 +818,7 @@ declare interface IDataSkill
         variance?: number;
     }
     description?: string;
-    effects?: {
-        code?: number;
-        dataId?: number;
-        value1?: number;
-        value2?: number;
-    }[];
+    effects?: IDataEffect[];
     hitType?: number;
     iconIndex?: number;
     message1?: string;
@@ -821,12 +859,7 @@ declare interface IDataItem extends IDataAllItem
         type?: number;
         variance?: number;
     }
-    effects?: {
-        code?: number;
-        dataId?: number;
-        value1?: number;
-        value2?: number;
-    }[];
+    effects?: IDataEffect[];
     hitType?: number;
     itypeId?: number;
     occasion?: number;
@@ -840,7 +873,7 @@ declare interface IDataItem extends IDataAllItem
 declare interface IDataEquipItem extends IDataAllItem
 {
     etypeId?: number;
-    traits?: ITrait[];
+    traits?: IDataTrait[];
     params?: number[];
 }
 
@@ -858,13 +891,7 @@ declare interface IDataArmor extends IDataEquipItem
 declare interface IDataEnemy
 {
     id?: number;
-    actions?: {
-        conditionParam1?: number;
-        conditionParam2?: number;
-        conditionType?: number;
-        rating?: number;
-        skillId?: number;
-    }[];
+    actions?: IDataAction[];
     battlerHue?: number;
     battlerName?: string;
     dropItems?: {
@@ -873,7 +900,7 @@ declare interface IDataEnemy
         denominator?: number;
     }[];
     exp?: number;
-    traits?: ITrait[];
+    traits?: IDataTrait[];
     gold?: number;
     name?: string;
     note?: string;
@@ -941,7 +968,16 @@ declare interface IDataState
     removeByWalking?: boolean;
     restriction?: number;
     stepsToRemove?: number;
-    traits?: ITrait[];
+    traits?: IDataTrait[];
+}
+
+declare interface IDataAnimationTiming
+{
+    flashColor?: number[];
+    flashDuration?: number;
+    flashScope?: number;
+    frame?: number;
+    se?: IDataSound;
 }
 
 declare interface IDataAnimation
@@ -954,13 +990,7 @@ declare interface IDataAnimation
     frames?: number[][][];
     name?: string;
     position?: number;
-    timings?: {
-        flashColor?: number[];
-        flashDuration?: number;
-        flashScope?: number;
-        frame?: number;
-        se?: ISound;
-    }[];
+    timings?: IDataAnimationTiming[];
 }
 
 declare interface IDataTileset
@@ -976,51 +1006,43 @@ declare interface IDataTileset
 declare interface IDataCommonEvent
 {
     id?: number;
-    list?: {
-        code?: number;
-        indent?: number;
-        parameters?: number[];
-    }[];
+    list?: IDataList[];
     name: string;
     switchId: number;
     trigger: number;
 }
 
+declare interface IVehicle
+{
+    bgm?: IDataSound;
+    characterIndex?: number;
+    characterName?: string;
+    startMapId?: number;
+    startX?: number;
+    startY?: number;
+}
+
 declare interface IDataSystem
 {
-    airship?: {
-        bgm?: ISound;
-        characterIndex?: number;
-        characterName?: string;
-        startMapId?: number;
-        startX?: number;
-        startY?: number;
-    };
+    airship?: IVehicle;
     armorTypes?: string[];
     attackMotions?: {
         type?: number;
         weaponImageId?: number;
     }[];
-    battleBgm?: ISound;
+    battleBgm?: IDataSound;
     battleback1Name?: string;
     battleback2Name?: string;
     battlerHue?: number;
     battlerName?: string;
-    boat?: {
-        bgm?: ISound;
-        characterIndex?: number;
-        characterName?: string;
-        startMapId?: number;
-        startX?: number;
-        startY?: number;
-    };
+    boat?: IVehicle;
     currencyUnit?: string;
-    defeatMe?: ISound;
+    defeatMe?: IDataSound;
     editMapId?: number;
     elements?: string[];
     equipTypes?: string[];
     gameTitle?: string;
-    gameoverMe?: ISound;
+    gameoverMe?: IDataSound;
     locale?: string;
     magicSkills?: number[];
     menuCommands?: boolean[];
@@ -1033,16 +1055,9 @@ declare interface IDataSystem
     optSlipDeath?: boolean;
     optTransparent?: boolean;
     partyMembers?: number[];
-    ship?: {
-        bgm?: ISound;
-        characterIndex?: number;
-        characterName?: string;
-        startMapId?: number;
-        startX?: number;
-        startY?: number;
-    };
+    ship?: IVehicle;
     skillTypes?: string[];
-    sounds?: ISound[];
+    sounds?: IDataSound[];
     startMapId?: number;
     startX?: number;
     startY?: number;
@@ -1113,10 +1128,10 @@ declare interface IDataSystem
     testTroopId?: number;
     title1Name?: string;
     title2Name?: string;
-    titleBgm?: ISound;
+    titleBgm?: IDataSound;
     variables?: string[];
     versionId?: number;
-    victoryMe?: ISound;
+    victoryMe?: IDataSound;
     weaponTypes?: string;
     windowTone?: number[];
 }
@@ -1134,9 +1149,62 @@ declare interface IDataMapInfo
 
 declare interface IDataEncounterList
 {
-    regionSet: number[];
-    troopId: number;
-    weight: number;
+    regionSet?: number[];
+    troopId?: number;
+    weight?: number;
+}
+
+declare interface IDataMapEventPage
+{
+    conditions?: {
+        actorId?: number;
+        actorValid?: boolean;
+        itemId?: number;
+        itemValid?: boolean;
+        selfSwitchCh?: string;
+        selfSwitchValid: boolean;
+        switch1Id?: number;
+        switch1Valid?: boolean;
+        switch2Id?: number;
+        switch2Valid?: boolean;
+        variableId?: number;
+        variableValid?: boolean;
+        variableValue?: number;
+    };
+    directionFix?: boolean;
+    image?: {
+        tileId?: number;
+        characterName?: string;
+        direction?: number;
+        pattern?: number;
+        characterIndex?: number;
+    }
+    list?: IDataMapEventPageList[];
+    moveFrequency?: number;
+    moveRoute?: {
+        list?: {
+            code?: number;
+            parameters?: number[];
+        }[];
+        repeat?: boolean;
+        skippable?: boolean;
+        wait?: boolean;
+    };
+    moveSpeed?: number;
+    moveType?: number;
+    priorityType?: number;
+    stepAnime?: boolean;
+    through?: boolean;
+    trigger?: number;
+    walkAnime?: boolean;
+}
+
+declare interface IDataMapEvent
+{
+    id?: number;
+    name?: string;
+    note?: string;
+    pages?: IDataMapEventPage[];
 }
 
 declare interface IDataMap
@@ -1145,8 +1213,8 @@ declare interface IDataMap
     autoplayBgs?: boolean;
     battleback1Name?: string;
     battleback2Name?: string;
-    bgm?: ISound;
-    bgs?: ISound;
+    bgm?: IDataSound;
+    bgs?: IDataSound;
     disableDashing?: boolean;
     displayName?: string;
     encounterList?: IDataEncounterList[];
@@ -1164,58 +1232,7 @@ declare interface IDataMap
     tilesetId?: number;
     width?: number;
     data?: number[];
-    events?: {
-        id?: number;
-        name?: string;
-        note?: string;
-        pages?: {
-            conditions?: {
-                actorId?: number;
-                actorValid?: boolean;
-                itemId?: number;
-                itemValid?: boolean;
-                selfSwitchCh?: string;
-                selfSwitchValid: boolean;
-                switch1Id?: number;
-                switch1Valid?: boolean;
-                switch2Id?: number;
-                switch2Valid?: boolean;
-                variableId?: number;
-                variableValid?: boolean;
-                variableValue?: number;
-            };
-            directionFix?: boolean;
-            image?: {
-                tileId?: number;
-                characterName?: string;
-                direction?: number;
-                pattern?: number;
-                characterIndex?: number;
-            }
-            list?: {
-                code?: number;
-                indent?: number;
-                parameters?: any[]; // TODO codeによってパラメータの中身が変わるので、とりあえずany[]で妥協。
-            }[];
-            moveFrequency?: number;
-            moveRoute?: {
-                list?: {
-                    code?: number;
-                    parameters?: number[];
-                }[];
-                repeat?: boolean;
-                skippable?: boolean;
-                wait?: boolean;
-            };
-            moveSpeed?: number;
-            moveType?: number;
-            priorityType?: number;
-            stepAnime?: boolean;
-            through?: boolean;
-            trigger?: number;
-            walkAnime?: boolean;
-        }[];
-    }[];
+    events?: IDataMapEvent[];
 }
 
 declare var $dataActors      : IDataActor[];
@@ -1409,21 +1426,11 @@ declare class ImageManager
     static isZeroParallax: boolean;
 }
 
-interface AudioObject
+interface IAudioObject
 {
     name: string;
     volume: number;
     pitch: number;
-}
-
-interface BGM extends AudioObject
-{
-    pan: number;
-    pos: number;
-}
-
-interface BGS extends AudioObject
-{
     pan: number;
     pos: number;
 }
@@ -1436,8 +1443,8 @@ declare class AudioManager
     static _bgsVolume      : number;
     static _meVolume       : number;
     static _seVolume       : number;
-    static _currentBgm     : BGM;
-    static _currentBgs     : BGS;
+    static _currentBgm     : IAudioObject;
+    static _currentBgs     : IAudioObject;
     static _bgmBuffer      : WebAudio | Html5Audio;
     static _bgsBuffer      : WebAudio;
     static _meBuffer       : WebAudio;
@@ -1452,40 +1459,40 @@ declare class AudioManager
     static meVolume: number;
     static seVolume: number;
 
-    static playBgm(bgm: BGM, pos: number): void;
-    static playEncryptedBgm(bgm: BGM, pos: number): void;
-    static createDecryptBuffer(url: string, bgm: BGM, pos: number): void;
-    static replayBgm(bgm: BGM): void;
-    static isCurrentBgm(bgm: BGM): boolean;
-    static updateBgmParameters(bgm: BGM): void;
-    static updateCurrentBgm(bgm: BGM, pos: number): void;
+    static playBgm(bgm: IAudioObject, pos: number): void;
+    static playEncryptedBgm(bgm: IAudioObject, pos: number): void;
+    static createDecryptBuffer(url: string, bgm: IAudioObject, pos: number): void;
+    static replayBgm(bgm: IAudioObject): void;
+    static isCurrentBgm(bgm: IAudioObject): boolean;
+    static updateBgmParameters(bgm: IAudioObject): void;
+    static updateCurrentBgm(bgm: IAudioObject, pos: number): void;
     static stopBgm(): void;
     static fadeOutBgm(duration: number): void;
     static fadeInBgm(duration: number): void;
-    static playBgs(bgs: BGS, pos: number): void;
-    static replayBgs(bgs: BGS): void;
-    static isCurrentBgs(bgs: BGS): boolean;
-    static updateBgsParameters(bgs: BGS): void;
-    static updateCurrentBgs(bgs: BGS, pos: number): void;
+    static playBgs(bgs: IAudioObject, pos: number): void;
+    static replayBgs(bgs: IAudioObject): void;
+    static isCurrentBgs(bgs: IAudioObject): boolean;
+    static updateBgsParameters(bgs: IAudioObject): void;
+    static updateCurrentBgs(bgs: IAudioObject, pos: number): void;
     static stopBgs(): void;
     static fadeOutBgs(duration: number): void;
     static fadeInBgs(duration: number): void;
-    static playMe(me: ISound): void;
-    static updateMeParameters(me: ISound): void;
+    static playMe(me: IDataSound): void;
+    static updateMeParameters(me: IDataSound): void;
     static fadeOutMe(duration: number): void;
     static stopMe(): void;
-    static playSe(se: ISound): void;
-    static updateSeParameters(buffer: any, se: ISound): void;
+    static playSe(se: IDataSound): void;
+    static updateSeParameters(buffer: any, se: IDataSound): void;
     static stopSe(): void;
-    static playStaticSe(se: ISound): void;
-    static loadStaticSe(se: ISound): void;
-    static isStaticSe(se: ISound): boolean;
+    static playStaticSe(se: IDataSound): void;
+    static loadStaticSe(se: IDataSound): void;
+    static isStaticSe(se: IDataSound): boolean;
     static stopAll(): void;
-    static saveBgm(): AudioObject | BGM;
-    static saveBgs(): AudioObject | BGS;
-    static makeEmptyAudioObject(): AudioObject;
+    static saveBgm(): IAudioObject;
+    static saveBgs(): IAudioObject;
+    static makeEmptyAudioObject(): IAudioObject;
     static createBuffer(folder: number, name: string): Html5Audio | WebAudio;
-    static updateBufferParameters(buffer: AudioObject, configVolume: number, audio: AudioObject): void;
+    static updateBufferParameters(buffer: IAudioObject, configVolume: number, audio: IAudioObject): void;
     static audioFileExt(): string;
     static shouldUseHtml5Audio(): boolean;
     static checkErrors(): void;
@@ -1676,10 +1683,10 @@ declare class SceneManager
     static isSceneChanging(): boolean;
     static isCurrentSceneBusy(): boolean;
     static isCurrentSceneStarted(): boolean;
-    static isNextScene(sceneClass: Scene_Base): boolean;
-    static isPreviousScene(sceneClass: Scene_Base): boolean;
-    static goto(sceneClass: Scene_Base): void;
-    static push(sceneClass: Scene_Base): void;
+    static isNextScene(sceneClass: typeof Scene_Base): boolean;
+    static isPreviousScene(sceneClass: typeof Scene_Base): boolean;
+    static goto(sceneClass: typeof Scene_Base): void;
+    static push(sceneClass: typeof Scene_Base): void;
     static pop(): void;
     static exit(): void;
     static clearStack(): void;
@@ -1723,13 +1730,13 @@ declare class BattleManager
     static canEscape(): boolean;
     static canLose(): boolean;
     static isEscaped(): boolean;
-    static actor(): any; // TODO
+    static actor(): Game_Actor;
     static clearActor(): void;
-    static changeActor(newActorIndex: number, lastActorActionState: any): void; // TODO
+    static changeActor(newActorIndex: number, lastActorActionState: string): void;
     static startBattle(): void;
     static displayStartMessages(): void;
     static startInput(): void;
-    static inputtingAction(): any; // TODO
+    static inputtingAction(): Game_Action;
     static selectNextCommand(): void;
     static selectPreviousCommand(): void;
     static refreshStatus(): void;
@@ -1739,19 +1746,19 @@ declare class BattleManager
     static endTurn(): void;
     static updateTurnEnd(): void;
     static getNextSubject(): void;
-    static allBattleMembers(): any; // TODO
+    static allBattleMembers(): Game_Battler;
     static makeActionOrders(): void;
     static startAction(): void;
     static updateAction(): void;
     static endAction(): void;
-    static invokeAction(subject: any, target: any): void; // TODO
-    static invokeNormalAction(subject: any, target: any): void; // TODO
-    static invokeCounterAttack(subject: any, target: any): void; // TODO
-    static invokeMagicReflection(subject: any, target: any): void; // TODO
-    static applySubstitute(target: any): any; // TODO
-    static checkSubstitute(target: any): any; // TODO
+    static invokeAction(subject: Game_Battler, target: Game_Battler): void;
+    static invokeNormalAction(subject: Game_Battler, target: Game_Battler): void;
+    static invokeCounterAttack(subject: Game_Battler, target: Game_Battler): void;
+    static invokeMagicReflection(subject: Game_Battler, target: Game_Battler): void;
+    static applySubstitute(target: Game_Battler): any;
+    static checkSubstitute(target: Game_Battler): any;
     static isActionForced(): boolean;
-    static forceAction(battler: any): void; // TODO
+    static forceAction(battler: Game_Battler): void;
     static processForcedAction(): void;
     static abort(): void;
     static checkBattleEnd(): boolean;
@@ -1777,6 +1784,8 @@ declare class BattleManager
     static gainDropItems(): void;
 }
 
+declare type PluginParameters = { [key: string]: string; };
+
 declare class PluginManager
 {
     private constructor();
@@ -1784,14 +1793,14 @@ declare class PluginManager
     static _path: string;
     static _scripts: string[];
     static _errorUrls: string[];
-    static _parameters: { [key: string]: string; };
+    static _parameters: PluginParameters;
 
-    static setup(plugins: any[]): void; // TODO
+    static setup(plugins: any[]): void;
     static checkErrors(): void;
-    static parameters(name: string): { [key: string]: string; };
-    static setParameters(name: string, parameters: any): void; // TODO
+    static parameters(name: string): PluginParameters;
+    static setParameters(name: string, parameters: PluginParameters): void;
     static loadScript(name: string): void;
-    static onError(e: any): void; // TODO
+    static onError(e: ErrorEvent): void;
 }
 
 declare class Game_Temp
@@ -1802,7 +1811,7 @@ declare class Game_Temp
     reserveCommonEvent(commonEventId: number): void;
     clearCommonEvent(): void;
     isCommonEventReserved(): boolean;
-    reservedCommonEvent(): any; // TODO
+    reservedCommonEvent(): IDataCommonEvent;
     setDestination(x: number, y: number): void;
     clearDestination(): void;
     isDestinationValid(): void;
@@ -1836,15 +1845,15 @@ declare class Game_System
     winCount(): number;
     escapeCount(): number;
     saveCount(): number;
-    versionId(): number; // TODO 要検証
-    windowTone(): any; // TODO
-    setWindowTone(value: any): void; // TODO
-    battleBgm(): any; // TODO
-    setBattleBgm(value: any): void; // TODO
-    victoryMe(): any; // TODO
-    setVictoryMe(value: any): void; // TODO
-    defeatMe(): any; // TODO
-    setDefeatMe(value: any): void; // TODO
+    versionId(): number;
+    windowTone(): number[];
+    setWindowTone(value: number[]): void;
+    battleBgm(): IDataSound;
+    setBattleBgm(value: IDataSound): void;
+    victoryMe(): IDataSound;
+    setVictoryMe(value: IDataSound): void;
+    defeatMe(): IDataSound;
+    setDefeatMe(value: IDataSound): void;
     onBattleStart(): void;
     onBattleWin(): void;
     onBattleEscape(): void;
@@ -1875,7 +1884,7 @@ declare class Game_Message
     constructor();    
     initialize(): void;
     clear(): void;
-    choices(): any; // TODO
+    choices(): string[];
     faceName(): string;
     faceIndex(): number;
     background(): number;
@@ -1902,7 +1911,7 @@ declare class Game_Message
     setItemChoice(variableId: number, itemType: number): void;
     setScroll(speed: number, noFast: boolean);
     setChoiceCallback(callback: Function): void;
-    onChoice(n: any): void; // TODO
+    onChoice(n: number): void;
     hasText(): boolean;
     isChoice(): boolean;
     isNumberInput(): boolean;
@@ -1917,8 +1926,8 @@ declare class Game_Switches
     constructor();
     initialize(): void;
     clear(): void;
-    value(switchId: any): any; // TODO
-    setValue(switchId: any, value: boolean): void;
+    value(switchId: number): boolean;
+    setValue(switchId: number, value: boolean): void;
     onChange(): void;
 }
 
@@ -1971,7 +1980,7 @@ declare class Game_Screen
     startFadeOut(duration: number): void;
     startFadeIn(duration: number): void;
     startTint(tone: number[], duration: number): void;
-    startFlash(color: any, duration: number): void; // TODO
+    startFlash(color: number[], duration: number): void;
     startShake(power: number, speed: number, duration: number): void;
     startZoom(x: number, y: number, scale: number, duration: number): void;
     setZoom(x: number, y: number, scale: number): void;
@@ -2024,8 +2033,8 @@ declare class Game_Picture
 
 declare class Game_Item
 {
-    constructor(item?: Game_Item);
-    initialize(item: Game_Item): void;
+    constructor(item?: IDataItem);
+    initialize(item: IDataItem): void;
     isSkill(): boolean;
     isItem(): boolean;
     isUsableItem(): boolean;
@@ -2034,14 +2043,14 @@ declare class Game_Item
     isEquipItem(): boolean;
     isNull(): boolean;
     itemId(): number;
-    object(): Game_Item;
-    setObject(item: Game_Item): void;
+    object(): IDataItem;
+    setObject(item: IDataItem): void;
     setEquip(isWeapon: boolean, itemId: number): void;
 }
 
 declare class Game_Action
 {
-    constructor(subject: any, forcing: boolean); // TODO
+    constructor(subject: Game_Battler, forcing: boolean);
 
     static EFFECT_RECOVER_HP: number;
     static EFFECT_RECOVER_MP: number;
@@ -2061,24 +2070,24 @@ declare class Game_Action
     static HITTYPE_PHYSICAL: number;
     static HITTYPE_MAGICAL: number;
 
-    initialize(subject: any, forcing: boolean): void; // TODO
+    initialize(subject: Game_Battler, forcing: boolean): void;
     clear(): void;
-    setSubject(subject: any): void; // TODO
-    subject(): any; // TODO
-    friendsUnit(): any; // TODO
-    opponentsUnit(): any; // TODO
+    setSubject(subject: Game_Battler): void;
+    subject(): Game_Battler;
+    friendsUnit(): Game_Unit;
+    opponentsUnit(): Game_Unit;
     setEnemyAction(action: boolean): void;
     setAttack(): void;
     setGuard(): void;
     setSkill(skillId: number): void;
     setItem(itemId: number): void;
-    setItemObject(object: any): void // TODO
+    setItemObject(object: IDataItem): void
     setTarget(targetIndex: number): void;
-    item(): any; // TODO
+    item(): IDataItem;
     isSkill(): boolean;
     isItem(): boolean;
     numRepeats(): number;
-    checkItemScope(list: any): any; // TODO
+    checkItemScope(list: number[]): boolean;
     isForOpponent(): boolean;
     isForFriend(): boolean;
     isForDeadFriend(): boolean;
@@ -2086,9 +2095,9 @@ declare class Game_Action
     isForOne(): boolean;
     isForRandom(): boolean;
     isForAll(): boolean;
-    needsSelection(): any; // TODO
+    needsSelection(): boolean;
     numTargets(): number;
-    checkDamageType(list: any): any; // TODO
+    checkDamageType(list: number[]): boolean;
     isHpEffect(): boolean;
     isMpEffect(): boolean;
     isDamage(): boolean;
@@ -2107,54 +2116,54 @@ declare class Game_Action
     prepare(): void;
     isValid(): boolean;
     speed(): number;
-    makeTargets(): any; // TODO
-    repeatTargets(targets: any): any; // TODO
-    confusionTarget(): any; // TODO
-    targetsForOpponents(): any; // TODO
-    targetsForFriends(): any; // TODO
+    makeTargets(): Game_Battler[];
+    repeatTargets(targets: Game_Battler[]): Game_Battler[];
+    confusionTarget(): Game_Battler;
+    targetsForOpponents(): Game_Battler[];
+    targetsForFriends(): Game_Battler[];
     evaluate(): number;
-    itemTargetCandidates(): any; // TODO
-    evaluateWithTarget(target: any): number;
-    testApply(target: any): boolean; // TODO
-    hasItemAnyValidEffects(target: any): number; // TODO
-    testItemEffect(target: any, effect: any): number; // TODO
-    itemCnt(target: any): number; // TODO
-    itemMrf(target: any): number; // TODO
-    itemHit(target: any): number; // TODO
-    itemEva(target: any): number; // TODO
-    itemCri(target: any): number; // TODO
-    apply(target: any): void; // TODO
-    makeDamageValue(target: any, critical: boolean): number; // TODO
-    evalDamageFormula(target: any): number; // TODO
-    calcElementRate(target: any): number; // TODO
-    elementsMaxRate(target: any, elements: any[]): number; // TODO
+    itemTargetCandidates(): Game_Battler[];
+    evaluateWithTarget(target: Game_Battler): number;
+    testApply(target: Game_Battler): boolean;
+    hasItemAnyValidEffects(target: Game_Battler): number;
+    testItemEffect(target: Game_Battler, effect: IDataEffect): number;
+    itemCnt(target: Game_Battler): number;
+    itemMrf(target: Game_Battler): number;
+    itemHit(target: Game_Battler): number;
+    itemEva(target: Game_Battler): number;
+    itemCri(target: Game_Battler): number;
+    apply(target: Game_Battler): void;
+    makeDamageValue(target: Game_Battler, critical: boolean): number;
+    evalDamageFormula(target: Game_Battler): number;
+    calcElementRate(target: Game_Battler): number;
+    elementsMaxRate(target: Game_Battler, elements: number[]): number;
     applyCritical(damage: number): number;
     applyVariance(damage: number, variance: number): number;
-    applyGuard(damage: number, target: any): number; // TODO
-    executeDamage(target: any, value: number): void; // TODO
-    executeHpDamage(target: any, value: number): void; // TODO
-    executeMpDamage(target: any, value: number): void; // TODO
+    applyGuard(damage: number, target: Game_Battler): number;
+    executeDamage(target: Game_Battler, value: number): void;
+    executeHpDamage(target: Game_Battler, value: number): void;
+    executeMpDamage(target: Game_Battler, value: number): void;
     gainDrainedHp(value: number): void;
     gainDrainedMp(value: number): void;
-    applyItemEffect(target: any, effect: any): void // TODO
-    itemEffectRecoverHp(target: any, effect: any): void // TODO
-    itemEffectRecoverMp(target: any, effect: any): void // TODO
-    itemEffectGainTp(target: any, effect: any): void // TODO
-    itemEffectAddState(target: any, effect: any): void // TODO
-    itemEffectAddAttackState(target: any, effect: any): void // TODO
-    itemEffectAddNormalState(target: any, effect: any): void // TODO
-    itemEffectRemoveState(target: any, effect: any): void // TODO
-    itemEffectAddBuff(target: any, effect: any): void // TODO
-    itemEffectAddDebuff(target: any, effect: any): void // TODO
-    itemEffectRemoveBuff(target: any, effect: any): void // TODO
-    itemEffectRemoveDebuff(target: any, effect: any): void // TODO
-    itemEffectSpecial(target: any, effect: any): void // TODO
-    itemEffectGrow(target: any, effect: any): void // TODO
-    itemEffectLearnSkill(target: any, effect: any): void // TODO
-    itemEffectCommonEvent(target: any, effect: any): void // TODO
-    makeSuccess(target: any): void // TODO
-    applyItemUserEffect(target: any): void // TODO
-    lukEffectRate(target: any): number // TODO
+    applyItemEffect(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectRecoverHp(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectRecoverMp(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectGainTp(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectAddState(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectAddAttackState(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectAddNormalState(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectRemoveState(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectAddBuff(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectAddDebuff(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectRemoveBuff(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectRemoveDebuff(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectSpecial(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectGrow(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectLearnSkill(target: Game_Battler, effect: IDataEffect): void;
+    itemEffectCommonEvent(target: Game_Battler, effect: IDataEffect): void;
+    makeSuccess(target: Game_Battler): void;
+    applyItemUserEffect(target: Game_Battler): void;
+    lukEffectRate(target: Game_Battler): number;
     applyGlobal(): void;
 }
 
@@ -2163,8 +2172,8 @@ declare class Game_ActionResult
     constructor();
     initialize(): void;
     clear(): void;
-    addedStateObjects(): any; // TODO
-    removedStateObjects(): any; // TODO
+    addedStateObjects(): IDataState[];
+    removedStateObjects(): IDataState[];
     isStatusAffected(): boolean;
     isHit(): boolean;
     isStateAdded(stateId: number): boolean;
@@ -2274,19 +2283,19 @@ declare class Game_BattlerBase
     updateBuffTurns(): void;
     die(): void;
     revive(): void;
-    states(): any; // TODO
+    states(): IDataState[];
     stateIcons(): number[];
     buffIcons(): number[];
     buffIconIndex(buffLevel: number, paramId: number): number;
-    allIcons(): any; // TODO
-    traitObjects(): any; // TODO
-    allTraits(): any; // TODO
-    traits(code: number): any; // TODO
-    traitsWithId(code: number, id: number): any; // TODO
+    allIcons(): number[];
+    traitObjects(): IDataState[];
+    allTraits(): IDataTrait[];
+    traits(code: number): IDataTrait[];
+    traitsWithId(code: number, id: number): IDataTrait[];
     traitsPi(code: number, id: number): number;
     traitsSum(code: number, id: number): number;
     traitsSumAll(code: number): number;
-    traitsSet(code: number): any; // TODO
+    traitsSet(code: number): number[];
     paramBase(paramId: number): number;
     paramPlus(paramId: number): number;
     paramMin(paramId: number): number;
@@ -2299,16 +2308,16 @@ declare class Game_BattlerBase
     elementRate(elementId: number): number;
     debuffRate(paramId: number): number;
     stateRate(stateId: number): number;
-    stateResistSet(): any; // TODO
+    stateResistSet(): number[];
     isStateResist(stateId: number): boolean;
-    attackElements(): any; // TODO
-    attackStates(): any; // TODO
+    attackElements(): number[];
+    attackStates(): number[];
     attackStatesRate(stateId: number): number;
     attackSpeed(): number;
     attackTimesAdd(): number;
-    addedSkillTypes(): any; // TODO
+    addedSkillTypes(): number[];
     isSkillTypeSealed(stypeId: number): boolean;
-    addedSkills(): any; // TODO
+    addedSkills(): number[];
     isSkillSealed(skillId: number): boolean;
     isEquipWtypeOk(wtypeId: number): boolean;
     isEquipAtypeOk(atypeId: number): boolean;
@@ -2316,10 +2325,10 @@ declare class Game_BattlerBase
     isEquipTypeSealed(etypeId: number): boolean;
     slotType(): number;
     isDualWield(): boolean;
-    actionPlusSet(): any; // TODO
-    specialFlag(flagId: number): any; // TODO
+    actionPlusSet(): number[];
+    specialFlag(flagId: number): boolean;
     collapseType(): number;
-    partyAbility(abilityId: number): any; // TODO
+    partyAbility(abilityId: number): boolean;
     isAutoBattle(): boolean;
     isGuard(): boolean;
     isSubstitute(): boolean;
@@ -2355,19 +2364,19 @@ declare class Game_BattlerBase
     mostImportantStateText(): string;
     stateMotionIndex(): number;
     stateOverlayIndex(): number;
-    isSkillWtypeOk(skill: any): boolean; // TODO
-    skillMpCost(skill: any): number; // TODO
-    skillTpCost(skill: any): number; // TODO
-    canPaySkillCost(skill: any): boolean; // TODO
-    paySkillCost(skill: any): void; // TODO
-    isOccasionOk(item: any): boolean; // TODO
-    meetsUsableItemConditions(item: any): boolean; // TODO
-    meetsSkillConditions(skill: any): boolean; // TODO
-    meetsItemConditions(skill: any): boolean; // TODO
-    canUse(item: any): boolean; // TODO
-    canEquip(item: any): boolean; // TODO
-    canEquipWeapon(item: any): boolean; // TODO
-    canEquipArmor(item: any): boolean; // TODO
+    isSkillWtypeOk(skill: IDataSkill): boolean;
+    skillMpCost(skill: IDataSkill): number;
+    skillTpCost(skill: IDataSkill): number;
+    canPaySkillCost(skill: IDataSkill): boolean;
+    paySkillCost(skill: IDataSkill): void;
+    isOccasionOk(item: IDataAllItem): boolean;
+    meetsUsableItemConditions(item: IDataAllItem): boolean;
+    meetsSkillConditions(skill: IDataSkill): boolean;
+    meetsItemConditions(skill: IDataSkill): boolean;
+    canUse(item: IDataAllItem): boolean;
+    canEquip(item: IDataAllItem): boolean;
+    canEquipWeapon(item: IDataAllItem): boolean;
+    canEquipArmor(item: IDataAllItem): boolean;
     attackSkillId(): number;
     guardSkillId(): number;
     canAttack(): boolean;
@@ -2398,15 +2407,15 @@ declare class Game_Battler extends Game_BattlerBase
     effectType(): boolean;
     motionType(): boolean;
     weaponImageId(): number;
-    shiftAnimation(): { animationId: string, mirror: any, delay: number }; // TODO
-    startAnimation(animationId: number, mirror: any, delay: number): void; // TODO
+    shiftAnimation(): { animationId: string, mirror: boolean, delay: number };
+    startAnimation(animationId: number, mirror: boolean, delay: number): void;
     startDamagePopup(): void;
     startWeaponAnimation(weaponImageId: number): void;
-    action(index: number): any; // TODO
-    setAction(index: number, action: any): void // TODO
+    action(index: number): number;
+    setAction(index: number, action: number): void;
     numActions(): number;
     clearActions(): void;
-    result(): any; // TODO
+    result(): Game_ActionResult;
     clearResult(): void;
     refresh(): void;
     addState(stateId: number): void;
@@ -2420,19 +2429,19 @@ declare class Game_Battler extends Game_BattlerBase
     removeBuff(paramId: number): void;
     removeBattleStates(): void;
     removeAllBuffs(): void;
-    removeStatesAuto(timing: any): void; // TODO
+    removeStatesAuto(timing: number): void;
     removeBuffsAuto(): void;
     removeStatesByDamage(): void;
     makeActionTimes(): number;
     makeActions(): void;
     speed(): number;
     makeSpeed(): void;
-    currentAction(): any; // TODO
+    currentAction(): number;
     removeCurrentAction(): void;
-    setLastTarget(target: any): void; // TODO
+    setLastTarnget(target: Game_Battler): void
     forceAction(skillId: number, targetIndex: number): void;
-    useItem(item: any): void; // TODO
-    consumeItem(item: any): void; // TODO
+    useItem(item: IDataAllItem): void;
+    consumeItem(item: IDataAllItem): void;
     gainHp(value: number): void;
     gainMp(value: number): void;
     gainTp(value: number): void;
@@ -2450,15 +2459,15 @@ declare class Game_Battler extends Game_BattlerBase
     onTurnEnd(): void;
     onBattleEnd(): void;
     onDamage(value: number): void;
-    setActionState(actionState: any): void; // TODO
+    setActionState(actionState: string): void;
     isUndecided(): boolean;
     isInputting(): boolean;
     isWaiting(): boolean;
     isActing(): boolean;
     isChanting(): boolean;
     isGuardWaiting(): boolean;
-    performActionStart(action: any): void; // TODO
-    performAction(action: any): void; // TODO
+    performActionStart(action: Game_Action): void;
+    performAction(action: Game_Action): void;
     performActionEnd(): void;
     performDamage(): void;
     performMiss(): void;
@@ -2467,7 +2476,7 @@ declare class Game_Battler extends Game_BattlerBase
     performMagicEvasion(): void;
     performCounter(): void;
     performReflection(): void;
-    performSubstitute(target: any): void; // TODO
+    performSubstitute(target: Game_Battler): void;
     performCollapse(): void;
 }
 
@@ -2484,8 +2493,8 @@ declare class Game_Actor extends Game_Battler
     setName(name: string): void;
     nickname(): string;
     setNickname(nickname: string): void;
-    profile(): any; // TODO
-    setProfile(profile: any); // TODO
+    profile(): string;
+    setProfile(profile: string);
     characterName(): string;
     characterIndex(): number;
     faceName(): string;
@@ -2504,26 +2513,26 @@ declare class Game_Actor extends Game_Battler
     maxLevel(): number;
     isMaxLevel(): number;
     initSkills(): void;
-    initEquips(equips: any[]): void; // TODO
-    equipSlots(): any[]; // TODO
-    equips(): any[]; // TODO
-    weapons(): any[]; // TODO
-    armors(): any[]; // TODO
-    hasWeapon(weapon: any): boolean; // TODO
-    hasArmor(armor: any): boolean; // TODO
+    initEquips(equips: number[]): void;
+    equipSlots(): number[];
+    equips(): Game_Item[];
+    weapons(): IDataWeapon[];
+    armors(): IDataArmor[];
+    hasWeapon(weapon: IDataWeapon): boolean;
+    hasArmor(armor: IDataArmor): boolean;
     isEquipChangeOk(slotId: number): boolean;
-    changeEquip(slotId: number, item: any): void; // TODO
-    forceChangeEquip(slotId: number, item: any): void; // TODO
-    tradeItemWithParty(newItem: any, oldItem: any): boolean; // TODO
+    changeEquip(slotId: number, item: IDataEquipItem): void;
+    forceChangeEquip(slotId: number, item: IDataEquipItem): void;
+    tradeItemWithParty(newItem: IDataEquipItem, oldItem: IDataEquipItem): boolean;
     changeEquipById(etypeId: number, itemId: number): void;
-    isEquipped(item: any): boolean; // TODO
-    discardEquip(item: any): void; // TODO
+    isEquipped(item: IDataAllItem): boolean;
+    discardEquip(item: IDataEquipItem): void;
     releaseUnequippableItems(forcing: boolean): void;
     clearEquipments(): void;
     optimizeEquipments(): void;
-    bestEquipItem(slotId: number): any; // TODO
-    calcEquipItemPerformance(item: any): number; // TODO
-    isSkillWtypeOk(skill: any): boolean; // TODO
+    bestEquipItem(slotId: number): IDataEquipItem;
+    calcEquipItemPerformance(item: IDataEquipItem): number;
+    isSkillWtypeOk(skill: IDataSkill): boolean;
     isWtypeEquipped(wtypeId: number): boolean;
     refresh(): void;
     isActor(): boolean;
@@ -2532,16 +2541,16 @@ declare class Game_Actor extends Game_Battler
     index(): number;
     isBattleMember(): boolean;
     isFormationChangeOk(): boolean;
-    currentClass(): any; // TODO
-    isClass(gameClass: any): boolean; // TODO
-    skills(): any[]; // TODO
-    usableSkills(): any[]; // TODO
-    traitObjects(): any[]; // TODO
-    attackElements(): any[]; // TODO
+    currentClass(): IDataClass;
+    isClass(gameClass: IDataClass): boolean;
+    skills(): IDataSkill[];
+    usableSkills(): IDataSkill[];
+    traitObjects(): IDataState[];
+    attackElements(): number[];
     hasNoWeapons(): boolean;
     bareHandsElementId(): number;
     paramMax(paramId: number): number;
-    paramBase(paramId: number): any; // TODO
+    paramBase(paramId: number): number;
     paramPlus(paramId: number): number;
     attackAnimationId1(): number;
     attackAnimationId2(): number;
@@ -2549,8 +2558,8 @@ declare class Game_Actor extends Game_Battler
     changeExp(exp: number, show: boolean): void;
     levelUp(): void;
     levelDown(): void;
-    findNewSkills(lastSkills: any[]): any; // TODO
-    displayLevelUp(newSkills: any[]): void; // TODO
+    findNewSkills(lastSkills: IDataSkill[]): IDataSkill[];
+    displayLevelUp(newSkills: IDataSkill[]): void;
     gainExp(exp: number): void;
     finalExpRate(): number;
     benchMembersExpRate(): number;
@@ -2564,9 +2573,9 @@ declare class Game_Actor extends Game_Battler
     setFaceImage(faceName: string, faceIndex: number): void;
     setBattlerImage(battlerName: string): void;
     isSpriteVisible(): boolean;
-    startAnimation(animationId: number, mirror: any, delay: number): void; // TODO
-    performActionStart(aciton: any): void; // TODO
-    performAction(aciton: any): void; // TODO
+    startAnimation(animationId: number, mirror: boolean, delay: number): void;
+    performActionStart(aciton: Game_Action): void;
+    performAction(aciton: Game_Action): void;
     performActionEnd(): void;
     performAttack(): void;
     performDamage(): void;
@@ -2576,12 +2585,12 @@ declare class Game_Actor extends Game_Battler
     performCollapse(): void;
     performVictory(): void;
     performEscape(): void;
-    makeActionList(): any[]; // TODO
+    makeActionList(): Game_Action[];
     makeAutoBattleActions(): void;
     makeConfusionActions(): void;
     makeActions(): void;
     onPlayerWalk(): void;
-    updateStateSteps(state: any): void; // TODO
+    updateStateSteps(state: IDataState): void;
     showAddedStates(): void;
     showRemovedStates(): void;
     stepsForTurn(): number;
@@ -2592,15 +2601,15 @@ declare class Game_Actor extends Game_Battler
     maxFloorDamage(): number;
     performMapDamage(): void;
     clearActions(): void;
-    inputtingAction(): any; // TODO
+    inputtingAction(): Game_Action;
     selectNextCommand(): boolean;
     selectPreviousCommand(): boolean;
-    lastMenuSkill(): any; // TODO
-    setLastMenuSkill(skill: any): void; // TODO
-    lastBattleSkill(): any; // TODO
-    setLastBattleSkill(skill: any): void; // TODO
-    lastCommandSymbol(): any; // TODO
-    setLastCommandSymbol(symbol: any): void; // TODO
+    lastMenuSkill(): IDataSkill;
+    setLastMenuSkill(skill: IDataSkill): void;
+    lastBattleSkill(): IDataSkill;
+    setLastBattleSkill(skill: IDataSkill): void;
+    lastCommandSymbol(): string;
+    setLastCommandSymbol(symbol: string): void;
 }
 
 declare class Game_Enemy extends Game_Battler
@@ -2615,40 +2624,40 @@ declare class Game_Enemy extends Game_Battler
     index(): number;
     isBattleMember(): boolean;
     enemyId(): number;
-    enemy(): any; // TODO
-    traitObjects(): any; // TODO
-    paramBase(paramId: number): any; // TODO
+    enemy(): IDataEnemy;
+    traitObjects(): IDataState[];
+    paramBase(paramId: number): number;
     exp(): number;
     gold(): number;
-    makeDropItems(): any; // TODO
+    makeDropItems(): IDataAllItem[];
     dropItemRate(): number;
-    itemObject(kind: number, dataId: number): any; // TODO
+    itemObject(kind: number, dataId: number): IDataAllItem;
     isSpriteVisible(): boolean;
     screenX(): number;
     screenY(): number;
     battlerName(): string;
-    battlerHue(): any; // TODO
+    battlerHue(): number;
     originalName(): string;
     name(): string;
     isLetterEmpty(): string;
     setLetter(letter: string): void;
     setPlural(plural: string): void;
-    performActionStart(action: any): void; // TODO
-    performAction(action: any): void; // TODO
+    performActionStart(action: Game_Action): void;
+    performAction(action: Game_Action): void;
     performActionEnd(): void;
     performDamage(): void;
     performCollapse(): void;
     transform(enemyId: number): void;
-    meetsCondition(action: any): boolean; // TODO
-    meetsTurnCondition(param1: any, param2: any): boolean; // TODO
-    meetsHpCondition(param1: any, param2: any): boolean; // TODO
-    meetsMpCondition(param1: any, param2: any): boolean; // TODO
-    meetsStateCondition(param: any): boolean; // TODO
-    meetsPartyLevelCondition(param: any): boolean; // TODO
-    meetsSwitchCondition(param: any): boolean; // TODO
-    isActionValid(action: any): boolean;
-    selectAction(actionList: any[], ratingZero: number): any; // TODO
-    selectAllActions(actionList: any[]): void;
+    meetsCondition(action: IDataAction): boolean;
+    meetsTurnCondition(param1: number, param2: number): boolean;
+    meetsHpCondition(param1: number, param2: number): boolean;
+    meetsMpCondition(param1: number, param2: number): boolean;
+    meetsStateCondition(param: number): boolean;
+    meetsPartyLevelCondition(param: number): boolean;
+    meetsSwitchCondition(param: number): boolean;
+    isActionValid(action: IDataAction): boolean;
+    selectAction(actionList: IDataAction[], ratingZero: number): IDataAction;
+    selectAllActions(actionList: IDataAction[]): void;
     makeActions(): void;
 }
 
@@ -2664,24 +2673,24 @@ declare class Game_Unit
     constructor();
     initialize(): void;
     inBattle(): boolean;
-    members(): any[]; // TODO
-    aliveMembers(): any[]; // TODO
-    deadMembers(): any[]; // TODO
-    movableMembers(): any[]; // TODO
-    clearActions(): any[]; // TODO
+    members(): Game_Battler[];
+    aliveMembers(): Game_Battler[];
+    deadMembers(): Game_Battler[];
+    movableMembers(): Game_Battler[];
+    clearActions(): void;
     agility(): number;
     tgrSum(): number;
-    randomTarget(): any; // TODO
-    randomDeadTarget(): any; // TODO
-    smoothTarget(): any; // TODO
-    smoothDeadTarget(): any; // TODO
+    randomTarget(): Game_Battler;
+    randomDeadTarget(): Game_Battler;
+    smoothTarget(): Game_Battler;
+    smoothDeadTarget(): Game_Battler;
     clearResults(): void;
     onBattleStart(): void;
     onBattleEnd(): void;
     makeActions(): void;
     select(): void;
     isAllDead(): boolean;
-    substituteBattler(): any; // TODO
+    substituteBattler(): Game_Battler;
 }
 
 declare class Game_Party extends Game_Unit
@@ -2789,7 +2798,7 @@ declare class Game_Troop extends Game_Unit
 }
 
 declare class Game_Map
-{4
+{
     constructor();
     initialize(): void;
     setup(mapId: number): void;
@@ -2906,8 +2915,8 @@ declare class Game_CommonEvent
 {
     constructor(commonEventId: number);
     initialize(commonEventId: number): void;
-    event(): any; // TODO
-    list(): any; // TODO
+    event(): IDataCommonEvent;
+    list(): IDataList;
     refresh(): void;
     isActive(): boolean;
     update(): void;
@@ -2952,7 +2961,7 @@ declare class Game_CharacterBase
     isCollidedWithEvents(x: number, y: number): boolean;
     isCollidedWithVehicles(x: number, y: number): boolean;
     setPosition(x: number, y: number): void;
-    copyPosition(character: any): void; // TODO
+    copyPosition(character: Game_CharacterBase): void;
     locate(x: number, y: number): void;
     direction(): number;
     setDirection(d: number): void;
@@ -2964,7 +2973,7 @@ declare class Game_CharacterBase
     screenX(): number;
     screenY(): number;
     screenZ(): number;
-    isNearTheScreen: boolean;
+    isNearTheScreen(): boolean;
     update(): void;
     updateStop(): void;
     updateJump(): void;
@@ -3073,18 +3082,18 @@ declare class Game_Character extends Game_CharacterBase
     memorizeMoveRoute(); void;
     restoreMoveRoute(): void;
     isMoveRouteForcing(): boolean;
-    setMoveRoute(moveRoute: any): void; // TODO
-    forceMoveRoute(moveRoute: any): void; // TODO
+    setMoveRoute(moveRoute: IDataMoveRoute): void;
+    forceMoveRoute(moveRoute: IDataMoveRoute): void;
     updateStop(): void;
     updateRoutineMove(): void;
-    processMoveCommand(command: any): void // TODO
+    processMoveCommand(command: IDataMoveRouteCommand): void
     deltaXFrom(x: number): number;
     deltaYFrom(y: number): number;
     moveRandom(): void;
-    moveTowardCharacter(character: any): void; // TODO
-    moveAwayFromCharacter(character: any): void; // TODO
-    turnTowardCharacter(character: any): void; // TODO
-    turnAwayFromCharacter(character: any): void; // TODO
+    moveTowardCharacter(character: Game_CharacterBase): void;
+    moveAwayFromCharacter(character: Game_CharacterBase): void;
+    turnTowardCharacter(character: Game_CharacterBase): void;
+    turnAwayFromCharacter(character: Game_CharacterBase): void;
     turnTowardPlayer(): void;
     turnAwayFromPlayer(): void;
     moveTowardPlayer(): void;
@@ -3117,7 +3126,7 @@ declare class Game_Player extends Game_Character
     fadeType(): number;
     performTransfer(): void;
     isMapPassable(x: number, y: number, d: number): boolean;
-    vehicle(): any; // TODO
+    vehicle(): IVehicle;
     isInBoat(): boolean;
     isInShip(): boolean;
     isInAirship(): boolean;
@@ -3133,12 +3142,12 @@ declare class Game_Player extends Game_Character
     increaseSteps(): void;
     makeEncounterCount(): void;
     makeEncounterTroopId(): number;
-    meetsEncounterConditions(encounter: any): boolean; // TODO
+    meetsEncounterConditions(encounter: IDataEncounterList): boolean;
     executeEncounter(): boolean;
     startMapEvent(x: number, y: number, triggers: number[], normal: boolean): void;
     moveByInput(): void;
     canMove(): boolean;
-    getInputDirection(): number; // TODO 要検証
+    getInputDirection(): number;
     executeMove(direction: number): void;
     update(): void;
     update(sceneActive: boolean): void;
@@ -3182,10 +3191,10 @@ declare class Game_Follower extends Game_Character
 {
     initialize(): void;
     refresh(): void;
-    actor(): any; // TODO
+    actor(): Game_Actor;
     isVisible(): boolean;
     update(): void;
-    chaseCharacter(character: any): void; // TODO
+    chaseCharacter(character: Game_CharacterBase): void;
 }
 
 declare class Game_Followers extends Game_Character
@@ -3227,7 +3236,7 @@ declare class Game_Vehicle extends Game_Character
     isMapPassable(x: number, y: number, d: number): boolean;
     getOn(): void;
     getOff(): void;
-    setBgm(bgm: any): void; // TODO
+    setBgm(bgm: IAudioObject): void;
     playBgm(): void;
     syncWithPlayer(): void;
     screenY(): number;
@@ -3251,9 +3260,9 @@ declare class Game_Event extends Game_Character
     initialize(mapId: number, eventId: number): void;
     initMembers(): void;
     eventId(): number;
-    event(): any; // TODO
-    page(): any; // TODO
-    list(): any; // TODO
+    event(): IDataMapEvent;
+    page(): IDataMapEventPage;
+    list(): IDataMapEventPageList;
     isCollidedWithCharacters(): boolean;
     isCollidedWithEvents(): boolean;
     isCollidedWithPlayerCharacters(): boolean;
@@ -3285,7 +3294,7 @@ declare class Game_Event extends Game_Character
     update(): void;
     updateParallel(): void;
     locate(x: number, y: number): void;
-    forceMoveRoute(moveRoute: any): void; // TODO
+    forceMoveRoute(moveRoute: IDataMoveRoute): void;
 }
 
 declare class Game_Interpreter
@@ -3294,7 +3303,7 @@ declare class Game_Interpreter
     initialize(depth: number): void;
     checkOverflow(): void;
     clear(): void;
-    setup(list: any, eventId: number): void;
+    setup(list: IDataMapEventPageList[], eventId: number): void;
     eventId(): number;
     isOnCurrentMap(): boolean;
     setupReservedCommonEvent(): boolean;
@@ -3311,25 +3320,25 @@ declare class Game_Interpreter
     checkFreeze(): boolean;
     terminate(): void;
     skipBranch(): void;
-    currentCommand(): any;
+    currentCommand(): IDataMapEventPageList;
     nextEventCode(): number;
-    iterateActorId(param: any, callback: Function): void;
-    iterateActorIdEx(param1: any, param2: any, callback: Function): void;
-    iterateActorIndex(param: any, callback: Function): void;
-    iterateEnemyIndex(param: any, callback: Function): void;
-    iterateBattler(param1: any, param2: any, callback: Function): void;
-    character(param: any): any; // TODO
+    iterateActorId(param: number, callback: Function): void;
+    iterateActorEx(param1: number, param2: number, callback: Function): void;
+    iterateActorIndex(param: number, callback: Function): void;
+    iterateEnemyIndex(param: number, callback: Function): void;
+    iterateBattler(param1: number, param2: number, callback: Function): void;
+    character(param: number): Game_Character;
     operateValue(operation: number, operandType: number, operand: number): number;
-    changeHp(target: any, value: number, allowDeath: boolean): void; // TODO
+    changeHp(target: Game_Battler, value: number, allowDeath: boolean): void;
     command101(): boolean;
     command102(): boolean;
-    setupChoices(params: any): void;
+    setupChoices(params: (number|string)[]): void;
     command402(): boolean;
     command403(): boolean;
     command103(): boolean;
-    setupNumInput(params: any): void;
+    setupNumInput(params: (number|string)[]): void;
     command104(): boolean;
-    setupItemChoice(params: any): void;
+    setupItemChoice(params: (number|string)[]): void;
     command105(): boolean;
     command108(): boolean;
     command111(): boolean;
@@ -3339,13 +3348,13 @@ declare class Game_Interpreter
     command113(): boolean;
     command115(): boolean;
     command117(): boolean;
-    setupChild(list: any, eventId: number): void;
+    setupChild(list: IDataMapEventPageList[], eventId: number): void;
     command118(): boolean;
     command119(): boolean;
     jumpTo(index: number): void;
     command121(): boolean;
     command122(): boolean;
-    gameDataOperand(type: number, param1: any, param2: any): number;
+    gameDataOperand(type: number, param1: number, param2: number): number;
     operateVariable(variableId: number, operationType: number, value: number): void;
     command123(): boolean;
     command124(): boolean;
@@ -3456,7 +3465,7 @@ declare class Scene_Base extends Stage
     isBusy(): boolean;
     terminate(): void;
     createWindowLayer(): void;
-    addWindow(window: any): void; // TODO
+    addWindow(window: Window_Base): void;
     startFadeIn(duration: number, white: boolean): void;
     startFadeOut(duration: number, white: boolean): void;
     createFadeSprite(white: boolean): void;
@@ -3495,7 +3504,7 @@ declare class Scene_Title extends Scene_Base
     createBackground(): void;
     createForeground(): void;
     drawGameTitle(): void;
-    centerSprite(sprite: any): void; // TODO
+    centerSprite(sprite: Sprite_Base): void;
     createCommandWindow(): void;
     commandNewGame(): void;
     commandContinue(): void;
@@ -3554,7 +3563,7 @@ declare class Scene_MenuBase extends Scene_Base
 {
     initialize(): void;
     create(): void;
-    actor(): any; // TODO
+    actor(): Game_Actor;
     updateActor(): void;
     createBackground(): void;
     setBackgroundOpacity(opacity: number): void;
@@ -3589,11 +3598,11 @@ declare class Scene_ItemBase extends Scene_MenuBase
     initialize(): void;
     create(): void;
     createActorWindow(): void;
-    item(): any; // TODO
-    user(): any; // TODO
+    item(): IDataAllItem;
+    user(): Game_Actor;
     isCursorLeft(): boolean;
-    showSubWindow(window: any): void; // TODO
-    hideSubWindow(window: any): void; // TODO
+    showSubWindow(window: Window_Base): void;
+    hideSubWindow(window: Window_Base): void;
     onActorOk(): void;
     onActorCancel(): void;
     determineItem(): void;
@@ -3612,7 +3621,7 @@ declare class Scene_Item extends Scene_ItemBase
     create(): void;
     createCategoryWindow(): void;
     createItemWindow(): void;
-    user(): any; // TODO
+    user(): Game_Actor;
     onCategoryOk(): void;
     onItemOk(): void;
     onItemCancel(): void;
@@ -3628,7 +3637,7 @@ declare class Scene_Skill extends Scene_ItemBase
     createStatusWindow(): void;
     createItemWindow(): void;
     refreshActor(): void;
-    user(): any; // TODO
+    user(): Game_Actor;
     commandSkill(): void;
     onItemOk(): void;
     onItemCancel(): void;
@@ -3724,7 +3733,7 @@ declare class Scene_GameEnd extends Scene_MenuBase
 declare class Scene_Shop extends Scene_MenuBase
 {
     initialize(): void;
-    prepare(goods: any, purchaseOnly: boolean): void; // TODO
+    prepare(goods: number[][], purchaseOnly: boolean): void; // TODO
     create(): void;
     createGoldWindow(): void;
     createCommandWindow(): void;
@@ -3856,7 +3865,7 @@ declare class Sprite_Base extends Sprite
     show(): void;
     updateVisibility(): void;
     updateAnimationSprites(): void;
-    startAnimation(animation: any, mirror: any, delay: number): void; // TODO
+    startAnimation(animation: IDataAnimation, mirror: boolean, delay: number): void;
     isAnimationPlaying(): boolean;
 }
 
@@ -3878,14 +3887,14 @@ declare class Sprite_Button extends Sprite
 
 declare class Sprite_Character extends Sprite_Base
 {
-    initialize(): void; // TODO
-    initialize(character: any): void; // TODO
+    initialize(): void;
+    initialize(character: Game_CharacterBase): void;
     initMembers(): void;
-    setCharacter(character: any): void; // TODO
+    setCharacter(character: Game_CharacterBase): void;
     update(): void;
     updateVisibility(): void;
     isTile(): boolean;
-    tilesetBitmap(tileId: number): any; // TODO
+    tilesetBitmap(tileId: number): Bitmap;
     updateBitmap(): void;
     isImageChanged(): boolean;
     setTileBitmap(): void;
@@ -3915,9 +3924,9 @@ declare class Sprite_Character extends Sprite_Base
 declare class Sprite_Battler extends Sprite_Base
 {
     initialize(): void;
-    initialize(battler: any): void; // TODO
+    initialize(battler: Game_Battler): void;
     initMembers(): void;
-    setBattler(battler: any): void; // TODO
+    setBattler(battler: Game_Battler): void;
     setHome(x: number, y: number): void;
     update(): void;
     updateVisibility(): void;
@@ -3945,13 +3954,13 @@ declare class Sprite_Actor extends Sprite_Battler
     static MOTIONS: { [key: string]: { index: number, loop: boolean } };
 
     initialize(): void;
-    initialize(battler: any): void; // TODO
+    initialize(battler: Game_Actor): void;
     initMembers(): void;
     createMainSprite(): void;
     createShadowSprite(): void;
     createWeaponSprite(): void;
     createStateSprite(): void;
-    setBattler(battler: any): void; // TODO
+    setBattler(battler: Game_Actor): void;
     moveToStartPosition(): void;
     setActorHome(index: number): void;
     update(): void;
@@ -3980,10 +3989,10 @@ declare class Sprite_Actor extends Sprite_Battler
 declare class Sprite_Enemy extends Sprite_Battler
 {
     initialize(): void;
-    initialize(battler: any): void; // TODO
+    initialize(battler: Game_Enemy): void;
     initMembers(): void;
     createStateIconSprite(): void;
-    setBattler(battler: any): void; // TODO
+    setBattler(battler: Game_Enemy): void;
     update(): void;
     updateBitmap(): void;
     loadBitmap(name: string, hue: number): void;
@@ -4018,7 +4027,7 @@ declare class Sprite_Animation extends Sprite
 {
     initialize(): void;
     initMembers(): void;
-    setup(target: any, animation: any, mirror: any, delay: number): void; // TODO
+    setup(target: any, animation: IDataAnimation, mirror: boolean, delay: number): void;
     remove(): void;
     setupRate(): void;
     setupDuration(): void;
@@ -4038,12 +4047,12 @@ declare class Sprite_Animation extends Sprite
     updatePosition(): void;
     updateFrame(): void;
     currentFrameIndex(): void;
-    updateAllCellSprites(frame: any): void; // TODO
-    updateCellSprite(sprite: any, cell: any): void; // TODO
-    processTimingData(timing: any): void;
-    startFlash(color: any, duration: number): void; // TODO
-    startScreenFlash(color: any, duration: number): void; // TODO
-    startHiding(duration: number): void; // TODO
+    updateAllCellSprites(frame: number[][]): void;
+    updateCellSprite(sprite: Sprite, cell: number[]): void;
+    processTimingData(timing: IDataAnimationTiming): void;
+    startFlash(color: number[], duration: number): void;
+    startScreenFlash(color: number[], duration: number): void;
+    startHiding(duration: number): void;
 }
 
 declare class Sprite_Damage extends Sprite
@@ -5024,7 +5033,7 @@ declare class Window_MapName extends Window_Base
 declare class Window_BattleLog extends Window_Selectable
 {
     initialize(): void;
-    setSpriteset(spriteset: any): void; // TODO
+    setSpriteset(spriteset: Spriteset_Battle): void;
     windowWidth(): number;
     windowHeight(): number;
     maxLines(): number;
@@ -5049,24 +5058,24 @@ declare class Window_BattleLog extends Window_Selectable
     pushBaseLine(): void;
     popBaseLine(): void;
     waitForNewLine(): void;
-    popupDamage(target: any): void; // TODO
-    performActionStart(subject: any, action: any): void; // TODO
-    performAction(subject: any, action: any): void; // TODO
-    performActionEnd(subject: any): void; // TODO
-    performDamage(target: any): void; // TODO
-    performMiss(target: any): void; // TODO
-    performRecovery(target: any): void; // TODO
-    performEvasion(target: any): void; // TODO
-    performMagicEvasion(target: any): void; // TODO
-    performCounter(target: any): void; // TODO
-    performReflection(target: any): void; // TODO
-    performSubstitute(substitute, target: any): void; // TODO
-    performCollapse(target: any): void; // TODO
-    showAnimation(subject: any, targets: any, animationId: number): void; // TODO
-    showAttackAnimation(subject: any, targets: any): void; // TODO
-    showActorAttackAnimation(subject: any, targets: any): void; // TODO
-    showEnemyAttackAnimation(subject: any, targets: any): void; // TODO
-    showNormalAnimation(targets: any, animationId: number, mirror: any): void; // TODO
+    popupDamage(target: Game_Battler): void;
+    performActionStart(subject: Game_Battler, action: Game_Action): void;
+    performAction(subject: Game_Battler, action: Game_Action): void;
+    performActionEnd(subject: Game_Battler): void;
+    performDamage(target: Game_Battler): void;
+    performMiss(target: Game_Battler): void;
+    performRecovery(target: Game_Battler): void;
+    performEvasion(target: Game_Battler): void;
+    performMagicEvasion(target: Game_Battler): void;
+    performCounter(target: Game_Battler): void;
+    performReflection(target: Game_Battler): void;
+    performSubstitute(substitute: Game_Battler, target: Game_Battler): void;
+    performCollapse(target: Game_Battler): void;
+    showAnimation(subject: Game_Battler, targets: Game_Battler[], animationId: number): void;
+    showAttackAnimation(subject: Game_Battler, targets: Game_Battler[]): void;
+    showActorAttackAnimation(subject: Game_Battler, targets: Game_Battler[]): void;
+    showEnemyAttackAnimation(subject: Game_Battler, targets: Game_Battler[]): void;
+    showNormalAnimation(targets: Game_Battler[], animationId: number, mirror: boolean): void;
     animationBaseDelay(): number;
     animationNextDelay(): number;
     refresh(): void;
@@ -5076,33 +5085,33 @@ declare class Window_BattleLog extends Window_Selectable
     backPaintOpacity(): number;
     drawLineText(index: number): void;
     startTurn(): void;
-    startAction(subject: any, action: any, targets: any): void; // TODO
-    endAction(subject: any): void; // TODO
-    displayCurrentState(subject: any): void; // TODO
-    displayRegeneration(subject: any): void; // TODO
-    displayAction(subject: any, item: any): void; // TODO
-    displayCounter(target: any): void; // TODO
-    displayReflection(target: any): void; // TODO
-    displaySubstitute(substitute: any, target: any): void; // TODO
-    displayActionResults(substitute: any, target: any): void; // TODO
-    displayFailure(target: any): void; // TODO
-    displayCritical(target: any): void; // TODO
-    displayDamage(target: any): void; // TODO
-    displayMiss(target: any): void; // TODO
-    displayEvasion(target: any): void; // TODO
-    displayHpDamage(target: any): void; // TODO
-    displayMpDamage(target: any): void; // TODO
-    displayTpDamage(target: any): void; // TODO
-    displayAffectedStatus(target: any): void; // TODO
-    displayAutoAffectedStatus(target: any): void; // TODO
-    displayChangedStates(target: any): void; // TODO
-    displayAddedStates(target: any): void; // TODO
-    displayRemovedStates(target: any): void; // TODO
-    displayChangedBuffs(target: any): void; // TODO
-    displayBuffs(target: any, buffs: any[], fmt: any): void; // TODO
-    makeHpDamageText(target: any): void; // TODO
-    makeMpDamageText(target: any): void; // TODO
-    makeTpDamageText(target: any): void; // TODO
+    startAction(subject: Game_Battler, action: Game_Action, targets: Game_Battler[]): void;
+    endAction(subject: Game_Battler): void;
+    displayCurrentState(subject: Game_Battler): void;
+    displayRegeneration(subject: Game_Battler): void;
+    displayAction(subject: Game_Battler, item: IDataItem): void;
+    displayCounter(target: Game_Battler): void;
+    displayReflection(target: Game_Battler): void;
+    displaySubstitute(substitute: Game_Battler, target: Game_Battler): void;
+    displayActionResults(substitute: Game_Battler, target: Game_Battler): void;
+    displayFailure(target: Game_Battler): void;
+    displayCritical(target: Game_Battler): void;
+    displayDamage(target: Game_Battler): void;
+    displayMiss(target: Game_Battler): void;
+    displayEvasion(target: Game_Battler): void;
+    displayHpDamage(target: Game_Battler): void;
+    displayMpDamage(target: Game_Battler): void;
+    displayTpDamage(target: Game_Battler): void;
+    displayAffectedStatus(target: Game_Battler): void;
+    displayAutoAffectedStatus(target: Game_Battler): void;
+    displayChangedStates(target: Game_Battler): void;
+    displayAddedStates(target: Game_Battler): void;
+    displayRemovedStates(target: Game_Battler): void;
+    displayChangedBuffs(target: Game_Battler): void;
+    displayBuffs(target: Game_Battler, buffs: any[], fmt: string): void;
+    makeHpDamageText(target: Game_Battler): void;
+    makeMpDamageText(target: Game_Battler): void;
+    makeTpDamageText(target: Game_Battler): void;
 }
 
 declare class Window_PartyCommand extends Window_Command
@@ -5124,7 +5133,7 @@ declare class Window_ActorCommand extends Window_Command
     addSkillCommands(): void;
     addGuardCommand(): void;
     addItemCommand(): void;
-    setup(actor: any): void; // TODO
+    setup(actor: Game_Actor): void;
     processOk(): void;
     selectLast(): void;
 }
@@ -5141,10 +5150,10 @@ declare class Window_BattleStatus extends Window_Selectable
     basicAreaRect(index: number): void;
     gaugeAreaRect(index: number): void;
     gaugeAreaWidth(): number;
-    drawBasicArea(rect: { x: number, y: number, width: number, height: number }, actor: any): void; // TODO
-    drawGaugeArea(rect: { x: number, y: number, width: number, height: number }, actor: any): void; // TODO
-    drawGaugeAreaWithTp(rect: { x: number, y: number, width: number, height: number }, actor: any): void; // TODO
-    drawGaugeAreaWithoutTp(rect: { x: number, y: number, width: number, height: number }, actor: any): void; // TODO
+    drawBasicArea(rect: { x: number, y: number, width: number, height: number }, actor: Game_Actor): void;
+    drawGaugeArea(rect: { x: number, y: number, width: number, height: number }, actor: Game_Actor): void;
+    drawGaugeAreaWithTp(rect: { x: number, y: number, width: number, height: number }, actor: Game_Actor): void;
+    drawGaugeAreaWithoutTp(rect: { x: number, y: number, width: number, height: number }, actor: Game_Actor): void;
 }
 
 declare class Window_BattleActor extends Window_BattleStatus
