@@ -243,6 +243,16 @@ declare namespace PIXI {
 
     }
 
+    export class CompositeRectTileLayer extends Container
+    {
+
+    }
+
+    export class RectTileLayer extends DisplayObject
+    {
+        
+    }
+
     //graphics
 
     export class GraphicsData {
@@ -1615,7 +1625,7 @@ declare namespace PIXI {
 
             name: string;
             texture: Texture;
-			textures: Texture[];
+            textures: Texture[];
             url: string;
             data: any;
             crossOrigin: string;

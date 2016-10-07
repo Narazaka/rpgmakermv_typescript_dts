@@ -415,15 +415,15 @@ declare class ShaderTilemap extends Tilemap
     protected _paintAllTiles(startX: number, startY: number): void;
     protected _paintTiles(startX: number, startY: number, x: number, y: number): void;
     protected _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawTile(layer: any[], tileId: number, dx: number, dy: number): void;
+    protected _drawTile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
     protected _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawNormalTile(layer: any[], tileId: number, dx: number, dy: number): void;
+    protected _drawNormalTile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
     protected _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawAutotile(layer: any[], tileId: number, dx: number, dy: number): void;
+    protected _drawAutotile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
     protected _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawTableEdge(layer: any[], tileId: number, dx: number, dy: number): void;
+    protected _drawTableEdge(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
     protected _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
-    protected _drawShadow(layer: any[], shadowBits: number, dx: number, dy: number): void;
+    protected _drawShadow(layer: PIXI.RectTileLayer, shadowBits: number, dx: number, dy: number): void;
 }
 
 declare class TilingSprite extends PIXI.extras.TilingSprite
@@ -517,7 +517,7 @@ declare class WindowLayer extends PIXI.Container
     update(): void;
     renderCanvas(renderer: PIXI.CanvasRenderer): void;
 
-    protected _canvasClearWindowRect(renderSession: any, window: Window): void;
+    protected _canvasClearWindowRect(renderSession: PIXI.CanvasRenderer, window: Window): void;
 
     renderWebGL(renderer: PIXI.WebGLRenderer): void;
 
@@ -673,10 +673,6 @@ declare class Html5Audio
     static _onLoad(): void;
     static _startGainTween(duration: number): void;
     static _applyTweenValue(volume: number): void;
-    static _encode(value: any, depth: number): any;
-    static _decode(value: any): any;
-    static _getConstructorName(value: any): any;
-    static _resetPrototype(value: any, prototype: any): any;
 }
 
 declare class JsonEx
@@ -687,6 +683,10 @@ declare class JsonEx
     static stringify(object: any): string;
     static parse(json: string): any;
     static makeDeepCopy(object: any): any;
+    static _encode(value: any, depth: number): any;
+    static _decode(value: any): any;
+    static _getConstructorName(value: any): any;
+    static _resetPrototype(value: any, prototype: any): any;
 }
 
 declare class Decrypter
@@ -1318,7 +1318,7 @@ declare class DataManager
     static setupBattleTest(): void;
     static setupEventTest(): void;
     static loadGlobalInfo(): void;
-    static saveGlobalInfo(info: any): void;
+    static saveGlobalInfo(info: ISavefileInfo[]): void;
     static isThisGameFile(savefileId: number): boolean;
     static isAnySavefileExists(): boolean;
     static latestSavefileId(): number;
@@ -1327,7 +1327,7 @@ declare class DataManager
     static maxSavefiles(): number;
     static saveGame(savefileId: number): boolean;
     static loadGame(savefileId: number): boolean;
-    static loadSavefileInfo(savefileId: number): boolean;
+    static loadSavefileInfo(savefileId: number): ISavefileInfo;
     static lastAccessedSavefileId(): number;
     static saveGameWithoutRescue(savefileId: number): boolean;
     static loadGameWithoutRescue(savefileId: number): boolean;
@@ -1482,7 +1482,7 @@ declare class AudioManager
     static fadeOutMe(duration: number): void;
     static stopMe(): void;
     static playSe(se: IDataSound): void;
-    static updateSeParameters(buffer: any, se: IDataSound): void;
+    static updateSeParameters(buffer: WebAudio | Html5Audio, se: IDataSound): void;
     static stopSe(): void;
     static playStaticSe(se: IDataSound): void;
     static loadStaticSe(se: IDataSound): void;
@@ -1540,7 +1540,7 @@ declare class TextManager
     static param(paramId: number): string;
     static command(commandId: number): string;
     static message(messageId: number): string;
-    static getter(method: Function, param: any): Function;
+    static getter(method: Function, param: number): Function;
 
     static currencyUnit: string;
     static level: string;
@@ -1755,8 +1755,8 @@ declare class BattleManager
     static invokeNormalAction(subject: Game_Battler, target: Game_Battler): void;
     static invokeCounterAttack(subject: Game_Battler, target: Game_Battler): void;
     static invokeMagicReflection(subject: Game_Battler, target: Game_Battler): void;
-    static applySubstitute(target: Game_Battler): any;
-    static checkSubstitute(target: Game_Battler): any;
+    static applySubstitute(target: Game_Battler): Game_Battler;
+    static checkSubstitute(target: Game_Battler): Game_Battler;
     static isActionForced(): boolean;
     static forceAction(battler: Game_Battler): void;
     static processForcedAction(): void;
@@ -1784,6 +1784,14 @@ declare class BattleManager
     static gainDropItems(): void;
 }
 
+declare interface IDataPlugin
+{
+    name: string;
+    status: boolean;
+    description: string;
+    parameters: PluginParameters;
+}
+
 declare type PluginParameters = { [key: string]: string; };
 
 declare class PluginManager
@@ -1795,7 +1803,7 @@ declare class PluginManager
     static _errorUrls: string[];
     static _parameters: PluginParameters;
 
-    static setup(plugins: any[]): void;
+    static setup(plugins: IDataPlugin[]): void;
     static checkErrors(): void;
     static parameters(name: string): PluginParameters;
     static setParameters(name: string, parameters: PluginParameters): void;
@@ -1904,7 +1912,7 @@ declare class Game_Message
     setFaceImage(faceName: string, faceIndex: number): void;
     setBackground(background: number): void;
     setPositionType(positionType: number): void;
-    setChoices(choices: any, defaultType: number, cancelType: number): void;
+    setChoices(choices: string[], defaultType: number, cancelType: number): void;
     setChoiceBackground(background: number): void;
     setChoicePositionType(positionType: number): void;
     setNumberInput(variableId: number, maxDigits: number): void;
@@ -3282,7 +3290,7 @@ declare class Game_Event extends Game_Character
     erase(): void;
     refresh(): void;
     findProperPageIndex(): number;
-    meetsConditions(page: any): boolean;
+    meetsConditions(page: IDataMapEventPage): boolean;
     setupPage(): void;
     clearPageSettings(): void;
     setupPageSettings(): void;
@@ -4027,7 +4035,7 @@ declare class Sprite_Animation extends Sprite
 {
     initialize(): void;
     initMembers(): void;
-    setup(target: any, animation: IDataAnimation, mirror: boolean, delay: number): void;
+    setup(target: Sprite_Base, animation: IDataAnimation, mirror: boolean, delay: number): void;
     remove(): void;
     setupRate(): void;
     setupDuration(): void;
@@ -4058,7 +4066,7 @@ declare class Sprite_Animation extends Sprite
 declare class Sprite_Damage extends Sprite
 {
     initialize(): void;
-    setup(target: any): void;
+    setup(target: Game_Battler): void;
     digitWidth(): number;
     digitHeight(): number;
     createMiss(): void;
@@ -4235,7 +4243,7 @@ declare class Spriteset_Battle extends Spriteset_Base
     isBusy(): boolean;
 }
 
-declare interface ITextMate
+declare interface ITextState
 {
     index: number;
     x: number;
@@ -4307,17 +4315,17 @@ declare class Window_Base extends Window
     convertEscapeCharacters(text: string): string;
     actorName(n: number): string;
     partyMemberName(n: number): string;
-    processCharacter(textState: ITextMate): void;
-    processNormalCharacter(textState: ITextMate): void;
-    processNewLine(textState: ITextMate): void;
-    processNewPage(textState: ITextMate): void;
-    obtainEscapeCode(textState: ITextMate): string;
-    obtainEscapeParam(textState: ITextMate): string;
-    processEscapeCharacter(code : string, textState: ITextMate): void;
-    processDrawIcon(iconIndex: number, textState: ITextMate): void;
+    processCharacter(textState: ITextState): void;
+    processNormalCharacter(textState: ITextState): void;
+    processNewLine(textState: ITextState): void;
+    processNewPage(textState: ITextState): void;
+    obtainEscapeCode(textState: ITextState): string;
+    obtainEscapeParam(textState: ITextState): string;
+    processEscapeCharacter(code : string, textState: ITextState): void;
+    processDrawIcon(iconIndex: number, textState: ITextState): void;
     makeFontBigger(): void;
     makeFontSmaller(): void;
-    calcTextHeight(textState: ITextMate, all: boolean): number;
+    calcTextHeight(textState: ITextState, all: boolean): number;
     drawIcon(iconIndex: number, x: number, y: number): void;
     drawFace(faceName: string, faceIndex: number, x: number, y: number, width: number, height: number): void;
     drawCharacter(characterName: string, characterIndex: number, x: number, y: number): void;
@@ -4339,7 +4347,7 @@ declare class Window_Base extends Window
     drawActorSimpleStatus(actor: Game_Actor, x: number, y: number, width: number): void;
     drawItemName(item: IDataAllItem, x: number, y: number, width: number): void;
     drawCurrencyValue(value: number, unit: string, x: number, y: number, width: number): void;
-    paramchangeTextColor(change: number): any;
+    paramchangeTextColor(change: number): string;
     setBackgroundType(type: number): void;
     showBackgroundDimmer(): void;
     hideBackgroundDimmer(): void;
@@ -4356,10 +4364,10 @@ declare class Window_Selectable extends Window_Base
     initialize();
     initialize(x: number, y: number, width: number, height: number): void;
     index(): number;
-    cursorFixed(): any; // TODO
-    setCursorFixed(cursorFixed: any): void; // TODO
-    cursorAll(): any; // TODO
-    setCursorAll(cursorAll: any): void; // TODO
+    cursorFixed(): boolean;
+    setCursorFixed(cursorFixed: boolean): void;
+    cursorAll(): boolean;
+    setCursorAll(cursorAll: boolean): void;
     maxCols(): number;
     maxItems(): number;
     spacing(): number;
@@ -4384,12 +4392,12 @@ declare class Window_Selectable extends Window_Base
     topIndex(): number;
     itemRect(index: number): Rectangle;
     itemRectForText(index: number): Rectangle;
-    setHelpWindow(helpWindow: any): void; // TODO
+    setHelpWindow(helpWindow: Window_Help): void;
     showHelpWindow(): void;
     hideHelpWindow(): void;
-    setHandler(symbol: any, method: Function): void;
-    isHandled(symbol: any): boolean;
-    callHandler(symbol: any): void;
+    setHandler(symbol: string, method: Function): void;
+    isHandled(symbol: string): boolean;
+    callHandler(symbol: string): void;
     isOpenAndActive(): boolean;
     isCursorMovable(): boolean;
     cursorDown(wrap: boolean): void;
@@ -4429,7 +4437,7 @@ declare class Window_Selectable extends Window_Base
     ensureCursorVisible(): void;
     callUpdateHelp(): void;
     updateHelp(): void;
-    setHelpWindowItem(item: any): void; // TODO
+    setHelpWindowItem(item: IDataAllItem): void;
     isCurrentItemEnabled(): boolean;
     drawAllItems(): void;
     drawItem(index: number): void;
@@ -4437,6 +4445,14 @@ declare class Window_Selectable extends Window_Base
     redrawItem(index: number): void;
     redrawCurrentItem(): void;
     refresh(): void;
+}
+
+declare class IDataCommandList
+{
+    name: string;
+    symbol: string;
+    enabled: boolean;
+    ext: number;
 }
 
 declare class Window_Command extends Window_Selectable
@@ -4449,18 +4465,18 @@ declare class Window_Command extends Window_Selectable
     maxItems(): number;
     clearCommandList(): void;
     makeCommandList(): void;
-    addCommand(name: string, symbol: any, enabled: boolean, ext: any): void; // TODO
+    addCommand(name: string, symbol: string, enabled: boolean, ext: number): void;
     commandName(index: number): string;
-    commandSymbol(index: number): any; // TODO
+    commandSymbol(index: number): string;
     isCommandEnabled(index: number): boolean;
-    currentData(): any; // TODO
+    currentData(): IDataCommandList;
     isCurrentItemEnabled(): boolean;
-    currentSymbol(): any; // TODO
-    currentExt(): any; // TODO
-    findSymbol(symbol: any): number; // TODO
-    selectSymbol(symbol: any): void;
-    findExt(ext: any): number; // TODO
-    selectExt(ext: any): void; // TODO
+    currentSymbol(): string;
+    currentExt(): number;
+    findSymbol(symbol: string): number;
+    selectSymbol(symbol: string): void;
+    findExt(ext: number): number;
+    selectExt(ext: number): void;
     drawItem(index: number): void;
     itemTextAlign(): string;
     isOkEnabled(): boolean;
@@ -4483,7 +4499,7 @@ declare class Window_Help extends Window_Base
     initialize(numLines: number): void;
     setText(text: string): void;
     clear(): void;
-    setItem(item: any): void; // TODO
+    setItem(item: IDataAllItem): void;
     refresh(): void;
 }
 
@@ -4496,7 +4512,6 @@ declare class Window_Gold extends Window_Base
     refresh(): void;
     value(): number;
     currencyUnit(): string;
-    open(): Window; // TODO lib.d.tsのWindowを参照してしまっている
     open(): void;
 }
 
@@ -4505,7 +4520,7 @@ declare class Window_MenuCommand extends Window_Command
     initialize(): void;
     initialize(x: number, y: number): void;
 
-    static _lastCommandSymbol: any; // TODO
+    static _lastCommandSymbol: string;
 
     static initCommandPosition(): void;
 
@@ -4545,8 +4560,8 @@ declare class Window_MenuStatus extends Window_Selectable
     processOk(): void;
     isCurrentItemEnabled(): boolean;
     selectLast(): void;
-    formationMode(): any; // TODO
-    setFormationMode(formationMode: any): void; // TODO
+    formationMode(): boolean;
+    setFormationMode(formationMode: boolean): void;
     pendingIndex(): number;
     setPendingIndex(index: number): void;
 }
@@ -4556,7 +4571,7 @@ declare class Window_MenuActor extends Window_MenuStatus
     initialize(): void;
     processOk(): void;
     selectLast(): void;
-    selectForItem(item: any): void; // TODO
+    selectForItem(item: IDataAllItem): void;
 }
 
 declare class Window_ItemCategory extends Window_HorzCommand
@@ -4566,27 +4581,26 @@ declare class Window_ItemCategory extends Window_HorzCommand
     maxCols(): number;
     update(): void;
     makeCommandList(): void;
-    setItemWindow(itemWindow: any): void; // TODO
+    setItemWindow(itemWindow: Window_ItemList): void;
 }
 
 declare class Window_ItemList extends Window_Selectable
 {
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
-    setCategory(category: any): void; // TODO
-    setCategory(): number;
+    setCategory(category: string): void;
     spacing(): number;
     maxItems(): number;
-    item(): any; // TODO
+    item(): IDataAllItem;
     isCurrentItemEnabled(): boolean;
-    includes(item: any): boolean; // TODO
+    includes(item: IDataAllItem): boolean;
     needsNumber(): number;
-    isEnabled(item: any): boolean; // TODO
+    isEnabled(item: IDataAllItem): boolean;
     makeItemList(): void;
     selectLast(): void;
     drawItem(index: number): void;
     numberWidth(): number;
-    drawItemNumber(item: any, x: number, y: number, width: number): void; // TODO
+    drawItemNumber(item: IDataAllItem, x: number, y: number, width: number): void;
     updateHelp(): void;
     refresh(): void;
 }
@@ -4596,11 +4610,11 @@ declare class Window_SkillType extends Window_Command
     initialize(): void;
     initialize(x: number, y: number): void;
     windowWidth(): number;
-    setActor(actor: any): void; // TODO
+    setActor(actor: Game_Actor): void;
     numVisibleRows(): number;
     makeCommandList(): void;
     update(): void;
-    setSkillWindow(skillWindow: any): void; // TODO
+    setSkillWindow(skillWindow: Window_SkillList): void;
     selectLast(): void;
 }
 
@@ -4608,7 +4622,7 @@ declare class Window_SkillStatus extends Window_Base
 {
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
-    setActor(actor: any): void; // TODO
+    setActor(actor: Game_Actor): void;
     refresh(): void;
 }
 
@@ -4616,20 +4630,20 @@ declare class Window_SkillList extends Window_Selectable
 {
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
-    setActor(actor: any): void; // TODO
+    setActor(actor: Game_Actor): void;
     setStypeId(stypeId: number): void;
     maxCols(): number;
     spacing(): number;
     maxItems(): number;
-    item(): any; // TODO
+    item(): IDataAllItem;
     isCurrentItemEnabled(): boolean;
-    includes(item: any): boolean; // TODO
-    isEnabled(item: any): boolean; // TODO
+    includes(item: IDataAllItem): boolean;
+    isEnabled(item: IDataAllItem): boolean;
     makeItemList(): void;
     selectLast(): void;
     drawItem(index: number): void;
     costWidth(): number;
-    drawSkillCost(skill: any, x: number, y: number, width: number): void; // TODO
+    drawSkillCost(skill: IDataSkill, x: number, y: number, width: number): void;
     updateHelp(): void;
     refresh(): void;
 }
@@ -4641,9 +4655,9 @@ declare class Window_EquipStatus extends Window_Base
     windowWidth(): number;
     windowHeight(): number;
     numVisibleRows(): number;
-    setActor(actor: any): void; // TODO
+    setActor(actor: Game_Actor): void;
     refresh(): void;
-    setTempActor(tempActor: any): void; // TODO
+    setTempActor(tempActor: Game_Actor): void;
     drawItem(x: number, y: number, paramId: number): void;
     drawParamName(x: number, y: number, paramId: number): void;
     drawCurrentParam(x: number, y: number, paramId: number): void;
@@ -4665,16 +4679,16 @@ declare class Window_EquipSlot extends Window_Selectable
 {
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
-    setActor(actor: any): void; // TODO
+    setActor(actor: Game_Actor): void;
     update(): void;
     maxItems(): number;
-    item(): any; // TODO
+    item(): IDataAllItem;
     drawItem(index: number): void;
     slotName(index: number): string;
     isEnabled(index: number): boolean;
     isCurrentItemEnabled(): boolean;
-    setStatusWindow(statusWindow: any): void; // TODO
-    setItemWindow(itemWindow: any): void; // TODO
+    setStatusWindow(statusWindow: Window_EquipStatus): void;
+    setItemWindow(itemWindow: Window_EquipItem): void;
     updateHelp(): void;
 }
 
@@ -4682,12 +4696,12 @@ declare class Window_EquipItem extends Window_ItemList
 {
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
-    setActor(actor: any): void; // TODO
+    setActor(actor: Game_Actor): void;
     setSlotId(slotId: number): void;
-    includes(item: any): boolean; // TODO
-    isEnabled(item: any): boolean; // TODO
+    includes(item: IDataAllItem): boolean;
+    isEnabled(item: IDataAllItem): boolean;
     selectLast(): void;
-    setStatusWindow(statusWindow: any): void; // TODO
+    setStatusWindow(statusWindow: Window_EquipStatus): void;
     updateHelp(): void;
     playOkSound(): void;
 }
@@ -4695,14 +4709,14 @@ declare class Window_EquipItem extends Window_ItemList
 declare class Window_Status extends Window_Selectable
 {
     initialize(): void;
-    setActor(actor: any): void; // TODO
+    setActor(actor: Game_Actor): void;
     refresh(): void;
     drawBlock1(y: number): void;
     drawBlock2(y: number): void;
     drawBlock3(y: number): void;
     drawBlock4(y: number): void;
     drawHorzLine(y: number): void;
-    lineColor(): any; // TODO
+    lineColor(): string;
     drawBasicInfo(x: number, y: number): void;
     drawParameters(x: number, y: number): void;
     drawExpInfo(x: number, y: number): void;
@@ -4723,32 +4737,32 @@ declare class Window_Options extends Window_Command
     drawItem(index: number): void;
     statusWidth(): number;
     statusText(index: number): string;
-    isVolumeSymbol(symbol: any): boolean;
+    isVolumeSymbol(symbol: string): boolean;
     booleanStatusText(value: number): string;
     volumeStatusText(value: number): string;
     processOk(): void;
-    cursorRight(wrap: any): void;
-    cursorLeft(wrap: any): void;
+    cursorRight(wrap: boolean): void;
+    cursorLeft(wrap: boolean): void;
     volumeOffset(): number;
-    changeValue(symbol: any, value: number): void; // TODO
-    getConfigValue(symbol: any): any; // TODO
-    setConfigValue(symbol: any, volume: number): void; // TODO
+    changeValue(symbol: string, value: number): void;
+    getConfigValue(symbol: string): number | boolean;
+    setConfigValue(symbol: string, volume: number | boolean): void;
 }
 
 declare class Window_SavefileList extends Window_Selectable
 {
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
-    setMode(mode: any): void; // TODO
+    setMode(mode: string): void;
     maxItems(): number;
     maxVisibleItems(): number;
     itemHeight(): number;
     drawItem(index: number): void;
     drawFileId(id: number, x: number, y: number): void;
-    drawContents(info: any, rect: Rectangle, valid: boolean): void; // TODO
-    drawGameTitle(info: any, x: number, y: number, width: number): void; // TODO
-    drawPartyCharacters(info: any, x: number, y: number): void;
-    drawPlaytime(info: any, x: number, y: number, width: number): void;
+    drawContents(info: ISavefileInfo, rect: Rectangle, valid: boolean): void;
+    drawGameTitle(info: ISavefileInfo, x: number, y: number, width: number): void;
+    drawPartyCharacters(info: ISavefileInfo, x: number, y: number): void;
+    drawPlaytime(info: ISavefileInfo, x: number, y: number, width: number): void;
     playOkSound(): void;
 }
 
@@ -4764,18 +4778,18 @@ declare class Window_ShopCommand extends Window_HorzCommand
 declare class Window_ShopBuy extends Window_Selectable
 {
     initialize(): void;
-    initialize(x: number, y: number, height: number, shopGoods: any): void; // TODO
+    initialize(x: number, y: number, height: number, shopGoods: number[][]): void;
     windowWidth(): number;
     maxItems(): number;
-    item(): any; // TODO
+    item(): IDataAllItem;
     setMoney(money: number): void;
     isCurrentItemEnabled(): boolean;
-    price(item: any): number; // TODO
-    isEnabled(item: any): boolean; // TODO
+    price(item: IDataAllItem): number;
+    isEnabled(item: IDataAllItem): boolean;
     refresh(): void;
     makeItemList(): void;
     drawItem(index: number): void;
-    setStatusWindow(statusWindow: any): void; // TODO
+    setStatusWindow(statusWindow: Window_EquipStatus): void;
     updateHelp(): void;
 }
 
@@ -4783,7 +4797,7 @@ declare class Window_ShopSell extends Window_ItemList
 {
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
-    isEnabled(item: any): boolean; // TODO
+    isEnabled(item: IDataAllItem): boolean;
 }
 
 declare class Window_ShopNumber extends Window_Selectable
@@ -4792,7 +4806,7 @@ declare class Window_ShopNumber extends Window_Selectable
     initialize(x: number, y: number, height: number): void;
     windowWidth(): number;
     number(): number;
-    setup(item: any, max: number, price: number): void;
+    setup(item: IDataAllItem, max: number, price: number): void;
     setCurrencyUnit(currencyUnit: string): void;
     createButtons(): void;
     placeButtons(): void;
@@ -4827,16 +4841,16 @@ declare class Window_ShopStatus extends Window_Base
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     refresh(): void;
-    setItem(item: any): void; // TODO
+    setItem(item: IDataAllItem): void;
     isEquipItem(): boolean;
     drawPossession(x: number, y: number): void;
     drawEquipInfo(x: number, y: number): void;
-    statusMembers(): any[]; // TODO
+    statusMembers(): Game_Actor[];
     pageSize(): number;
     maxPages(): number;
-    drawActorEquipInfo(x: number, y: number, actor: any): void; // TODO
-    drawActorParamChange(x: number, y: number, actor: any, item1: any): void; // TODO
-    currentEquippedItem(actor: any, etypeId: number): any; // TODO
+    drawActorEquipInfo(x: number, y: number, actor: Game_Actor): void;
+    drawActorParamChange(x: number, y: number, actor: Game_Actor, item1: IDataAllItem): void;
+    currentEquippedItem(actor: Game_Actor, etypeId: number): IDataAllItem;
     update(): void;
     updatePage(): void;
     isPageChangeEnabled(): boolean;
@@ -4848,7 +4862,7 @@ declare class Window_ShopStatus extends Window_Base
 declare class Window_NameEdit extends Window_Base
 {
     initialize(): void;
-    initialize(actor: any, maxLength: number): void; // TODO
+    initialize(actor: Game_Actor, maxLength: number): void;
     windowWidth(): number;
     windowHeight(): number;
     restoreDefault(): boolean;
@@ -4875,7 +4889,7 @@ declare class Window_NameInput extends Window_Selectable
     static JAPAN3: string[];
 
     initialize(): void;
-    initialize(editWindow: any): void; // any
+    initialize(editWindow: Window_NameEdit): void;
     windowHeight(): number;
     table(): string[][];
     maxCols(): number;
@@ -4908,7 +4922,7 @@ declare class Window_NameInput extends Window_Selectable
 declare class Window_ChoiceList extends Window_Command
 {
     initialize(): void;
-    initialize(messageWindow: any): void; // TODO
+    initialize(messageWindow: Window_Message): void;
     start(): void;
     selectDefault(): void;
     updatePlacement(): void;
@@ -4929,7 +4943,7 @@ declare class Window_ChoiceList extends Window_Command
 declare class Window_NumberInput extends Window_Selectable
 {
     initialize(): void;
-    initialize(messageWindow: any): void; // TODO
+    initialize(messageWindow: Window_Message): void;
     start(): void;
     updatePlacement(): void;
     windowWidth(): number;
@@ -4961,13 +4975,13 @@ declare class Window_NumberInput extends Window_Selectable
 declare class Window_EventItem extends Window_ItemList
 {
     initialize(): void;
-    initialize(messageWindow: any): void; // TODO
+    initialize(messageWindow: Window_Message): void;
     windowHeight(): number;
     numVisibleRows(): number;
     start(): void;
     updatePlacement(): void;
-    includes(item: any): boolean; // TODO
-    isEnabled(item: any): boolean;
+    includes(item: IDataAllItem): boolean;
+    isEnabled(item: IDataAllItem): boolean;
     onOk(): void;
     onCancel(): void;
 }
@@ -4976,7 +4990,7 @@ declare class Window_Message extends Window_Base
 {
     initialize(): void;
     initMembers(): void;
-    subWindows(): any[]; // TODO
+    subWindows(): Window_Base[];
     createSubWindows(): void;
     windowWidth(): number;
     windowHeight(): number;
@@ -4999,15 +5013,15 @@ declare class Window_Message extends Window_Base
     doesContinue(): boolean;
     areSettingsChanged(): boolean;
     updateShowFast(): void;
-    newPage(textState: any): void; // TODO
+    newPage(textState: ITextState): void;
     loadMessageFace(): void;
     drawMessageFace(): void;
     newLineX(): number;
-    processNewLine(textState: any): void; // TODO
-    processNewPage(textState: any): void; // TODO
-    isEndOfText(textState: any): boolean; // TODO
-    needsNewPage(textState: any): boolean; // TODO
-    processEscapeCharacter(code: string, textState: any): void; // TODO
+    processNewLine(textState: ITextState): void;
+    processNewPage(textState: ITextState): void;
+    isEndOfText(textState: ITextState): boolean;
+    needsNewPage(textState: ITextState): boolean;
+    processEscapeCharacter(code: string, textState: ITextState): void;
     startWait(count: number): void;
     startPause(): void;
 }
@@ -5118,7 +5132,7 @@ declare class Window_BattleLog extends Window_Selectable
     displayAddedStates(target: Game_Battler): void;
     displayRemovedStates(target: Game_Battler): void;
     displayChangedBuffs(target: Game_Battler): void;
-    displayBuffs(target: Game_Battler, buffs: any[], fmt: string): void;
+    displayBuffs(target: Game_Battler, buffs: number[], fmt: string): void;
     makeHpDamageText(target: Game_Battler): void;
     makeMpDamageText(target: Game_Battler): void;
     makeTpDamageText(target: Game_Battler): void;
