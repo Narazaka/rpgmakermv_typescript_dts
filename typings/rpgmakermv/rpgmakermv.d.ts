@@ -5122,9 +5122,9 @@ declare class Window_Base extends Window
     _closing: boolean;
     _dimmerSprite: Sprite;
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize();
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     lineHeight(): number;
     standardFontFace(): string;
     standardPadding(): number;
@@ -5236,9 +5236,9 @@ declare class Window_Selectable extends Window_Base
     downArrowVisible: boolean;
     upArrowVisible: boolean;
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize();
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     index(): number;
     cursorFixed(): boolean;
     setCursorFixed(cursorFixed: boolean): void;
@@ -5335,9 +5335,9 @@ declare class Window_Command extends Window_Selectable
 {
     _list: IDataCommandList[];
 
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     windowWidth(): number;
     windowHeight(): number;
     numVisibleRows(): number;
@@ -5365,9 +5365,9 @@ declare class Window_Command extends Window_Selectable
 
 declare class Window_HorzCommand extends Window_Command
 {
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     numVisibleRows(): number;
     maxCols(): number;
     itemTextAlign(): string;
@@ -5388,9 +5388,9 @@ declare class Window_Help extends Window_Base
 
 declare class Window_Gold extends Window_Base
 {
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     windowWidth(): number;
     windowHeight(): number;
     refresh(): void;
@@ -5405,9 +5405,9 @@ declare class Window_MenuCommand extends Window_Command
 
     static initCommandPosition(): void;
 
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     windowWidth(): number;
     numVisibleRows(): number;
     makeCommandList(): void;
@@ -5432,9 +5432,9 @@ declare class Window_MenuStatus extends Window_Selectable
     _formationMode: boolean;
     _pendingIndex: number;
 
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     windowWidth(): number;
     windowHeight(): number;
     maxItems(): number;
@@ -5481,9 +5481,9 @@ declare class Window_ItemList extends Window_Selectable
     _category: string;
     _data: IDataAllItem[];
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     setCategory(category: string): void;
     spacing(): number;
     maxItems(): number;
@@ -5506,9 +5506,9 @@ declare class Window_SkillType extends Window_Command
     _actor: Game_Actor;
     _skillWindow: Window_SkillList;
 
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     windowWidth(): number;
     setActor(actor: Game_Actor): void;
     numVisibleRows(): number;
@@ -5522,9 +5522,9 @@ declare class Window_SkillStatus extends Window_Base
 {
     _actor: Game_Actor;
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize();
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     setActor(actor: Game_Actor): void;
     refresh(): void;
 }
@@ -5535,9 +5535,9 @@ declare class Window_SkillList extends Window_Selectable
     _stypeId: number;
     _data: IDataAllItem[];
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize();
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     setActor(actor: Game_Actor): void;
     setStypeId(stypeId: number): void;
     maxCols(): number;
@@ -5561,9 +5561,9 @@ declare class Window_EquipStatus extends Window_Base
     _actor: Game_Actor;
     _tempActor: Game_Actor;
 
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize();
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     windowWidth(): number;
     windowHeight(): number;
     numVisibleRows(): number;
@@ -5581,9 +5581,9 @@ declare class Window_EquipCommand extends Window_HorzCommand
 {
     _windowWidth: number;
 
-    constructor(x: number, y: number, width: number);
+    constructor(x?: number, y?: number, width?: number);
     initialize();
-    initialize(x: number, y: number, width: number): void;
+    initialize(x?: number, y?: number, width?: number): void;
     windowWidth(): number;
     maxCols(): number;
     makeCommandList(): void;
@@ -5595,9 +5595,9 @@ declare class Window_EquipSlot extends Window_Selectable
     _itemWindow: Window_EquipItem;
     _statusWindow: Window_EquipStatus;
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     setActor(actor: Game_Actor): void;
     update(): void;
     maxItems(): number;
@@ -5617,9 +5617,9 @@ declare class Window_EquipItem extends Window_ItemList
     _slotId: number;
     _statusWindow: Window_EquipStatus;
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     setActor(actor: Game_Actor): void;
     setSlotId(slotId: number): void;
     includes(item: IDataAllItem): boolean;
@@ -5681,9 +5681,9 @@ declare class Window_SavefileList extends Window_Selectable
 {
     _mode: string;
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     setMode(mode: string): void;
     maxItems(): number;
     maxVisibleItems(): number;
@@ -5702,9 +5702,9 @@ declare class Window_ShopCommand extends Window_HorzCommand
     _windowWidth: number;
     _purchaseOnly: boolean;
 
-    constructor(width: number, purchaseOnly: boolean);
+    constructor(width?: number, purchaseOnly?: boolean);
     initialize(): void;
-    initialize(width: number, purchaseOnly: boolean): void;
+    initialize(width?: number, purchaseOnly?: boolean): void;
     windowWidth(): number;
     maxCols(): number;
     makeCommandList(): void;
@@ -5718,9 +5718,9 @@ declare class Window_ShopBuy extends Window_Selectable
     _price: number[];
     _statusWindow: Window_EquipStatus;
 
-    constructor(x: number, y: number, height: number, shopGoods: any[][]);
+    constructor(x?: number, y?: number, height?: number, shopGoods?: any[][]);
     initialize(): void;
-    initialize(x: number, y: number, height: number, shopGoods: any[][]): void;
+    initialize(x?: number, y?: number, height?: number, shopGoods?: any[][]): void;
     windowWidth(): number;
     maxItems(): number;
     item(): IDataAllItem;
@@ -5737,9 +5737,9 @@ declare class Window_ShopBuy extends Window_Selectable
 
 declare class Window_ShopSell extends Window_ItemList
 {
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     isEnabled(item: IDataAllItem): boolean;
 }
 
@@ -5752,9 +5752,9 @@ declare class Window_ShopNumber extends Window_Selectable
     _currencyUnit: string;
     _buttons: Sprite_Button[];
 
-    constructor(x: number, y: number, height: number);
+    constructor(x?: number, y?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, height: number): void;
+    initialize(x?: number, y?: number, height?: number): void;
     windowWidth(): number;
     number(): number;
     setup(item: IDataAllItem, max: number, price: number): void;
@@ -5792,9 +5792,9 @@ declare class Window_ShopStatus extends Window_Base
     _item: IDataAllItem;
     _pageIndex: number;
 
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     refresh(): void;
     setItem(item: IDataAllItem): void;
     isEquipItem(): boolean;
@@ -5822,9 +5822,9 @@ declare class Window_NameEdit extends Window_Base
     _maxLength: number;
     _defaultName: string;
 
-    constructor(actor: Game_Actor, maxLength: number);
+    constructor(actor?: Game_Actor, maxLength?: number);
     initialize(): void;
-    initialize(actor: Game_Actor, maxLength: number): void;
+    initialize(actor?: Game_Actor, maxLength?: number): void;
     windowWidth(): number;
     windowHeight(): number;
     restoreDefault(): boolean;
@@ -5854,9 +5854,9 @@ declare class Window_NameInput extends Window_Selectable
     _page: number;
     _index: number;
 
-    constructor(editWindow: Window_NameEdit);
+    constructor(editWindow?: Window_NameEdit);
     initialize(): void;
-    initialize(editWindow: Window_NameEdit): void;
+    initialize(editWindow?: Window_NameEdit): void;
     windowHeight(): number;
     table(): string[][];
     maxCols(): number;
@@ -5891,9 +5891,9 @@ declare class Window_ChoiceList extends Window_Command
     _messageWindow: Window_Message;
     _background: number;
 
-    constructor(messageWindow: Window_Message);
+    constructor(messageWindow?: Window_Message);
     initialize(): void;
-    initialize(messageWindow: Window_Message): void;
+    initialize(messageWindow?: Window_Message): void;
     start(): void;
     selectDefault(): void;
     updatePlacement(): void;
@@ -5918,9 +5918,9 @@ declare class Window_NumberInput extends Window_Selectable
     _maxDigits: number;
     _buttons: Sprite_Button[];
 
-    constructor(messageWindow: Window_Message);
+    constructor(messageWindow?: Window_Message);
     initialize(): void;
-    initialize(messageWindow: Window_Message): void;
+    initialize(messageWindow?: Window_Message): void;
     start(): void;
     updatePlacement(): void;
     windowWidth(): number;
@@ -5953,9 +5953,9 @@ declare class Window_EventItem extends Window_ItemList
 {
     _messageWindow: Window_Message;
 
-    constructor(messageWindow: Window_Message);
+    constructor(messageWindow?: Window_Message);
     initialize(): void;
-    initialize(messageWindow: Window_Message): void;
+    initialize(messageWindow?: Window_Message): void;
     windowHeight(): number;
     numVisibleRows(): number;
     start(): void;
@@ -6198,9 +6198,9 @@ declare class Window_BattleStatus extends Window_Selectable
 
 declare class Window_BattleActor extends Window_BattleStatus
 {
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     show(): void;
     hide(): void;
     select(index: number): void;
@@ -6211,9 +6211,9 @@ declare class Window_BattleEnemy extends Window_Selectable
 {
     _enemies: Game_Enemy[];
 
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     windowWidth(): number;
     windowHeight(): number;
     numVisibleRows(): number;
@@ -6230,18 +6230,18 @@ declare class Window_BattleEnemy extends Window_Selectable
 
 declare class Window_BattleSkill extends Window_SkillList
 {
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     show(): void;
     hide(): void;
 }
 
 declare class Window_BattleItem extends Window_ItemList
 {
-    constructor(x: number, y: number, width: number, height: number);
+    constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
     includes(item: IDataAllItem): boolean;
     show(): void;
     hide(): void;
@@ -6277,9 +6277,9 @@ declare class Window_DebugRange extends Window_Selectable
     _maxVariables: number;
     _editWindow: Window_DebugEdit;
 
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     initialize(): void;
-    initialize(x: number, y: number): void;
+    initialize(x?: number, y?: number): void;
     windowWidth(): number;
     windowHeight(): number;
     maxItems(): number;
@@ -6298,9 +6298,9 @@ declare class Window_DebugEdit extends Window_Selectable
     _mode: string;
     _topId: number;
 
-    constructor(x: number, y: number, width: number);
+    constructor(x?: number, y?: number, width?: number);
     initialize(): void;
-    initialize(x: number, y: number, width: number): void;
+    initialize(x?: number, y?: number, width?: number): void;
     maxItems(): number;
     refresh(): void;
     drawItem(index: number): void;
