@@ -45,16 +45,35 @@ declare class Utils
 
 declare class CacheEntry
 {
+    cache: CacheMap;
+    key: string;
+    item: Bitmap | Html5Audio | WebAudio;
+    cached: boolean;
+    touchTicks: number;
+    touchSeconds: number;
+    ttlTicks: number;
+    ttlSeconds: number;
+    freedByTTL: boolean;
+
     constructor(cache: CacheMap, key: string, item: Bitmap | Html5Audio | WebAudio);
-    free(byTTL: boolean): void;
+    free(byTTL?: boolean): void;
     allocate(): CacheEntry;
-    setTimeToLive(ticks: number, seconds: number): CacheEntry;
+    setTimeToLive(ticks?: number, seconds?: number): CacheEntry;
     isStillAlive(): boolean;
     touch(): void;
 }
 
 declare class CacheMap
 {
+    _inner: { [key: string]: CacheEntry };
+    _lastRemovedEntries:  CacheEntry[];
+
+    manager: typeof DataManager | typeof ConfigManager | typeof StorageManager | typeof ImageManager | typeof AudioManager | typeof SoundManager | typeof TextManager | typeof SceneManager | typeof BattleManager | typeof PluginManager;
+    updateTicks: number;
+    lastCheckTTL: number;
+    delayCheckTTL: number;
+    updateSeconds: number;
+
     constructor(manager: typeof DataManager | typeof ConfigManager | typeof StorageManager | typeof ImageManager | typeof AudioManager | typeof SoundManager | typeof TextManager | typeof SceneManager | typeof BattleManager | typeof PluginManager);
     checkTTL(): void;
     getItem(key: string): any;
@@ -65,27 +84,22 @@ declare class CacheMap
 
 declare class Point extends PIXI.Point
 {
-    initialize(x: number, y: number): void;
+    constructor(x?: number, y?: number);
+    initialize(x?: number, y?: number): void;
 }
 
 declare class Rectangle extends PIXI.Rectangle
 {
-    initialize(x: number, y: number, width: number, height: number): void;
-
     static emptyRectangle: Rectangle;
+
+    constructor(x?: number, y?: number, width?: number, height?: number);
+    initialize(x?: number, y?: number, width?: number, height?: number): void;
 }
 
 declare class Bitmap
 {
-    constructor(width: number, height: number);
-    initialize(width: number, height: number): void;
-    
     static load(url: string): Bitmap;
     static snap(stage: Stage): Bitmap;
-
-    isReady(): boolean;
-    isError(): boolean;
-    touch(): void;
     
     url: string;
     baseTexture: PIXI.BaseTexture;
@@ -96,10 +110,22 @@ declare class Bitmap
     rect: Rectangle;
     smooth: boolean;
     paintOpacity: number;
+    cacheEntry: CacheEntry;
+    fontFace: string;
+    fontSize: number;
+    fontItalic: boolean;
+    textColor: string;
+    outlineColor: string;
+    outlineWidth: number;
 
+    constructor(width?: number, height?: number);
+    initialize(width?: number, height?: number): void;
+    isReady(): boolean;
+    isError(): boolean;
+    touch(): void;
     resize(width: number, height: number): void;
-    blt(source: Bitmap, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number): void;
-    bltImage(source: Bitmap, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number): void;
+    blt(source: Bitmap, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw?: number, dh?: number): void;
+    bltImage(source: Bitmap, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw?: number, dh?: number): void;
     getPixel(x: number, y: number): string;
     getAlphaPixel(x: number, y: number): string;
     clearRect(x: number, y: number, width: number, height: number): void;
@@ -108,36 +134,50 @@ declare class Bitmap
     fillAll(color: string): void;
     gradientFillRect(x: number, y: number, width: number, height: number, color1: String, color2: string, vertical: boolean): void;
     drawCircle(x: number, y: number, radius: number, color: string): void;
-    drawText(text: string, x: number, y: number, maxWidth: number, lineHeight: number, align: string): void;
+    drawText(text: string, x: number, y: number, maxWidth?: number, lineHeight?: number, align?: string): void;
     measureTextWidth(text: string): number;
     adjustTone(r: number, g: number, b: number): void;
     rotateHue(offset: number): void;
     blur(): void;
     addLoadListener(listener: Function): void;
-
-    protected _makeFontNameText(): string;
-    protected _drawTextOutline(text: string, tx: number, ty: number, maxWidth: number): void;
-    protected _drawTextBody(text: string, tx: number, ty: number, maxWidth: number): void;
-    protected _onLoad(): void;
-    protected _callLoadListeners(): void;
-    protected _onError(): void;
-    protected _setDirty(): void;
-
     checkDirty(): void;
+
+    _canvas: HTMLCanvasElement;
+    _context: CanvasRenderingContext2D;
+    _baseTexture: PIXI.BaseTexture;
+    _image: HTMLImageElement;
+    _url: string;
+    _paintOpacity: number;
+    _smooth: boolean;
+    _loadListeners: Function[];
+    _isLoading: boolean;
+    _hasError: boolean;
+
+    _makeFontNameText(): string;
+    _drawTextOutline(text: string, tx: number, ty: number, maxWidth: number): void;
+    _drawTextBody(text: string, tx: number, ty: number, maxWidth: number): void;
+    _onLoad(): void;
+    _callLoadListeners(): void;
+    _onError(): void;
+    _setDirty(): void;
 }
 
 declare class Graphics
 {
     private constructor();
 
-    static initialize(width: number, height: number, type: string): void;
     static frameCount: number;
-
     static BLEND_NORMAL: number;
     static BLEND_ADD: number;
     static BLEND_MULTIPLY: number;
     static BLEND_SCREEN: number;
+    static width: number;
+    static height: number;
+    static boxWidth: number;
+    static boxHeight: number;
+    static scale: number;
 
+    static initialize(width?: number, height?: number, type?: string): void;
     static tickStart(): void;
     static tickEnd(): void;
     static render(stage: Stage): void;
@@ -161,11 +201,30 @@ declare class Graphics
     static isInsideCanvas(x: number, y: number): boolean;
     static callGC(): void;
 
-    static width: number;
-    static height: number;
-    static boxWidth: number;
-    static boxHeight: number;
-    static scale: number;
+    static _width: number;
+    static _height: number;
+    static _rendererType: string;
+    static _boxWidth: number;
+    static _boxHeight: number;
+    static _scale: number;
+    static _realScale: number;
+    static _errorPrinter: HTMLParagraphElement;
+    static _canvas: HTMLCanvasElement;
+    static _video: HTMLVideoElement;
+    static _upperCanvas: HTMLCanvasElement;
+    static _renderer: PIXI.SystemRenderer;
+    static _fpsMeter: any;
+    static _modeBox: HTMLDivElement;
+    static _skipCount: number;
+    static _maxSkip: number;
+    static _rendered: boolean;
+    static _loadingImage: HTMLImageElement;
+    static _loadingCount: number;
+    static _fpsMeterToggled: boolean;
+    static _stretchEnabled
+    static _canUseDifferenceBlend: boolean;
+    static _canUseSaturationBlend: boolean;
+    static _hiddenCanvas: HTMLCanvasElement;
 
     static _createAllElements(): void;
     static _updateAllElements(): void;
@@ -214,13 +273,12 @@ declare class Input
 {
     private constructor();
 
-    static initialize(): void;
-
     static keyRepeatWait: number;
     static keyRepeatInterval: number;
     static keyMapper: { [key: number]: string };
     static gamepadMapper: { [key: number]: string };
 
+    static initialize(): void;
     static clear(): void;
     static update(): void;
     static isPressed(keyName: string): boolean;
@@ -231,6 +289,16 @@ declare class Input
     static dir4: number;
     static dir8: number;
     static date: number;
+
+    static _currentState: { [key: string]: boolean };
+    static _previousState: { [key: string]: boolean };
+    static _gamepadStates: boolean[][];
+    static _latestButton: string;
+    static _pressedTime: number;
+    static _dir4: number;
+    static _dir8: number;
+    static _preferredAxis: string;
+    static _date: number
 
     static _wrapNwjsAlert(): void;
     static _setupEventHandlers(): void;
@@ -247,15 +315,24 @@ declare class Input
     static _isEscapeCompatible(keyName: string): boolean;
 }
 
+declare interface IDataTouchInput
+{
+    triggered: boolean;
+    cancelled: boolean;
+    moved: boolean;
+    released: boolean;
+    wheelX: number;
+    wheelY: number;
+}
+
 declare class TouchInput
 {
     private constructor();
 
-    static initialize(): void;
-
     static keyRepeatWait: number;
     static keyRepeatInterval: number;
 
+    static initialize(): void;
     static clear(): void;
     static update(): void;
     static isPressed(): boolean;
@@ -271,6 +348,19 @@ declare class TouchInput
     static x: number;
     static y: number;
     static date: number;
+    static _mousePressed: boolean;
+    static _screenPressed: boolean;
+    static _pressedTime: number;
+    static _events: IDataTouchInput;
+    static _triggered: boolean;
+    static _cancelled: boolean;
+    static _moved: boolean;
+    static _released: boolean;
+    static _wheelX: number;
+    static _wheelY: number;
+    static _x: number;
+    static _y: number;
+    static _date: number;
 
     static _setupEventHandlers(): void;
     static _onMouseDown(event: MouseEvent): void;
@@ -293,8 +383,6 @@ declare class TouchInput
 
 declare class Sprite extends PIXI.Sprite
 {
-    initialize(bitmap: Bitmap): void;
-
     static _counter: number;
 
     bitmap: Bitmap;
@@ -302,6 +390,8 @@ declare class Sprite extends PIXI.Sprite
     height: number;
     opacity: number;
 
+    constructor(bitmap?: Bitmap);
+    initialize(bitmap?: Bitmap): void;
     update(): void;
     move(x: number, y: number): void;
     setFrame(x: number, y: number, width: number, height: number): void;
@@ -309,33 +399,47 @@ declare class Sprite extends PIXI.Sprite
     setBlendColor(color: number[]): void;
     getColorTone(): number[];
     setColorTone(tone: number[]): void;
-
-    protected _onBitmapLoad(): void;
-    protected _refresh(): void;
-    protected _isInBitmapRect(x: number, y: number, w: number, h: number): boolean;
-    protected _needsTint(): boolean;
-    protected _createTinter(w: number, h: number): void;
-    protected _executeTint(x: number, y: number, w: number, h: number): void;
-
     updateTransform(): void;
 
-    protected _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
-    protected _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
+    _bitmap: Bitmap;
+    _frame: Rectangle;
+    _realFrame: Rectangle;
+    _offset: Point;
+    _blendColor: number[];
+    _colorTone: number[];
+    _canvas: HTMLCanvasElement;
+    _context: CanvasRenderingContext2D;
+    _tintTexture: PIXI.BaseTexture;
 
-    protected _renderCanvas(renderer: PIXI.CanvasRenderer): void;
-    protected _speedUpCustomBlendModes(renderer: PIXI.CanvasRenderer): void;
-    protected _renderWebGL(renderer: PIXI.WebGLRenderer): void;
+    _onBitmapLoad(): void;
+    _refresh(): void;
+    _isInBitmapRect(x: number, y: number, w: number, h: number): boolean;
+    _needsTint(): boolean;
+    _createTinter(w: number, h: number): void;
+    _executeTint(x: number, y: number, w: number, h: number): void;
+    _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
+    _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
+    _renderCanvas(renderer: PIXI.CanvasRenderer): void;
+    _speedUpCustomBlendModes(renderer: PIXI.CanvasRenderer): void;
+    _renderWebGL(renderer: PIXI.WebGLRenderer): void;
 }
 
 declare class Tilemap extends PIXI.Container
 {
-    initialize(): void;
-
     width: number;
     height: number;
     tileWidth: number;
     tileHeight: number;
-    
+    bitmaps: Bitmap[];
+    origin: Point;
+    flags: { [key: number]: boolean };
+    animationCount: number;
+    animationFrame: number;
+    horizontalWrap: boolean;
+    verticalWrap: boolean;
+
+    constructor();
+    initialize(): void;
     setData(width: number, height: number, data: number[]): void;
     isReady(): boolean;
     update(): void;
@@ -343,23 +447,44 @@ declare class Tilemap extends PIXI.Container
     refreshTileset(): void;
     updateTransform(): void;
 
-    protected _createLayers(): void;
-    protected _updateLayerPositions(startX: number, startY: number): void;
-    protected _paintAllTiles(startX: number, startY: number): void;
-    protected _paintTiles(startX: number, startY: number, x: number, y: number): void;
-    protected _readLastTiles(i: number, x: number, y: number): number[];
-    protected _writeLastTiles(i: number, x: number, y: number, tiles: number[]): void;
-    protected _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
-    protected _readMapData(x: number, y: number, z: number): number;
-    protected _isHigherTile(tileId: number): boolean;
-    protected _isTableTile(tileId: number): boolean;
-    protected _isOverpassPosition(mx: number, my: number): boolean;
-    protected _sortChildren(): void;
-    protected _compareChildOrder(a: Sprite, b: Sprite): number;
+    _margin: number;
+    _width: number;
+    _height: number;
+    _tileWidth: number;
+    _tileHeight: number;
+    _mapWidth: number;
+    _mapHeight: number;
+    _mapData: number[];
+    _layerWidth: number;
+    _layerHeight: number;
+    _lastTiles: number[][][][];
+    _needsRepaint: boolean;
+    _lastAnimationFrame: number;
+    _lastStartX: number;
+    _lastStartY: number;
+    _frameUpdated: boolean;
+    _lowerBitmap: Bitmap;
+    _upperBitmap: Bitmap;
+    _lowerLayer: Sprite;
+    _upperLayer: Sprite;
+
+    _createLayers(): void;
+    _updateLayerPositions(startX: number, startY: number): void;
+    _paintAllTiles(startX: number, startY: number): void;
+    _paintTiles(startX: number, startY: number, x: number, y: number): void;
+    _readLastTiles(i: number, x: number, y: number): number[];
+    _writeLastTiles(i: number, x: number, y: number, tiles: number[]): void;
+    _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
+    _readMapData(x: number, y: number, z: number): number;
+    _isHigherTile(tileId: number): boolean;
+    _isTableTile(tileId: number): boolean;
+    _isOverpassPosition(mx: number, my: number): boolean;
+    _sortChildren(): void;
+    _compareChildOrder(a: Sprite, b: Sprite): number;
 
     static TILE_ID_B: number;
     static TILE_ID_C: number;
@@ -394,7 +519,6 @@ declare class Tilemap extends PIXI.Container
     static isFloorTypeAutotile(tileId: number): boolean;
     static isWallTypeAutotile(tileId: number): boolean;
     static isWaterfallTypeAutotile(tileId: number): boolean;
-
     static FLOOR_AUTOTILE_TABLE: number[][][];
     static WALL_AUTOTILE_TABLE: number[][][];
     static WATERFALL_AUTOTILE_TABLE: number[][][];
@@ -402,73 +526,108 @@ declare class Tilemap extends PIXI.Container
 
 declare class ShaderTilemap extends Tilemap
 {
-    protected _hackRenderer(renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer): PIXI.WebGLRenderer | PIXI.CanvasRenderer;
+    roundPixels: boolean;
+    animationFrame: number;
+    lowerZLayer: any; // PIXI.tilemap.ZLayer;
+    upperZLayer: any; // PIXI.tilemap.ZLayer;
 
+    _lastBitmapLength: number;
+    
+    constructor();
     renderCanvas(renderer: PIXI.CanvasRenderer): void;
     renderWebGL(renderer: PIXI.WebGLRenderer): void;
     refresh(): void;
     refreshTileset(): void;
     updateTransform(): void;
 
-    protected _createLayers(): void;
-    protected _updateLayerPositions(startX: number, startY: number): void;
-    protected _paintAllTiles(startX: number, startY: number): void;
-    protected _paintTiles(startX: number, startY: number, x: number, y: number): void;
-    protected _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawTile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
-    protected _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawNormalTile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
-    protected _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawAutotile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
-    protected _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    protected _drawTableEdge(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
-    protected _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
-    protected _drawShadow(layer: PIXI.RectTileLayer, shadowBits: number, dx: number, dy: number): void;
+    _hackRenderer(renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer): PIXI.WebGLRenderer | PIXI.CanvasRenderer;
+    _createLayers(): void;
+    _updateLayerPositions(startX: number, startY: number): void;
+    _paintAllTiles(startX: number, startY: number): void;
+    _paintTiles(startX: number, startY: number, x: number, y: number): void;
+    _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    _drawTile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
+    _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    _drawNormalTile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
+    _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    _drawAutotile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
+    _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
+    _drawTableEdge(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
+    _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
+    _drawShadow(layer: PIXI.RectTileLayer, shadowBits: number, dx: number, dy: number): void;
 }
 
 declare class TilingSprite extends PIXI.extras.TilingSprite
 {
-    initialize(bitmap: Bitmap): void;
-
-    protected _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
-    protected _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
-    protected _renderCanvas(renderer: PIXI.CanvasRenderer): void;
-    protected _renderWebGL(renderer: PIXI.WebGLRenderer): void;
-
     bitmap: Bitmap;
     opacity: number;
+    spriteId: number;
+    origin: Point;
+
+    _bitmap: Bitmap;
+    _width: number;
+    _height: number;
+    _frame: Rectangle;
     
+    _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
+    _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
+    _renderCanvas(renderer: PIXI.CanvasRenderer): void;
+    _renderWebGL(renderer: PIXI.WebGLRenderer): void;
+    _onBitmapLoad(): void;
+    _refresh(): void;
+
+    constructor(bitmap: Bitmap);
+    initialize(bitmap: Bitmap): void;
     update(): void;
-    move(x: number, y: number, width: number, height: number): void;
+    move(x?: number, y?: number, width?: number, height?: number): void;
     setFrame(x: number, y: number, width: number, height: number): void;
     updateTransform(): void;
     updateTransformTS(): void;
-
-    protected _onBitmapLoad(): void;
-    protected _refresh(): void;
 }
 
 declare class ScreenSprite extends PIXI.Container
 {
-    initialize(): void;
-
-    opacity: number;
-
     static YEPWarned: boolean;
     static warnYep(): void;
 
+    _graphics: PIXI.Graphics;
+    _red: number;
+    _green: number;
+    _blue: number;
+    _colorText: string;
+
+    opacity: number;
     anchor: number;
     blendMode: number;
-    
+
+    constructor();
+    initialize(): void;
     setBlack(): void;
     setWhite(): void;
-    setColor(r: number, g: number, b: number): void;
+    setColor(r?: number, g?: number, b?: number): void;
 }
 
 declare class Window extends PIXI.Container
 {
-    initialize(): void;
+    _isWindow: boolean;
+    _windowskin: Bitmap;
+    _width: number;
+    _height: number;
+    _cursorRect: Rectangle;
+    _openness: number;
+    _animationCount: number;
+    _padding: number;
+    _margin: number;
+    _colorTone: number[];
+    _windowSpriteContainer: PIXI.Container;
+    _windowBackSprite: Sprite;
+    _windowCursorSprite: Sprite;
+    _windowFrameSprite: Sprite;
+    _windowContentsSprite: Sprite;
+    _windowArrowSprites: Sprite[];
+    _windowPauseSignSprite: Sprite;
 
+    active: boolean;
     windowskin: Bitmap;
     contents: Bitmap;
     width: number;
@@ -479,105 +638,137 @@ declare class Window extends PIXI.Container
     backOpacity: number;
     contentsOpacity: number;
     openness: number;
+    origin: Point;
+    downArrowVisible: boolean;
+    upArrowVisible: boolean;
+    pause: boolean;
 
+    constructor();
+    initialize(): void;
     update(): void;
-    move(x: number, y: number, width: number, height: number): void;
+    move(x?: number, y?: number, width?: number, height?: number): void;
     isOpen(): boolean;
     isClosed(): boolean;
-    setCursorRect(x: number, y: number, width: number, height: number): void;
+    setCursorRect(x?: number, y?: number, width?: number, height?: number): void;
     setTone(r: number, g: number, b: number): void;
     addChildToBack(child: PIXI.DisplayObject): PIXI.DisplayObject;
     updateTransform(): void;
 
-    protected _createAllParts(): void;
-    protected _onWindowskinLoad(): void;
-    protected _refreshAllParts(): void;
-    protected _refreshBack(): void;
-    protected _refreshFrame(): void;
-    protected _refreshCursor(): void;
-    protected _refreshContents(): void;
-    protected _refreshArrows(): void;
-    protected _refreshPauseSign(): void;
-    protected _updateCursor(): void;
-    protected _updateContents(): void;
-    protected _updateArrows(): void;
-    protected _updatePauseSign(): void;
+    _createAllParts(): void;
+    _onWindowskinLoad(): void;
+    _refreshAllParts(): void;
+    _refreshBack(): void;
+    _refreshFrame(): void;
+    _refreshCursor(): void;
+    _refreshContents(): void;
+    _refreshArrows(): void;
+    _refreshPauseSign(): void;
+    _updateCursor(): void;
+    _updateContents(): void;
+    _updateArrows(): void;
+    _updatePauseSign(): void;
 }
 
 declare class WindowLayer extends PIXI.Container
 {
-    initialize(): void;
-
     static voidFilter: PIXI.filters.VoidFilter;
+
+    _width: number;
+    _height: number;
+    _tempCanvas: HTMLCanvasElement;
+    _translationMatrix: number[];
+    _windowMask: PIXI.Graphics;
+    _windowRect: PIXI.Rectangle;
+    _renderSprite: Sprite;
 
     width: number;
     height: number;
+    filterArea: PIXI.Rectangle;
 
+    constructor();
+    initialize(): void;
     move(x: number, y: number, width: number, height: number): void;
     update(): void;
     renderCanvas(renderer: PIXI.CanvasRenderer): void;
-
-    protected _canvasClearWindowRect(renderSession: PIXI.CanvasRenderer, window: Window): void;
-
     renderWebGL(renderer: PIXI.WebGLRenderer): void;
 
-    protected _maskWindow(window: Window): void;
+    _canvasClearWindowRect(renderSession: PIXI.CanvasRenderer, window: Window): void;
+    _maskWindow(window: Window): void;
 }
 
 declare class Weather extends PIXI.Container
 {
+    _width: number;
+    _height: number;
+    _sprites: Sprite[];
+    _rainBitmap: Bitmap;
+    _stormBitmap: Bitmap;
+    _snowBitmap: Bitmap;
+    _dimmerSprite: ScreenSprite;
+
+    type: string;
+    power: number;
+    origin: Point;
+
+    constructor();
     initialize(): void;
     update(): void;
 
-    protected _createBitmaps(): void;
-    protected _createDimmer(): void;
-    protected _updateDimmer(): void;
-    protected _updateAllSprites(): void;
-    protected _addSprite(): void;
-    protected _removeSprite(): void;
-    protected _updateSprite(sprite: Sprite): void;
-    protected _updateRainSprite(sprite: Sprite): void;
-    protected _updateStormSprite(sprite: Sprite): void;
-    protected _updateSnowSprite(sprite: Sprite): void;
-    protected _rebornSprite(sprite: Sprite): void;
+    _createBitmaps(): void;
+    _createDimmer(): void;
+    _updateDimmer(): void;
+    _updateAllSprites(): void;
+    _addSprite(): void;
+    _removeSprite(): void;
+    _updateSprite(sprite: Sprite): void;
+    _updateRainSprite(sprite: Sprite): void;
+    _updateStormSprite(sprite: Sprite): void;
+    _updateSnowSprite(sprite: Sprite): void;
+    _rebornSprite(sprite: Sprite): void;
 }
 
 declare class ToneFilter extends PIXI.filters.ColorMatrixFilter
 {
+    constructor();
     adjustHue(value: number): void;
-    adjustSaturation(value: number): void;
-    adjustTone(r: number, g: number, b: number): void;
+    adjustSaturation(value?: number): void;
+    adjustTone(r?: number, g?: number, b?: number): void;
 }
 
 declare class ToneSprite extends PIXI.Container
 {
+    constructor();
     initialize(): void;
     clear(): void;
-    setTone(r: number, g: number, b: number, gray: number): void;
+    setTone(r?: number, g?: number, b?: number, gray?: number): void;
 
-    protected _renderCanvas(renderer: PIXI.CanvasRenderer): void;
-    protected _renderWebGL(renderer: PIXI.WebGLRenderer): void;
+    _red: number;
+    _green: number;
+    _blue: number;
+    _gray: number;
+
+    _renderCanvas(renderer: PIXI.CanvasRenderer): void;
+    _renderWebGL(renderer: PIXI.WebGLRenderer): void;
 }
 
 declare class Stage extends PIXI.Container
 {
+    constructor();
     initialize(): void;
 }
 
 declare class WebAudio
 {
-    constructor(url: string);
-    initialize(url: string): void;
-
     static _context: AudioContext;
     static _masterGainNode: GainNode;
     static _initialized: boolean;
     static _unlocked: boolean;
+    static _canPlayOgg: boolean;
+    static _canPlayM4a: boolean;
 
     static initialize(noAudio: boolean): boolean;
     static canPlayOgg(): boolean;
     static canPlayM4a(): boolean;
-
     static _createContext(): void;
     static _detectCodecs(): void;
     static _createMasterGainNode(): void;
@@ -590,13 +781,14 @@ declare class WebAudio
     static _fadeIn(duration: number): void;
     static _fadeOut(duration: number): void;
 
-    clear(): void;
-
     url: string;
     volume: number;
     pitch: number;
     pan: number;
 
+    constructor(url: string);
+    initialize(url: string): void;
+    clear(): void;
     isReady(): boolean;
     isError(): boolean;
     isPlaying(): boolean;
@@ -608,29 +800,49 @@ declare class WebAudio
     addLoadListener(listener: Function): void;
     addStopListener(listener: Function): void;
 
-    protected _load(url: string): void;
-    protected _onXhrLoad(xhr: XMLHttpRequest): void;
-    protected _startPlaying(loop: boolean, offset: number): void;
-    protected _createNodes(): void;
-    protected _connectNodes(): void;
-    protected _removeNodes(): void;
-    protected _createEndTimer(): void;
-    protected _removeEndTimer(): void;
-    protected _updatePanner(): void;
-    protected _onLoad(): void;
-    protected _readLoopComments(array: Uint8Array): void;
-    protected _readOgg(array: Uint8Array): void;
-    protected _readMp4(array: Uint8Array): void;
-    protected _readMetaData(array: Uint8Array, index: number, size: number): void;
-    protected _readLittleEndian(array: Uint8Array, index: number): void;
-    protected _readBigEndian(array: Uint8Array, index: number): void;
-    protected _readFourCharacters(array: Uint8Array, index: number): void;
+    _url: string;
+    _buffer: AudioBuffer;
+    _sourceNode: AudioBufferSourceNode;
+    _gainNode: GainNode;
+    _pannerNode: PannerNode;
+    _totalTime: number;
+    _sampleRate: number;
+    _loopStart: number;
+    _loopLength: number;
+    _startTime: number;
+    _volume: number;
+    _pitch: number;
+    _pan: number;
+    _endTimer: number;
+    _loadListeners: Function[];
+    _stopListeners: Function[];
+    _hasError: boolean;
+    _autoPlay: boolean;
+
+    _load(url: string): void;
+    _onXhrLoad(xhr: XMLHttpRequest): void;
+    _startPlaying(loop: boolean, offset: number): void;
+    _createNodes(): void;
+    _connectNodes(): void;
+    _removeNodes(): void;
+    _createEndTimer(): void;
+    _removeEndTimer(): void;
+    _updatePanner(): void;
+    _onLoad(): void;
+    _readLoopComments(array: Uint8Array): void;
+    _readOgg(array: Uint8Array): void;
+    _readMp4(array: Uint8Array): void;
+    _readMetaData(array: Uint8Array, index: number, size: number): void;
+    _readLittleEndian(array: Uint8Array, index: number): void;
+    _readBigEndian(array: Uint8Array, index: number): void;
+    _readFourCharacters(array: Uint8Array, index: number): void;
 }
 
 declare class Html5Audio
 {
     private constructor();
 
+    static _url: string;
     static _initialized: boolean;
     static _unlocked: boolean;
     static _audioElement: HTMLAudioElement;
@@ -639,9 +851,20 @@ declare class Html5Audio
     static _tweenTargetGain: number;
     static _tweenGainStep: number;
     static _staticSePath: string;
+    static _buffered: boolean;
+    static _hasError: boolean;
+    static _autoPlay: boolean;
+    static _isLoading: boolean;
+    static _loadListeners: Function[];
+    static _volume: number;
+
+    static url: string;
+    static volume: string;
 
     static setup(url: string): void;
     static initialize(): boolean;
+    static clear(): void;
+    static setStaticSe(url: string): void;
 
     static _setupEventHandlers(): void;
     static _onTouchStart(): void;
@@ -651,12 +874,6 @@ declare class Html5Audio
     static _onEnded(): void;
     static _onHide(): void;
     static _onShow(): void;
-
-    static clear(): void;
-    static setStaticSe(url: string): void;
-
-    static url: string;
-    static volume: string;
 
     static isReady(): boolean;
     static isError(): boolean;
@@ -683,6 +900,7 @@ declare class JsonEx
     static stringify(object: any): string;
     static parse(json: string): any;
     static makeDeepCopy(object: any): any;
+
     static _encode(value: any, depth: number): any;
     static _decode(value: any): any;
     static _getConstructorName(value: any): any;
@@ -695,14 +913,15 @@ declare class Decrypter
 
     static hasEncryptedImages: boolean;
     static hasEncryptedAudio: boolean;
+    static SIGNATURE: string;
+    static VER: string;
+    static REMAIN: string;
+
     static _requestImgFile: any[]; // TODO おそらく未使用なので具体的な型が分からない。
     static _headerlength: number;
     static _xhrOk: number;
     static _encryptionKey: string;
     static _ignoreList: string[];
-    static SIGNATURE: string;
-    static VER: string;
-    static REMAIN: string;
 
     static checkImgIgnore(url: string): boolean;
     static decryptImg(url: string, bitmap: Bitmap): void;
@@ -789,6 +1008,7 @@ declare interface IDataActor
     nickname?: string;
     note?: string;
     profile?: string;
+    meta?: any;
 }
 
 declare interface IDataClass
@@ -804,6 +1024,7 @@ declare interface IDataClass
     name?: string;
     note?: string;
     params?: number[][];
+    meta?: any;
 }
 
 declare interface IDataSkill
@@ -836,6 +1057,7 @@ declare interface IDataSkill
     successRate?: number;
     tpCost?: number;
     tpGain?: number;
+    meta?: any;
 }
 
 declare interface IDataAllItem
@@ -846,6 +1068,7 @@ declare interface IDataAllItem
     note?: string;
     iconIndex?: number;
     price?: number;
+    meta?: any;
 }
 
 declare interface IDataItem extends IDataAllItem
@@ -888,23 +1111,27 @@ declare interface IDataArmor extends IDataEquipItem
     atypeId?: number;
 }
 
+declare interface IDataDropItem
+{
+    kind?: number;
+    dataId?: number;
+    denominator?: number;
+}
+
 declare interface IDataEnemy
 {
     id?: number;
     actions?: IDataAction[];
     battlerHue?: number;
     battlerName?: string;
-    dropItems?: {
-        kind?: number;
-        dataId?: number;
-        denominator?: number;
-    }[];
+    dropItems?: IDataDropItem[];
     exp?: number;
     traits?: IDataTrait[];
     gold?: number;
     name?: string;
     note?: string;
     params?: number[];
+    meta?: any;
 }
 
 declare interface IDataPage
@@ -942,6 +1169,7 @@ declare interface IDataTroop
     }[];
     name?: string;
     pages?: IDataPage[];
+    meta?: any;
 }
 
 declare interface IDataState
@@ -991,6 +1219,7 @@ declare interface IDataAnimation
     name?: string;
     position?: number;
     timings?: IDataAnimationTiming[];
+    meta?: any;
 }
 
 declare interface IDataTileset
@@ -1001,6 +1230,7 @@ declare interface IDataTileset
     name?: string;
     note?: string;
     tilesetNames?: string[];
+    meta?: any;
 }
 
 declare interface IDataCommonEvent
@@ -1010,6 +1240,7 @@ declare interface IDataCommonEvent
     name: string;
     switchId: number;
     trigger: number;
+    meta?: any;
 }
 
 declare interface IVehicle
@@ -1134,6 +1365,7 @@ declare interface IDataSystem
     victoryMe?: IDataSound;
     weaponTypes?: string;
     windowTone?: number[];
+    meta?: any;
 }
 
 declare interface IDataMapInfo
@@ -1145,6 +1377,7 @@ declare interface IDataMapInfo
     parentId?: number;
     scrollX?: number;
     scrollY?: number;
+    meta?: any;
 }
 
 declare interface IDataEncounterList
@@ -1233,6 +1466,7 @@ declare interface IDataMap
     width?: number;
     data?: number[];
     events?: IDataMapEvent[];
+    meta?: any;
 }
 
 declare var $dataActors      : IDataActor[];
@@ -1247,7 +1481,7 @@ declare var $dataStates      : IDataState[];
 declare var $dataAnimations  : IDataAnimation[];
 declare var $dataTilesets    : IDataTileset[];
 declare var $dataCommonEvents: IDataCommonEvent[];
-declare var $dataSystem      : IDataSystem[];
+declare var $dataSystem      : IDataSystem;
 declare var $dataMapInfos    : IDataMapInfo[];
 declare var $dataMap         : IDataMap[];
 declare var $gameTemp        : Game_Temp;
@@ -1402,21 +1636,21 @@ declare class ImageManager
 
     static cache: CacheMap;
 
-    static loadAnimation(filename: string, hue: number): Bitmap;
-    static loadBattleback1(filename: string, hue: number): Bitmap;
-    static loadBattleback2(filename: string, hue: number): Bitmap;
-    static loadEnemy(filename: string, hue: number): Bitmap;
-    static loadCharacter(filename: string, hue: number): Bitmap;
-    static loadFace(filename: string, hue: number): Bitmap;
-    static loadParallax(filename: string, hue: number): Bitmap;
-    static loadPicture(filename: string, hue: number): Bitmap;
-    static loadSvActor(filename: string, hue: number): Bitmap;
-    static loadSvEnemy(filename: string, hue: number): Bitmap;
-    static loadSystem(filename: string, hue: number): Bitmap;
-    static loadTileset(filename: string, hue: number): Bitmap;
-    static loadTitle1(filename: string, hue: number): Bitmap;
-    static loadTitle2(filename: string, hue: number): Bitmap;
-    static loadBitmap(folder: string, filename: string, hue: number, smooth: boolean): Bitmap;
+    static loadAnimation(filename: string, hue?: number): Bitmap;
+    static loadBattleback1(filename: string, hue?: number): Bitmap;
+    static loadBattleback2(filename: string, hue?: number): Bitmap;
+    static loadEnemy(filename: string, hue?: number): Bitmap;
+    static loadCharacter(filename: string, hue?: number): Bitmap;
+    static loadFace(filename: string, hue?: number): Bitmap;
+    static loadParallax(filename: string, hue?: number): Bitmap;
+    static loadPicture(filename: string, hue?: number): Bitmap;
+    static loadSvActor(filename: string, hue?: number): Bitmap;
+    static loadSvEnemy(filename: string, hue?: number): Bitmap;
+    static loadSystem(filename: string, hue?: number): Bitmap;
+    static loadTileset(filename: string, hue?: number): Bitmap;
+    static loadTitle1(filename: string, hue?: number): Bitmap;
+    static loadTitle2(filename: string, hue?: number): Bitmap;
+    static loadBitmap(folder: string, filename: string, hue?: number, smooth?: boolean): Bitmap;
     static loadEmptyBitmap(): Bitmap;
     static loadNormalBitmap(path: string, hue: number): Bitmap;
     static clear(): void;
@@ -1697,9 +1931,38 @@ declare class SceneManager
     static backgroundBitmap(): Bitmap;
 }
 
+declare interface IDataRewards
+{
+    gold: number;
+    exp: number;
+    items: IDataAllItem[];
+}
+
 declare class BattleManager
 {
     private constructor();
+
+    static _phase: string;
+    static _canEscape: boolean;
+    static _canLose: boolean;
+    static _battleTest: boolean;
+    static _eventCallback: Function;
+    static _preemptive: boolean;
+    static _surprise: boolean;
+    static _actorIndex: number;
+    static _actionForcedBattler: Game_Battler;
+    static _mapBgm: IAudioObject;
+    static _mapBgs: IAudioObject;
+    static _actionBattlers: Game_Battler[];
+    static _subject: Game_Battler;
+    static _action: Game_Action;
+    static _targets: Game_Battler[];
+    static _logWindow: Window_BattleLog;
+    static _statusWindow: Window_BattleStatus;
+    static _spriteset: Spriteset_Battle;
+    static _escapeRatio: number;
+    static _escaped: boolean;
+    static _rewards: IDataRewards;
 
     static setup(troopId: number, canEscape: boolean, canLose: boolean): void;
     static initMembers(): void;
@@ -1825,10 +2088,34 @@ declare class Game_Temp
     isDestinationValid(): void;
     destinationX(): number;
     destinationY(): number;
+
+    _isPlaytest: boolean;
+    _commonEventId: number;
+    _destinationX: number;
+    _destinationY: number;
 }
 
 declare class Game_System
 {
+    _saveEnabled: boolean;
+    _menuEnabled: boolean;
+    _encounterEnabled: boolean;
+    _formationEnabled: boolean;
+    _battleCount: number;
+    _winCount: number;
+    _escapeCount: number;
+    _saveCount: number;
+    _versionId: number;
+    _framesOnSave: number;
+    _bgmOnSave: IAudioObject;
+    _bgsOnSave: IAudioObject;
+    _windowTone: number[];
+    _battleBgm: IDataSound;
+    _victoryMe: IDataSound;
+    _defeatMe: IDataSound;
+    _savedBgm: IDataSound;
+    _walkingBgm: IDataSound;
+
     constructor();
     initialize(): void;
     isJapanese(): boolean;
@@ -1877,6 +2164,9 @@ declare class Game_System
 
 declare class Game_Timer
 {
+    _frames: number;
+    _working: boolean;
+
     constructor();
     initialize(): void;
     update(sceneActive: boolean): void;
@@ -1889,7 +2179,26 @@ declare class Game_Timer
 
 declare class Game_Message
 {
-    constructor();    
+    _texts: string[];
+    _choices: string[];
+    _faceName: string;
+    _faceIndex: number;
+    _background: number;
+    _positionType: number;
+    _choiceDefaultType: number;
+    _choiceCancelType: number;
+    _choiceBackground: number;
+    _choicePositionType: number;
+    _numInputVariableId: number;
+    _numInputMaxDigits: number;
+    _itemChoiceVariableId: number;
+    _itemChoiceItypeId: number;
+    _scrollMode: boolean;
+    _scrollSpeed: number;
+    _scrollNoFast: boolean;
+    _choiceCallback: Function;
+
+    constructor();
     initialize(): void;
     clear(): void;
     choices(): string[];
@@ -1937,6 +2246,8 @@ declare class Game_Switches
     value(switchId: number): boolean;
     setValue(switchId: number, value: boolean): void;
     onChange(): void;
+
+    _data: boolean[];
 }
 
 declare class Game_Variables
@@ -1947,6 +2258,8 @@ declare class Game_Variables
     value(variableId: number): number;
     setValue(variableId: number, value: number): number;
     onChange(): void;
+
+    _data: number[];
 }
 
 declare class Game_SelfSwitches
@@ -1957,10 +2270,35 @@ declare class Game_SelfSwitches
     value(key: number[]): boolean;
     setValue(key: (number | string)[], value: boolean): void;
     onChange(): void;
+
+    _data: { [key: string]: boolean };
 }
 
 declare class Game_Screen
 {
+    _brightness: number;
+    _zoomX: number;
+    _zoomY: number;
+    _zoomScale: number;
+    _zoomScaleTarget: number;
+    _zoomDuration: number;
+    _weatherType: string;
+    _weatherPower: number;
+    _weatherPowerTarget: number;
+    _weatherDuration: number;
+    _pictures: Game_Picture[];
+    _fadeOutDuration: number;
+    _fadeInDuration: number;
+    _tone: number[];
+    _toneTarget: number[];
+    _toneDuration: number;
+    _flashColor: number[];
+    _flashDuration: number;
+    _shake: number;
+    _shakePower: number;
+    _shakeSpeed: number;
+    _shakeDuration: number;
+
     constructor();
     initialize(): void;
     clear(): void;
@@ -2012,6 +2350,26 @@ declare class Game_Screen
 
 declare class Game_Picture
 {
+    _name: string;
+    _origin: number;
+    _x: number;
+    _y: number;
+    _scaleX: number;
+    _scaleY: number;
+    _opacity: number;
+    _blendMode: number;
+    _tone: number[];
+    _toneTarget: number[];
+    _toneDuration: number;
+    _angle: number;
+    _rotationSpeed: number;
+    _targetX: number;
+    _targetY: number;
+    _targetScaleX: number;
+    _targetScaleY: number;
+    _targetOpacity: number;
+    _duration: number;
+
     constructor();
     initialize(): void;
     name(): string;
@@ -2041,6 +2399,9 @@ declare class Game_Picture
 
 declare class Game_Item
 {
+    _dataClass: string;
+    _itemId: number;
+
     constructor(item?: IDataItem);
     initialize(item: IDataItem): void;
     isSkill(): boolean;
@@ -2049,7 +2410,7 @@ declare class Game_Item
     isWeapon(): boolean;
     isArmor(): boolean;
     isEquipItem(): boolean;
-    isNull(): boolean;
+    isNull(): boolean;77
     itemId(): number;
     object(): IDataItem;
     setObject(item: IDataItem): void;
@@ -2078,6 +2439,13 @@ declare class Game_Action
     static HITTYPE_PHYSICAL: number;
     static HITTYPE_MAGICAL: number;
 
+    _subjectActorId: number;
+    _subjectEnemyIndex: number;
+    _forcing: boolean;
+    _item: Game_Item;
+    _targetIndex: number;
+
+    constructor(subject: Game_Battler, forcing?: boolean);
     initialize(subject: Game_Battler, forcing: boolean): void;
     clear(): void;
     setSubject(subject: Game_Battler): void;
@@ -2177,6 +2545,23 @@ declare class Game_Action
 
 declare class Game_ActionResult
 {
+    used: boolean;
+    missed: boolean;
+    evaded: boolean;
+    physical: boolean;
+    drain: boolean;
+    critical: boolean;
+    success: boolean;
+    hpAffected: boolean;
+    hpDamage: number;
+    mpDamage: number;
+    tpDamage: number;
+    addedStates: IDataState[];
+    removedStates: IDataState[];
+    addedBuffs: number[];
+    addedDebuffs: number[];
+    removedBuffs: number[];
+
     constructor();
     initialize(): void;
     clear(): void;
@@ -2198,8 +2583,6 @@ declare class Game_ActionResult
 
 declare class Game_BattlerBase
 {
-    constructor();
-
     static TRAIT_ELEMENT_RATE: number;
     static TRAIT_DEBUFF_RATE: number;
     static TRAIT_STATE_RATE: number;
@@ -2263,6 +2646,17 @@ declare class Game_BattlerBase
     fdr: number;
     exr: number;
 
+    _hp: number;
+    _mp: number;
+    _tp: number;
+    _hidden: boolean;
+    _paramPlus: number[];
+    _states: number[];
+    _stateTurns: { [key: number]: number };
+    _buffs: number[];
+    _buffTurns: number[];
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     clearParamPlus(): void;
@@ -2391,8 +2785,29 @@ declare class Game_BattlerBase
     canGuard(): boolean;
 }
 
+declare interface IGame_BattlerAnimation
+{
+    animationId: string;
+    mirror: boolean;
+    delay: number;
+}
+
 declare class Game_Battler extends Game_BattlerBase
 {
+    _actions: Game_Action[];
+    _speed: number;
+    _result: Game_ActionResult;
+    _actionState: string;
+    _lastTargetIndex: number;
+    _animations: IGame_BattlerAnimation[];
+    _damagePopup: boolean;
+    _effectType: string;
+    _motionType: string;
+    _weaponImageId: number;
+    _motionRefresh: boolean;
+    _selected: boolean;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     clearAnimations(): void;
@@ -2400,8 +2815,8 @@ declare class Game_Battler extends Game_BattlerBase
     clearWeaponAnimation(): void;
     clearEffect(): void;
     clearMotion(): void;
-    requestEffect(effectType: boolean): void;
-    requestMotion(motionType: boolean): void;
+    requestEffect(effectType: string): void;
+    requestMotion(motionType: string): void;
     requestMotionRefresh(): void;
     select(): void;
     deselect(): void;
@@ -2412,15 +2827,15 @@ declare class Game_Battler extends Game_BattlerBase
     isWeaponAnimationRequested(): boolean;
     isMotionRefreshRequested(): boolean;
     isSelected(): boolean;
-    effectType(): boolean;
-    motionType(): boolean;
+    effectType(): string;
+    motionType(): string;
     weaponImageId(): number;
-    shiftAnimation(): { animationId: string, mirror: boolean, delay: number };
+    shiftAnimation(): IGame_BattlerAnimation;
     startAnimation(animationId: number, mirror: boolean, delay: number): void;
     startDamagePopup(): void;
     startWeaponAnimation(weaponImageId: number): void;
-    action(index: number): number;
-    setAction(index: number, action: number): void;
+    action(index: number): Game_Action;
+    setAction(index: number, action: Game_Action): void;
     numActions(): number;
     clearActions(): void;
     result(): Game_ActionResult;
@@ -2444,7 +2859,7 @@ declare class Game_Battler extends Game_BattlerBase
     makeActions(): void;
     speed(): number;
     makeSpeed(): void;
-    currentAction(): number;
+    currentAction(): Game_Action;
     removeCurrentAction(): void;
     setLastTarnget(target: Game_Battler): void
     forceAction(skillId: number, targetIndex: number): void;
@@ -2491,6 +2906,28 @@ declare class Game_Battler extends Game_BattlerBase
 declare class Game_Actor extends Game_Battler
 {
     level: number;
+
+    _actorId: number;
+    _name: string;
+    _nickname: string;
+    _classId: number;
+    _level: number;
+    _characterName: string;
+    _characterIndex: number;
+    _faceName: string;
+    _faceIndex: number;
+    _battlerName: string;
+    _exp: { [key: number]: number };
+    _skills: number[];
+    _equips: Game_Item[];
+    _actionInputIndex: number;
+    _lastMenuSkill: Game_Item;
+    _lastBattleSkill : Game_Item;
+    _lastCommandSymbol: string;
+    _profile: string;
+    _stateSteps: { [key: number]: number };
+
+    constructor();
     initialize(): void;
     initialize(actorId: number): void;
     initMembers(): void;
@@ -2622,6 +3059,13 @@ declare class Game_Actor extends Game_Battler
 
 declare class Game_Enemy extends Game_Battler
 {
+    _enemyId: number;
+    _letter: string;
+    _plural: boolean;
+    _screenX: number;
+    _screenY: number;
+
+    constructor();
     initialize(): void;
     initialize(enemyId: number, x: number, y: number): void;
     initMembers(): void;
@@ -2671,6 +3115,8 @@ declare class Game_Enemy extends Game_Battler
 
 declare class Game_Actors
 {
+    _data: Game_Actor[];
+
     constructor();
     initialize(): void;
     actor(actorId: number): Game_Actor;
@@ -2678,6 +3124,8 @@ declare class Game_Actors
 
 declare class Game_Unit
 {
+    _inBattle: boolean;
+
     constructor();
     initialize(): void;
     inBattle(): boolean;
@@ -2710,6 +3158,18 @@ declare class Game_Party extends Game_Unit
     static ABILITY_GOLD_DOUBLE: number;
     static ABILITY_DROP_ITEM_DOUBLE: number;
 
+    _gold: number;
+    _steps: number;
+    _lastItem: Game_Item;
+    _menuActorId: number;
+    _targetActorId: number;
+    _actors: number[];
+
+    _items: { [key: number]: number };
+    _weapons: { [key: number]: number };
+    _armors: { [key: number]: number };
+
+    constructor();
     initialize(): void;
     initAllItems(): void;
     exists(): boolean;
@@ -2785,6 +3245,14 @@ declare class Game_Troop extends Game_Unit
     static LETTER_TABLE_HALF: string[];
     static LETTER_TABLE_FULL: string[];
 
+    _interpreter: Game_Interpreter;
+    _turnCount: number;
+    _enemies: Game_Enemy[];
+    _troopId: number;
+    _eventFlags: { [key: number]: boolean };
+    _namesCount: { [key: string]: number };
+
+    constructor();
     initialize(): void;
     isEventRunning(): boolean;
     updateInterpreter(): void;
@@ -2807,6 +3275,30 @@ declare class Game_Troop extends Game_Unit
 
 declare class Game_Map
 {
+    _interpreter: Game_Interpreter;
+    _mapId: number;
+    _tilesetId: number;
+    _events: Game_Event[];
+    _commonEvents: Game_CommonEvent[];
+    _vehicles: Game_Vehicle[];
+    _displayX: number;
+    _displayY: number;
+    _nameDisplay: boolean;
+    _scrollDirection: number;
+    _scrollRest: number;
+    _scrollSpeed: number;
+    _parallaxName: string;
+    _parallaxZero: boolean;
+    _parallaxLoopX: boolean;
+    _parallaxLoopY: boolean;
+    _parallaxSx: number;
+    _parallaxSy: number;
+    _parallaxX: number;
+    _parallaxY: number;
+    _battleback1Name: string;
+    _battleback2Name: string;
+    _needsRefresh: boolean;
+
     constructor();
     initialize(): void;
     setup(mapId: number): void;
@@ -2921,6 +3413,9 @@ declare class Game_Map
 
 declare class Game_CommonEvent
 {
+    _commonEventId: number;
+    _interpreter: Game_Interpreter;
+
     constructor(commonEventId: number);
     initialize(commonEventId: number): void;
     event(): IDataCommonEvent;
@@ -2932,10 +3427,41 @@ declare class Game_CommonEvent
 
 declare class Game_CharacterBase
 {
-    constructor();
-
     x: number;
     y: number;
+
+    _x: number;
+    _y: number;
+    _realX: number;
+    _realY: number;
+    _moveSpeed: number;
+    _moveFrequency: number;
+    _opacity: number;
+    _blendMode: number;
+    _direction: number;
+    _pattern: number;
+    _priorityType: number;
+    _tileId: number;
+    _characterName: string;
+    _characterIndex: number;
+    _isObjectCharacter: boolean;
+    _walkAnime: boolean;
+    _stepAnime: boolean;
+    _directionFix: boolean;
+    _through: boolean;
+    _transparent: boolean;
+    _bushDepth: number;
+    _animationId: number;
+    _balloonId: number;
+    _animationPlaying: boolean;
+    _balloonPlaying: boolean;
+    _animationCount: number;
+    _stopCount: number;
+    _jumpCount: number;
+    _jumpPeak: number;
+    _movementSuccess: boolean;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     pos(x: number, y: number): boolean;
@@ -3085,6 +3611,14 @@ declare class Game_Character extends Game_CharacterBase
     static ROUTE_PLAY_SE: number;
     static ROUTE_SCRIPT: number;
 
+    _moveRouteForcing: boolean;
+    _moveRoute: IDataMoveRoute;
+    _moveRouteIndex: number;
+    _originalMoveRoute: IDataMoveRoute;
+    _originalMoveRouteIndex: number;
+    _waitCount: number;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     memorizeMoveRoute(); void;
@@ -3121,6 +3655,21 @@ declare class Game_Character extends Game_CharacterBase
 
 declare class Game_Player extends Game_Character
 {
+    _vehicleType: string;
+    _vehicleGettingOn: boolean;
+    _vehicleGettingOff: boolean;
+    _dashing: boolean;
+    _needsMapReload: boolean;
+    _transferring: boolean;
+    _newMapId: number;
+    _newX: number;
+    _newY: number;
+    _newDirection: number;
+    _fadeType: number;
+    _followers: Game_Followers;
+    _encounterCount: number;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     clearTransferInfo(): void;
@@ -3197,6 +3746,9 @@ declare class Game_Player extends Game_Character
 
 declare class Game_Follower extends Game_Character
 {
+    _memberIndex: number;
+
+    constructor();
     initialize(): void;
     refresh(): void;
     actor(): Game_Actor;
@@ -3207,6 +3759,11 @@ declare class Game_Follower extends Game_Character
 
 declare class Game_Followers extends Game_Character
 {
+    _visible: boolean;
+    _gathering: boolean;
+    _data: Game_Follower[];
+
+    constructor();
     initialize(): void;
     isVisible(): boolean;
     show(): void;
@@ -3229,6 +3786,13 @@ declare class Game_Followers extends Game_Character
 
 declare class Game_Vehicle extends Game_Character
 {
+    _type: string;
+    _mapId: number;
+    _altitude: number;
+    _driving: boolean;
+    _bgm: IAudioObject;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     isBoat(): boolean;
@@ -3264,6 +3828,20 @@ declare class Game_Vehicle extends Game_Character
 
 declare class Game_Event extends Game_Character
 {
+    _mapId: number;
+    _eventId: number;
+    _moveType: number;
+    _trigger: number;
+    _starting: boolean;
+    _erased: boolean;
+    _pageIndex: number;
+    _originalPattern: number;
+    _originalDirection: number;
+    _prelockDirection: number;
+    _locked: boolean;
+    _interpreter: Game_Interpreter;
+
+    constructor();
     initialize();
     initialize(mapId: number, eventId: number): void;
     initMembers(): void;
@@ -3307,11 +3885,24 @@ declare class Game_Event extends Game_Character
 
 declare class Game_Interpreter
 {
+    _depth: number;
+    _branch: { [key: number]: number };
+    _params: any[];
+    _indent: number;
+    _frameCount: number;
+    _freezeChecker: number;
+    _mapId: number;
+    _eventId: number;
+    _list: IDataMapEventPageList[];
+    _index: number;
+    _childInterpreter: Game_Interpreter;
+    _character: Game_Character;
+
     constructor(depth?: number);
-    initialize(depth: number): void;
+    initialize(depth?: number): void;
     checkOverflow(): void;
     clear(): void;
-    setup(list: IDataMapEventPageList[], eventId: number): void;
+    setup(list: IDataMapEventPageList[], eventId?: number): void;
     eventId(): number;
     isOnCurrentMap(): boolean;
     setupReservedCommonEvent(): boolean;
@@ -3463,6 +4054,13 @@ declare class Game_Interpreter
 
 declare class Scene_Base extends Stage
 {
+    _active: boolean;
+    _fadeSign: number;
+    _fadeDuration: number;
+    _fadeSprite: ScreenSprite;
+    _windowLayer: WindowLayer;
+
+    constructor();
     initialize(): void;
     create(): void;
     isActive(): boolean;
@@ -3474,9 +4072,9 @@ declare class Scene_Base extends Stage
     terminate(): void;
     createWindowLayer(): void;
     addWindow(window: Window_Base): void;
-    startFadeIn(duration: number, white: boolean): void;
-    startFadeOut(duration: number, white: boolean): void;
-    createFadeSprite(white: boolean): void;
+    startFadeIn(duration?: number, white?: boolean): void;
+    startFadeOut(duration?: number, white?: boolean): void;
+    createFadeSprite(white?: boolean): void;
     updateFade(): void;
     updateChildren(): void;
     popScene(): void;
@@ -3488,12 +4086,14 @@ declare class Scene_Base extends Stage
 
 declare class Scene_Boot extends Scene_Base
 {
-    initialize(): void;
-    create(): void;
-    loadSystemWindowImage(): void;
+    _startDate: number;
 
     static loadSystemImages(): void;
 
+    constructor();
+    initialize(): void;
+    create(): void;
+    loadSystemWindowImage(): void;
     isReady(): boolean;
     isGameFontLoaded(): boolean;
     start(): void;
@@ -3503,6 +4103,12 @@ declare class Scene_Boot extends Scene_Base
 
 declare class Scene_Title extends Scene_Base
 {
+    _commandWindow: Window_TitleCommand;
+    _backSprite1: Sprite;
+    _backSprite2: Sprite;
+    _gameTitleSprite: Sprite;
+
+    constructor();
     initialize(): void;
     create(): void;
     start(): void;
@@ -3522,6 +4128,19 @@ declare class Scene_Title extends Scene_Base
 
 declare class Scene_Map extends Scene_Base
 {
+    _waitCount: number;
+    _encounterEffectDuration: number;
+    _mapLoaded: boolean;
+    _mapNameWindow: Window_MapName;
+    _messageWindow: Window_Message;
+    _scrollTextWindow: Window_ScrollText;
+    _spriteset: Spriteset_Map;
+    _touchCount: number;
+    _transfer: boolean;
+
+    menuCalling: boolean;
+
+    constructor();
     initialize(): void;
     create(): void;
     isReady(): boolean;
@@ -3569,6 +4188,11 @@ declare class Scene_Map extends Scene_Base
 
 declare class Scene_MenuBase extends Scene_Base
 {
+    _actor: Game_Actor;
+    _backgroundSprite: Sprite;
+    _helpWindow: Window_Help;
+
+    constructor();
     initialize(): void;
     create(): void;
     actor(): Game_Actor;
@@ -3583,6 +4207,11 @@ declare class Scene_MenuBase extends Scene_Base
 
 declare class Scene_Menu extends Scene_MenuBase
 {
+    _statusWindow: Window_MenuStatus;
+    _goldWindow: Window_Gold;
+    _commandWindow: Window_MenuCommand;
+    
+    constructor();
     initialize(): void;
     create(): void;
     start(): void;
@@ -3603,6 +4232,10 @@ declare class Scene_Menu extends Scene_MenuBase
 
 declare class Scene_ItemBase extends Scene_MenuBase
 {
+    _actorWindow: Window_MenuActor;
+    _itemWindow: Window_Selectable;
+
+    constructor();
     initialize(): void;
     create(): void;
     createActorWindow(): void;
@@ -3625,6 +4258,10 @@ declare class Scene_ItemBase extends Scene_MenuBase
 
 declare class Scene_Item extends Scene_ItemBase
 {
+    _categoryWindow: Window_ItemCategory;
+    _itemWindow: Window_ItemList;
+
+    constructor();
     initialize(): void;
     create(): void;
     createCategoryWindow(): void;
@@ -3639,6 +4276,11 @@ declare class Scene_Item extends Scene_ItemBase
 
 declare class Scene_Skill extends Scene_ItemBase
 {
+    _skillTypeWindow: Window_SkillType;
+    _statusWindow: Window_SkillStatus;
+    _itemWindow: Window_SkillList;
+
+    constructor();
     initialize(): void;
     create(): void;
     createSkillTypeWindow(): void;
@@ -3654,8 +4296,14 @@ declare class Scene_Skill extends Scene_ItemBase
     onActorChange(): void;
 }
 
-declare class Scene_Equip extends Scene_ItemBase
+declare class Scene_Equip extends Scene_MenuBase
 {
+    _statusWindow: Window_EquipStatus;
+    _commandWindow: Window_EquipCommand;
+    _slotWindow: Window_EquipSlot;
+    _itemWindow: Window_EquipItem;
+
+    constructor();
     initialize(): void;
     create(): void;
     createStatusWindow(): void;
@@ -3666,31 +4314,41 @@ declare class Scene_Equip extends Scene_ItemBase
     commandEquip(): void;
     commandOptimize(): void;
     commandClear(): void;
-    onSlotOk(): void;
+    onSlotOk(): void;4
     onSlotCancel(): void;
     onItemOk(): void;
     onItemCancel(): void;
     onActorChange(): void;
 }
 
-declare class Scene_Status extends Scene_ItemBase
+declare class Scene_Status extends Scene_MenuBase
 {
+    _statusWindow: Window_Status;
+
+    constructor();
     initialize(): void;
     create(): void;
     refreshActor(): void;
     onActorChange(): void;
 }
 
-declare class Scene_Options extends Scene_ItemBase
+declare class Scene_Options extends Scene_MenuBase
 {
+    _optionsWindow: Window_Options;
+
+    constructor();
     initialize(): void;
     create(): void;
     terminate(): void;
     createOptionsWindow(): void;
 }
 
-declare class Scene_File extends Scene_ItemBase
+declare class Scene_File extends Scene_MenuBase
 {
+    _listWindow: Window_SavefileList;
+    _helpWindow: Window_Help;
+
+    constructor();
     initialize(): void;
     create(): void;
     start(): void;
@@ -3706,6 +4364,7 @@ declare class Scene_File extends Scene_ItemBase
 
 declare class Scene_Save extends Scene_File
 {
+    constructor();
     initialize(): void;
     mode(): string;
     helpWindowText(): string;
@@ -3717,6 +4376,9 @@ declare class Scene_Save extends Scene_File
 
 declare class Scene_Load extends Scene_File
 {
+    _loadSuccess: boolean;
+
+    constructor();
     initialize(): void;
     terminate(): void;
     mode(): string;
@@ -3730,6 +4392,9 @@ declare class Scene_Load extends Scene_File
 
 declare class Scene_GameEnd extends Scene_MenuBase
 {
+    _commandWindow: Window_GameEnd;
+
+    constructor();
     initialize(): void;
     create(): void;
     stop(): void;
@@ -3740,8 +4405,21 @@ declare class Scene_GameEnd extends Scene_MenuBase
 
 declare class Scene_Shop extends Scene_MenuBase
 {
+    _goods: any[][];
+    _purchaseOnly: boolean;
+    _item: IDataAllItem;
+    _goldWindow: Window_Gold;
+    _commandWindow: Window_ShopCommand;
+    _dummyWindow: Window_Base;
+    _numberWindow: Window_ShopNumber;
+    _statusWindow: Window_ShopStatus;
+    _buyWindow: Window_ShopBuy;
+    _categoryWindow: Window_ItemCategory;
+    _sellWindow: Window_ShopSell;
+
+    constructor();
     initialize(): void;
-    prepare(goods: number[][], purchaseOnly: boolean): void;
+    prepare(goods: any[][], purchaseOnly: boolean): void;
     create(): void;
     createGoldWindow(): void;
     createCommandWindow(): void;
@@ -3776,6 +4454,13 @@ declare class Scene_Shop extends Scene_MenuBase
 
 declare class Scene_Name extends Scene_MenuBase
 {
+    _actor: Game_Actor;
+    _actorId: number;
+    _maxLength: number;
+    _editWindow: Window_NameEdit;
+    _inputWindow: Window_NameInput;
+
+    constructor();
     initialize(): void;
     prepare(actorId: number, maxLength: number): void;
     create(): void;
@@ -3787,6 +4472,11 @@ declare class Scene_Name extends Scene_MenuBase
 
 declare class Scene_Debug extends Scene_MenuBase
 {
+    _editWindow: Window_DebugEdit;
+    _rangeWindow: Window_DebugRange;
+    _debugHelpWindow : Window_Base;
+
+    constructor();
     initialize(): void;
     create(): void;
     createRangeWindow(): void;
@@ -3798,8 +4488,22 @@ declare class Scene_Debug extends Scene_MenuBase
     helpText(): string;
 }
 
-declare class Scene_Battle extends Scene_MenuBase
+declare class Scene_Battle extends Scene_Base
 {
+    _partyCommandWindow: Window_PartyCommand;
+    _actorCommandWindow: Window_ActorCommand;
+    _skillWindow: Window_BattleSkill;
+    _itemWindow: Window_BattleItem;
+    _actorWindow: Window_BattleActor;
+    _enemyWindow: Window_BattleEnemy;
+    _helpWindow: Window_Help;
+    _statusWindow: Window_BattleStatus;
+    _spriteset: Spriteset_Battle;
+    _logWindow: Window_BattleLog;
+    _messageWindow: Window_Message;
+    _scrollTextWindow: Window_ScrollText;
+
+    constructor();
     initialize(): void;
     create(): void;
     start(): void;
@@ -3853,6 +4557,9 @@ declare class Scene_Battle extends Scene_MenuBase
 
 declare class Scene_Gameover extends Scene_Base
 {
+    _backSprite: Sprite;
+
+    constructor();
     initialize(): void;
     create(): void;
     start(): void;
@@ -3867,6 +4574,13 @@ declare class Scene_Gameover extends Scene_Base
 
 declare class Sprite_Base extends Sprite
 {
+    _animationSprites: Sprite_Animation[];
+    _effectTarget: Sprite_Base;
+    _hiding: boolean;
+
+    visible: boolean;
+
+    constructor();
     initialize(): void;
     update(): void;
     hide(): void;
@@ -3879,6 +4593,12 @@ declare class Sprite_Base extends Sprite
 
 declare class Sprite_Button extends Sprite
 {
+    _touching: boolean;
+    _coldFrame: Rectangle;
+    _hotFrame: Rectangle;
+    _clickHandler: Function;
+
+    constructor();
     initialize(): void;
     update(): void;
     updateFrame(): void;
@@ -3895,8 +4615,20 @@ declare class Sprite_Button extends Sprite
 
 declare class Sprite_Character extends Sprite_Base
 {
-    initialize(): void;
-    initialize(character: Game_CharacterBase): void;
+    _character: Game_Character;
+    _balloonSprite: Sprite_Balloon;
+    _balloonDuration: number;
+    _tilesetId: number;
+    _tileId: number;
+    _characterName: string;
+    _characterIndex: number;
+    _upperBody: Sprite;
+    _lowerBody: Sprite;
+    _isBigCharacter: boolean;
+    _bushDepth: number;
+
+    constructor();
+    initialize(character?: Game_CharacterBase): void;
     initMembers(): void;
     setCharacter(character: Game_CharacterBase): void;
     update(): void;
@@ -3931,8 +4663,19 @@ declare class Sprite_Character extends Sprite_Base
 
 declare class Sprite_Battler extends Sprite_Base
 {
-    initialize(): void;
-    initialize(battler: Game_Battler): void;
+    _battler: Game_Battler;
+    _damages: Sprite_Damage[];
+    _homeX: number;
+    _homeY: number;
+    _offsetX: number;
+    _offsetY: number;
+    _targetOffsetX: number;
+    _targetOffsetY: number;
+    _movementDuration: number;
+    _selectionEffectCount: number;
+
+    constructor();
+    initialize(battler?: Game_Battler): void;
     initMembers(): void;
     setBattler(battler: Game_Battler): void;
     setHome(x: number, y: number): void;
@@ -3957,12 +4700,28 @@ declare class Sprite_Battler extends Sprite_Base
     inHomePosition(): boolean;
 }
 
+declare interface IMotion
+{
+    index: number;
+    loop: boolean;
+}
+
 declare class Sprite_Actor extends Sprite_Battler
 {
-    static MOTIONS: { [key: string]: { index: number, loop: boolean } };
+    static MOTIONS: { [key: string]: IMotion };
 
-    initialize(): void;
-    initialize(battler: Game_Actor): void;
+    _battlerName: string;
+    _motion: IMotion;
+    _motionCount: number;
+    _pattern: number;
+    _mainSprite: Sprite_Base;
+    _effectTarget: Sprite_Base;
+    _shadowSprite: Sprite;
+    _weaponSprite: Sprite_Weapon;
+    _stateSprite: Sprite_StateOverlay;
+
+    constructor();
+    initialize(battler?: Game_Actor): void;
     initMembers(): void;
     createMainSprite(): void;
     createShadowSprite(): void;
@@ -3996,8 +4755,17 @@ declare class Sprite_Actor extends Sprite_Battler
 
 declare class Sprite_Enemy extends Sprite_Battler
 {
-    initialize(): void;
-    initialize(battler: Game_Enemy): void;
+    _enemy: Game_Enemy;
+    _appeared: boolean;
+    _battlerName: string;
+    _battlerHue: number;
+    _effectType: string;
+    _effectDuration: number;
+    _shake: number;
+    _stateIconSprite: Sprite_StateIcon;
+
+    constructor();
+    initialize(battler?: Game_Enemy): void;
     initMembers(): void;
     createStateIconSprite(): void;
     setBattler(battler: Game_Enemy): void;
@@ -4033,6 +4801,24 @@ declare class Sprite_Enemy extends Sprite_Battler
 
 declare class Sprite_Animation extends Sprite
 {
+    _reduceArtifacts: boolean;
+    _target: Sprite_Base;
+    _animation: IDataAnimation;
+    _mirror: boolean;
+    _delay: number;
+    _rate: number;
+    _duration: number;
+    _flashColor: number[];
+    _flashDuration: number;
+    _screenFlashDuration: number;
+    _hidingDuration: number;
+    _bitmap1: Bitmap;
+    _bitmap2: Bitmap;
+    _cellSprites: Sprite[];
+    _screenFlashSprite: ScreenSprite;
+    _duplicated: boolean;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     setup(target: Sprite_Base, animation: IDataAnimation, mirror: boolean, delay: number): void;
@@ -4065,6 +4851,12 @@ declare class Sprite_Animation extends Sprite
 
 declare class Sprite_Damage extends Sprite
 {
+    _duration: number;
+    _flashColor: number[];
+    _flashDuration: number;
+    _damageBitmap: Bitmap;
+
+    constructor();
     initialize(): void;
     setup(target: Game_Battler): void;
     digitWidth(): number;
@@ -4081,6 +4873,15 @@ declare class Sprite_Damage extends Sprite
 
 declare class Sprite_StateIcon extends Sprite
 {
+    static _iconWidth: number;
+    static _iconHeight: number;
+
+    _battler: Game_Battler;
+    _iconIndex: number;
+    _animationCount: number;
+    _animationIndex: number;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     setup(battler: Game_Battler): void;
@@ -4092,6 +4893,12 @@ declare class Sprite_StateIcon extends Sprite
 
 declare class Sprite_StateOverlay extends Sprite_Base
 {
+    _battler: Game_Battler;
+    _overlayIndex: number;
+    _animationCount: number;
+    _pattern: number;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     loadBitmap(): void;
@@ -4104,6 +4911,11 @@ declare class Sprite_StateOverlay extends Sprite_Base
 
 declare class Sprite_Weapon extends Sprite_Base
 {
+    _weaponImageId: number;
+    _animationCount: number;
+    _pattern: number;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     setup(weaponImageId: number): void;
@@ -4117,6 +4929,10 @@ declare class Sprite_Weapon extends Sprite_Base
 
 declare class Sprite_Balloon extends Sprite_Base
 {
+    _balloonId: number;
+    _duration: number;
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     loadBitmap(): void;
@@ -4131,6 +4947,11 @@ declare class Sprite_Balloon extends Sprite_Base
 
 declare class Sprite_Picture extends Sprite
 {
+    _pictureId: number;
+    _pictureName: string;
+    _isPicture: boolean;
+
+    constructor(pictureId: number);
     initialize(): void;
     initialize(pictureId: number): void;
     picture(): Game_Picture;
@@ -4146,6 +4967,9 @@ declare class Sprite_Picture extends Sprite
 
 declare class Sprite_Timer extends Sprite
 {
+    _seconds: number;
+
+    constructor();
     initialize(): void;
     createBitmap(): void;
     update(): void;
@@ -4158,6 +4982,9 @@ declare class Sprite_Timer extends Sprite
 
 declare class Sprite_Destination extends Sprite
 {
+    _frameCount: number;
+
+    constructor();
     initialize(): void;
     update(): void;
     createBitmap(): void;
@@ -4167,6 +4994,18 @@ declare class Sprite_Destination extends Sprite
 
 declare class Spriteset_Base extends Sprite
 {
+    _tone: number[];
+    _baseSprite: Sprite;
+    _toneSprite: ToneSprite;
+    _toneFilter: ToneFilter;
+    _pictureContainer: Sprite;
+    _timerSprite: Sprite_Timer;
+    _flashSprite: ScreenSprite;
+    _fadeSprite: ScreenSprite;
+
+    opaque: boolean;
+
+    constructor();
     initialize(): void;
     createLowerLayer(): void;
     createUpperLayer(): void;
@@ -4186,6 +5025,16 @@ declare class Spriteset_Base extends Sprite
 
 declare class Spriteset_Map extends Spriteset_Base
 {
+    _parallax: TilingSprite;
+    _parallaxName: string;
+    _tilemap: Tilemap;
+    _tileset: IDataTileset;
+    _characterSprites: Sprite_Character[];
+    _shadowSprite: Sprite;
+    _destinationSprite: Sprite_Destination;
+    _weather: Weather;
+
+    constructor();
     initialize(): void;
     createLowerLayer(): void;
     update(): void;
@@ -4199,7 +5048,7 @@ declare class Spriteset_Map extends Spriteset_Base
     createWeather(): void;
     updateTileset(): void;
 
-    protected _canvasReAddParallax(): void;
+    _canvasReAddParallax(): void;
 
     updateParallax(): void;
     updateTilemap(): void;
@@ -4209,6 +5058,15 @@ declare class Spriteset_Map extends Spriteset_Base
 
 declare class Spriteset_Battle extends Spriteset_Base
 {
+    _battlebackLocated: boolean;
+    _backgroundSprite: Sprite;
+    _battleField: Sprite;
+    _back1Sprite: TilingSprite;
+    _back2Sprite: TilingSprite;
+    _enemySprites: Sprite_Enemy[];
+    _actorSprites: Sprite_Actor[];
+
+    constructor();
     initialize(): void;
     createLowerLayer(): void;
     createBackground(): void;
@@ -4255,14 +5113,18 @@ declare interface ITextState
 
 declare class Window_Base extends Window
 {
-    initialize(): void;
-    initialize(x: number, y: number, width: number, height: number): void;
-
     static _iconWidth: number;
     static _iconHeight: number;
     static _faceWidth: number;
     static _faceHeight: number;
 
+    _opening: boolean;
+    _closing: boolean;
+    _dimmerSprite: Sprite;
+
+    constructor(x: number, y: number, width: number, height: number);
+    initialize();
+    initialize(x: number, y: number, width: number, height: number): void;
     lineHeight(): number;
     standardFontFace(): string;
     standardPadding(): number;
@@ -4273,7 +5135,7 @@ declare class Window_Base extends Window
     updateBackOpacity(): void;
     contentsWidth(): number;
     contentsHeight(): number;
-    fittingHeight(): number;
+    fittingHeight(numLines: number): number;
     updateTone(): void;
     createContents(): void;
     resetFontSettings(): void;
@@ -4309,7 +5171,7 @@ declare class Window_Base extends Window
     translucentOpacity(): number;
     changeTextColor(color: string): void;
     changePaintOpacity(enabled: boolean): void;
-    drawText(text: string, x: number, y: number, maxWidth: number, align: string): void;
+    drawText(text: string, x: number, y: number, maxWidth?: number, align?: string): void;
     textWidth(text: string): number;
     drawTextEx(text: string, x: number, y: number): number;
     convertEscapeCharacters(text: string): string;
@@ -4327,25 +5189,25 @@ declare class Window_Base extends Window
     makeFontSmaller(): void;
     calcTextHeight(textState: ITextState, all: boolean): number;
     drawIcon(iconIndex: number, x: number, y: number): void;
-    drawFace(faceName: string, faceIndex: number, x: number, y: number, width: number, height: number): void;
+    drawFace(faceName: string, faceIndex: number, x: number, y: number, width?: number, height?: number): void;
     drawCharacter(characterName: string, characterIndex: number, x: number, y: number): void;
     drawGauge(x: number, y: number, width: number, rate: number, color1: string, color2: string): void;
     hpColor(actor: Game_Battler): string;
     mpColor(actor: Game_Battler): string;
     tpColor(actor: Game_Battler): string;
     drawActorCharacter(actor: Game_Actor, x: number, y: number): void;
-    drawActorFace(actor: Game_Actor, x: number, y: number, width: number, height: number): void;
-    drawActorName(actor: Game_Actor, x: number, y: number, width: number): void;
-    drawActorClass(actor: Game_Actor, x: number, y: number, width: number): void;
-    drawActorNickname(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorFace(actor: Game_Actor, x: number, y: number, width?: number, height?: number): void;
+    drawActorName(actor: Game_Actor, x: number, y: number, width?: number): void;
+    drawActorClass(actor: Game_Actor, x: number, y: number, width?: number): void;
+    drawActorNickname(actor: Game_Actor, x: number, y: number, width?: number): void;
     drawActorLevel(actor: Game_Actor, x: number, y: number): void;
-    drawActorIcons(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorIcons(actor: Game_Actor, x: number, y: number, width?: number): void;
     drawCurrentAndMax(current: number, max: number, x: number, y: number, width: number, color1: string, color2: string): void;
-    drawActorHp(actor: Game_Actor, x: number, y: number, width: number): void;
-    drawActorMp(actor: Game_Actor, x: number, y: number, width: number): void;
-    drawActorTp(actor: Game_Actor, x: number, y: number, width: number): void;
+    drawActorHp(actor: Game_Actor, x: number, y: number, width?: number): void;
+    drawActorMp(actor: Game_Actor, x: number, y: number, width?: number): void;
+    drawActorTp(actor: Game_Actor, x: number, y: number, width?: number): void;
     drawActorSimpleStatus(actor: Game_Actor, x: number, y: number, width: number): void;
-    drawItemName(item: IDataAllItem, x: number, y: number, width: number): void;
+    drawItemName(item: IDataAllItem, x: number, y: number, width?: number): void;
     drawCurrencyValue(value: number, unit: string, x: number, y: number, width: number): void;
     paramchangeTextColor(change: number): string;
     setBackgroundType(type: number): void;
@@ -4361,6 +5223,20 @@ declare class Window_Base extends Window
 
 declare class Window_Selectable extends Window_Base
 {
+    _index: number;
+    _cursorFixed: boolean;
+    _cursorAll: boolean;
+    _stayCount: number;
+    _helpWindow: Window_Help;
+    _handlers: { [key: string]: Function };
+    _touching: boolean;
+    _scrollX: number;
+    _scrollY: number;
+
+    downArrowVisible: boolean;
+    upArrowVisible: boolean;
+
+    constructor(x: number, y: number, width: number, height: number);
     initialize();
     initialize(x: number, y: number, width: number, height: number): void;
     index(): number;
@@ -4457,6 +5333,9 @@ declare class IDataCommandList
 
 declare class Window_Command extends Window_Selectable
 {
+    _list: IDataCommandList[];
+
+    constructor(x: number, y: number);
     initialize(): void;
     initialize(x: number, y: number): void;
     windowWidth(): number;
@@ -4465,7 +5344,7 @@ declare class Window_Command extends Window_Selectable
     maxItems(): number;
     clearCommandList(): void;
     makeCommandList(): void;
-    addCommand(name: string, symbol: string, enabled: boolean, ext: number): void;
+    addCommand(name: string, symbol: string, enabled?: boolean, ext?: number): void;
     commandName(index: number): string;
     commandSymbol(index: number): string;
     isCommandEnabled(index: number): boolean;
@@ -4486,6 +5365,7 @@ declare class Window_Command extends Window_Selectable
 
 declare class Window_HorzCommand extends Window_Command
 {
+    constructor(x: number, y: number);
     initialize(): void;
     initialize(x: number, y: number): void;
     numVisibleRows(): number;
@@ -4495,8 +5375,11 @@ declare class Window_HorzCommand extends Window_Command
 
 declare class Window_Help extends Window_Base
 {
+    _text: string;
+
+    constructor(numLines?: number);
     initialize(): void;
-    initialize(numLines: number): void;
+    initialize(numLines?: number): void;
     setText(text: string): void;
     clear(): void;
     setItem(item: IDataAllItem): void;
@@ -4505,6 +5388,7 @@ declare class Window_Help extends Window_Base
 
 declare class Window_Gold extends Window_Base
 {
+    constructor(x: number, y: number);
     initialize(): void;
     initialize(x: number, y: number): void;
     windowWidth(): number;
@@ -4517,13 +5401,13 @@ declare class Window_Gold extends Window_Base
 
 declare class Window_MenuCommand extends Window_Command
 {
-    initialize(): void;
-    initialize(x: number, y: number): void;
-
     static _lastCommandSymbol: string;
 
     static initCommandPosition(): void;
 
+    constructor(x: number, y: number);
+    initialize(): void;
+    initialize(x: number, y: number): void;
     windowWidth(): number;
     numVisibleRows(): number;
     makeCommandList(): void;
@@ -4545,6 +5429,10 @@ declare class Window_MenuCommand extends Window_Command
 
 declare class Window_MenuStatus extends Window_Selectable
 {
+    _formationMode: boolean;
+    _pendingIndex: number;
+
+    constructor(x: number, y: number);
     initialize(): void;
     initialize(x: number, y: number): void;
     windowWidth(): number;
@@ -4568,6 +5456,7 @@ declare class Window_MenuStatus extends Window_Selectable
 
 declare class Window_MenuActor extends Window_MenuStatus
 {
+    constructor();
     initialize(): void;
     processOk(): void;
     selectLast(): void;
@@ -4576,6 +5465,9 @@ declare class Window_MenuActor extends Window_MenuStatus
 
 declare class Window_ItemCategory extends Window_HorzCommand
 {
+    _itemWindow: Window_ItemList;
+
+    constructor();
     initialize(): void;
     windowWidth(): number;
     maxCols(): number;
@@ -4586,6 +5478,10 @@ declare class Window_ItemCategory extends Window_HorzCommand
 
 declare class Window_ItemList extends Window_Selectable
 {
+    _category: string;
+    _data: IDataAllItem[];
+
+    constructor(x: number, y: number, width: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     setCategory(category: string): void;
@@ -4607,6 +5503,10 @@ declare class Window_ItemList extends Window_Selectable
 
 declare class Window_SkillType extends Window_Command
 {
+    _actor: Game_Actor;
+    _skillWindow: Window_SkillList;
+
+    constructor(x: number, y: number);
     initialize(): void;
     initialize(x: number, y: number): void;
     windowWidth(): number;
@@ -4620,7 +5520,10 @@ declare class Window_SkillType extends Window_Command
 
 declare class Window_SkillStatus extends Window_Base
 {
-    initialize(): void;
+    _actor: Game_Actor;
+
+    constructor(x: number, y: number, width: number, height: number);
+    initialize();
     initialize(x: number, y: number, width: number, height: number): void;
     setActor(actor: Game_Actor): void;
     refresh(): void;
@@ -4628,7 +5531,12 @@ declare class Window_SkillStatus extends Window_Base
 
 declare class Window_SkillList extends Window_Selectable
 {
-    initialize(): void;
+    _actor: Game_Actor;
+    _stypeId: number;
+    _data: IDataAllItem[];
+
+    constructor(x: number, y: number, width: number, height: number);
+    initialize();
     initialize(x: number, y: number, width: number, height: number): void;
     setActor(actor: Game_Actor): void;
     setStypeId(stypeId: number): void;
@@ -4650,7 +5558,11 @@ declare class Window_SkillList extends Window_Selectable
 
 declare class Window_EquipStatus extends Window_Base
 {
-    initialize(): void;
+    _actor: Game_Actor;
+    _tempActor: Game_Actor;
+
+    constructor(x: number, y: number);
+    initialize();
     initialize(x: number, y: number): void;
     windowWidth(): number;
     windowHeight(): number;
@@ -4667,9 +5579,11 @@ declare class Window_EquipStatus extends Window_Base
 
 declare class Window_EquipCommand extends Window_HorzCommand
 {
-    initialize(): void;
-    initialize(x: number, y: number, width: number): void;
+    _windowWidth: number;
 
+    constructor(x: number, y: number, width: number);
+    initialize();
+    initialize(x: number, y: number, width: number): void;
     windowWidth(): number;
     maxCols(): number;
     makeCommandList(): void;
@@ -4677,6 +5591,11 @@ declare class Window_EquipCommand extends Window_HorzCommand
 
 declare class Window_EquipSlot extends Window_Selectable
 {
+    _actor: Game_Actor;
+    _itemWindow: Window_EquipItem;
+    _statusWindow: Window_EquipStatus;
+
+    constructor(x: number, y: number, width: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     setActor(actor: Game_Actor): void;
@@ -4694,6 +5613,11 @@ declare class Window_EquipSlot extends Window_Selectable
 
 declare class Window_EquipItem extends Window_ItemList
 {
+    _actor: Game_Actor;
+    _slotId: number;
+    _statusWindow: Window_EquipStatus;
+
+    constructor(x: number, y: number, width: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     setActor(actor: Game_Actor): void;
@@ -4708,6 +5632,9 @@ declare class Window_EquipItem extends Window_ItemList
 
 declare class Window_Status extends Window_Selectable
 {
+    _actor: Game_Actor;
+
+    constructor();
     initialize(): void;
     setActor(actor: Game_Actor): void;
     refresh(): void;
@@ -4727,6 +5654,7 @@ declare class Window_Status extends Window_Selectable
 
 declare class Window_Options extends Window_Command
 {
+    constructor();
     initialize(): void;
     windowWidth(): number;
     windowHeight(): number;
@@ -4751,6 +5679,9 @@ declare class Window_Options extends Window_Command
 
 declare class Window_SavefileList extends Window_Selectable
 {
+    _mode: string;
+
+    constructor(x: number, y: number, width: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     setMode(mode: string): void;
@@ -4768,6 +5699,10 @@ declare class Window_SavefileList extends Window_Selectable
 
 declare class Window_ShopCommand extends Window_HorzCommand
 {
+    _windowWidth: number;
+    _purchaseOnly: boolean;
+
+    constructor(width: number, purchaseOnly: boolean);
     initialize(): void;
     initialize(width: number, purchaseOnly: boolean): void;
     windowWidth(): number;
@@ -4777,8 +5712,15 @@ declare class Window_ShopCommand extends Window_HorzCommand
 
 declare class Window_ShopBuy extends Window_Selectable
 {
+    _shopGoods: any[][];
+    _money: number;
+    _data: IDataAllItem[];
+    _price: number[];
+    _statusWindow: Window_EquipStatus;
+
+    constructor(x: number, y: number, height: number, shopGoods: any[][]);
     initialize(): void;
-    initialize(x: number, y: number, height: number, shopGoods: number[][]): void;
+    initialize(x: number, y: number, height: number, shopGoods: any[][]): void;
     windowWidth(): number;
     maxItems(): number;
     item(): IDataAllItem;
@@ -4795,6 +5737,7 @@ declare class Window_ShopBuy extends Window_Selectable
 
 declare class Window_ShopSell extends Window_ItemList
 {
+    constructor(x: number, y: number, width: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     isEnabled(item: IDataAllItem): boolean;
@@ -4802,6 +5745,14 @@ declare class Window_ShopSell extends Window_ItemList
 
 declare class Window_ShopNumber extends Window_Selectable
 {
+    _item: IDataAllItem;
+    _max: number;
+    _price: number;
+    _number: number;
+    _currencyUnit: string;
+    _buttons: Sprite_Button[];
+
+    constructor(x: number, y: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, height: number): void;
     windowWidth(): number;
@@ -4838,6 +5789,10 @@ declare class Window_ShopNumber extends Window_Selectable
 
 declare class Window_ShopStatus extends Window_Base
 {
+    _item: IDataAllItem;
+    _pageIndex: number;
+
+    constructor(x: number, y: number, width: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     refresh(): void;
@@ -4861,6 +5816,13 @@ declare class Window_ShopStatus extends Window_Base
 
 declare class Window_NameEdit extends Window_Base
 {
+    _actor: Game_Actor;
+    _name: string;
+    _index: number;
+    _maxLength: number;
+    _defaultName: string;
+
+    constructor(actor: Game_Actor, maxLength: number);
     initialize(): void;
     initialize(actor: Game_Actor, maxLength: number): void;
     windowWidth(): number;
@@ -4888,6 +5850,11 @@ declare class Window_NameInput extends Window_Selectable
     static JAPAN2: string[];
     static JAPAN3: string[];
 
+    _editWindow: Window_NameEdit;
+    _page: number;
+    _index: number;
+
+    constructor(editWindow: Window_NameEdit);
     initialize(): void;
     initialize(editWindow: Window_NameEdit): void;
     windowHeight(): number;
@@ -4921,6 +5888,10 @@ declare class Window_NameInput extends Window_Selectable
 
 declare class Window_ChoiceList extends Window_Command
 {
+    _messageWindow: Window_Message;
+    _background: number;
+
+    constructor(messageWindow: Window_Message);
     initialize(): void;
     initialize(messageWindow: Window_Message): void;
     start(): void;
@@ -4942,6 +5913,12 @@ declare class Window_ChoiceList extends Window_Command
 
 declare class Window_NumberInput extends Window_Selectable
 {
+    _messageWindow: Window_Message;
+    _number: number;
+    _maxDigits: number;
+    _buttons: Sprite_Button[];
+
+    constructor(messageWindow: Window_Message);
     initialize(): void;
     initialize(messageWindow: Window_Message): void;
     start(): void;
@@ -4974,6 +5951,9 @@ declare class Window_NumberInput extends Window_Selectable
 
 declare class Window_EventItem extends Window_ItemList
 {
+    _messageWindow: Window_Message;
+
+    constructor(messageWindow: Window_Message);
     initialize(): void;
     initialize(messageWindow: Window_Message): void;
     windowHeight(): number;
@@ -4988,6 +5968,20 @@ declare class Window_EventItem extends Window_ItemList
 
 declare class Window_Message extends Window_Base
 {
+    _background: number;
+    _positionType: number;
+    _waitCount: number;
+    _faceBitmap: Bitmap;
+    _textState: ITextState;
+    _goldWindow: Window_Gold;
+    _choiceWindow: Window_ChoiceList;
+    _numberWindow: Window_NumberInput;
+    _itemWindow: Window_EventItem;
+    _showFast: boolean;
+    _lineShowFast: boolean;
+    _pauseSkip: boolean;1
+
+    constructor();
     initialize(): void;
     initMembers(): void;
     subWindows(): Window_Base[];
@@ -5028,6 +6022,10 @@ declare class Window_Message extends Window_Base
 
 declare class Window_ScrollText extends Window_Base
 {
+    _text: string;
+    _allTextHeight: number;
+
+    constructor();
     initialize(): void;
     update(): void;
     startMessage(): void;
@@ -5042,6 +6040,9 @@ declare class Window_ScrollText extends Window_Base
 
 declare class Window_MapName extends Window_Base
 {
+    _showCount: number;
+
+    constructor();
     initialize(): void;
     windowWidth(): number;
     windowHeight(): number;
@@ -5056,6 +6057,16 @@ declare class Window_MapName extends Window_Base
 
 declare class Window_BattleLog extends Window_Selectable
 {
+    _lines: string[];
+    _methods: { name: string, params: any[] }[];
+    _waitCount: number;
+    _waitMode: string;
+    _baseLineStack: number[];
+    _spriteset: Spriteset_Battle;
+    _backBitmap: Bitmap;
+    _backSprite: Sprite;
+
+    constructor();
     initialize(): void;
     setSpriteset(spriteset: Spriteset_Battle): void;
     windowWidth(): number;
@@ -5073,7 +6084,7 @@ declare class Window_BattleLog extends Window_Selectable
     setWaitMode(waitMode: string): void;
     callNextMethod(): void;
     isFastForward(): boolean;
-    push(methodName: string): void;
+    push(methodName: string, ...args: any[]): void;
     clear(): void;
     wait(): void;
     waitForEffect(): void;
@@ -5140,6 +6151,7 @@ declare class Window_BattleLog extends Window_Selectable
 
 declare class Window_PartyCommand extends Window_Command
 {
+    constructor();
     initialize(): void;
     windowWidth(): number;
     numVisibleRows(): number;
@@ -5149,6 +6161,9 @@ declare class Window_PartyCommand extends Window_Command
 
 declare class Window_ActorCommand extends Window_Command
 {
+    _actor: Game_Actor;
+
+    constructor();
     initialize(): void;
     windowWidth(): number;
     numVisibleRows(): number;
@@ -5164,6 +6179,7 @@ declare class Window_ActorCommand extends Window_Command
 
 declare class Window_BattleStatus extends Window_Selectable
 {
+    constructor();
     initialize(): void;
     windowWidth(): number;
     windowHeight(): number;
@@ -5182,6 +6198,7 @@ declare class Window_BattleStatus extends Window_Selectable
 
 declare class Window_BattleActor extends Window_BattleStatus
 {
+    constructor(x: number, y: number);
     initialize(): void;
     initialize(x: number, y: number): void;
     show(): void;
@@ -5192,6 +6209,9 @@ declare class Window_BattleActor extends Window_BattleStatus
 
 declare class Window_BattleEnemy extends Window_Selectable
 {
+    _enemies: Game_Enemy[];
+
+    constructor(x: number, y: number);
     initialize(): void;
     initialize(x: number, y: number): void;
     windowWidth(): number;
@@ -5210,6 +6230,7 @@ declare class Window_BattleEnemy extends Window_Selectable
 
 declare class Window_BattleSkill extends Window_SkillList
 {
+    constructor(x: number, y: number, width: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     show(): void;
@@ -5218,6 +6239,7 @@ declare class Window_BattleSkill extends Window_SkillList
 
 declare class Window_BattleItem extends Window_ItemList
 {
+    constructor(x: number, y: number, width: number, height: number);
     initialize(): void;
     initialize(x: number, y: number, width: number, height: number): void;
     includes(item: IDataAllItem): boolean;
@@ -5227,11 +6249,11 @@ declare class Window_BattleItem extends Window_ItemList
 
 declare class Window_TitleCommand extends Window_Command
 {
-    initialize(): void;
-
     static _lastCommandSymbol: string;
+    static initCommandPosition(): void;
 
-    initCommandPosition(): void;
+    constructor();
+    initialize(): void;
     windowWidth(): number;
     updatePlacement(): void;
     makeCommandList(): void;
@@ -5242,6 +6264,7 @@ declare class Window_TitleCommand extends Window_Command
 
 declare class Window_GameEnd extends Window_Command
 {
+    constructor();
     initialize(): void;
     windowWidth(): number;
     updatePlacement(): void;
@@ -5250,6 +6273,11 @@ declare class Window_GameEnd extends Window_Command
 
 declare class Window_DebugRange extends Window_Selectable
 {
+    _maxSwitches: number;
+    _maxVariables: number;
+    _editWindow: Window_DebugEdit;
+
+    constructor(x: number, y: number);
     initialize(): void;
     initialize(x: number, y: number): void;
     windowWidth(): number;
@@ -5267,6 +6295,10 @@ declare class Window_DebugRange extends Window_Selectable
 
 declare class Window_DebugEdit extends Window_Selectable
 {
+    _mode: string;
+    _topId: number;
+
+    constructor(x: number, y: number, width: number);
     initialize(): void;
     initialize(x: number, y: number, width: number): void;
     maxItems(): number;
