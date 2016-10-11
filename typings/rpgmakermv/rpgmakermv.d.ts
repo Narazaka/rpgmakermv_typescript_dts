@@ -1503,8 +1503,8 @@ declare interface ISavefileInfo
 {
     globalId?: number;
     title?: string;
-    characters?: [string, number];
-    faces?: [string, number]
+    characters?: [string, number][];
+    faces?: [string, number][];
     playtime?: string;
     timestamp?: number;
 }

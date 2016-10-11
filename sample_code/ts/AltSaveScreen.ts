@@ -163,7 +163,7 @@
         {
             for (let i: number = 0; i < info.faces.length; i++)
             {
-                let data: any[] = info.faces[i];
+                let data: [string, number] = info.faces[i];
                 this.drawFace(data[0], data[1], x + i * 150, y);
             }
         }
