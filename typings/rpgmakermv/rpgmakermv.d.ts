@@ -1503,8 +1503,8 @@ declare interface ISavefileInfo
 {
     globalId?: number;
     title?: string;
-    characters?: any[]; // TODO [0] string, [1] number
-    faces?: any[]; // TODO [0] string, [1] number
+    characters?: [string, number];
+    faces?: [string, number]
     playtime?: string;
     timestamp?: number;
 }
@@ -3223,8 +3223,8 @@ declare class Game_Party extends Game_Unit
     lastItem(): IDataAllItem;
     setLastItem(item: IDataAllItem): void;
     swapOrder(index1: number, index2: number): void;
-    charactersForSavefile(): any[]; // TODO [0] string, [1] number
-    facesForSavefile(): any[]; // TODO [0] string, [1] number
+    charactersForSavefile(): [string, number];
+    facesForSavefile(): [string, number];
     partyAbility(abilityId: number): boolean;
     hasEncounterHalf(): boolean;
     hasEncounterNone(): boolean;
