@@ -1483,7 +1483,7 @@ declare var $dataTilesets    : IDataTileset[];
 declare var $dataCommonEvents: IDataCommonEvent[];
 declare var $dataSystem      : IDataSystem;
 declare var $dataMapInfos    : IDataMapInfo[];
-declare var $dataMap         : IDataMap[];
+declare var $dataMap         : IDataMap;
 declare var $gameTemp        : Game_Temp;
 declare var $gameSystem      : Game_System;
 declare var $gameScreen      : Game_Screen;
