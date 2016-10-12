@@ -80,10 +80,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     var priceText = String(parameters["Price Text"] || "Price");
     var equipText = String(parameters["Equip Text"] || "Equip");
     var typeText = String(parameters["Type Text"] || "Type");
-    var $gameSystem_ex;
     var _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
     Game_Interpreter.prototype.pluginCommand = function (command, args) {
-        $gameSystem_ex = $gameSystem;
         _Game_Interpreter_pluginCommand.call(this, command, args);
         if (command === "ItemBook") {
             switch (args[0]) {
@@ -91,24 +89,23 @@ var __extends = (this && this.__extends) || function (d, b) {
                     SceneManager.push(Scene_ItemBook);
                     break;
                 case "add":
-                    $gameSystem_ex.addToItemBook(args[1], Number(args[2]));
+                    $gameSystem.addToItemBook(args[1], Number(args[2]));
                     break;
                 case "remove":
-                    $gameSystem_ex.removeFromItemBook(args[1], Number(args[2]));
+                    $gameSystem.removeFromItemBook(args[1], Number(args[2]));
                     break;
                 case "complete":
-                    $gameSystem_ex.completeItemBook();
+                    $gameSystem.completeItemBook();
                     break;
                 case "clear":
-                    $gameSystem_ex.clearItemBook();
+                    $gameSystem.clearItemBook();
                     break;
                 default:
                     break;
             }
         }
     };
-    var _Game_System_Ex_prototype = Game_System.prototype;
-    _Game_System_Ex_prototype.addToItemBook = function (type, dataId) {
+    Game_System.prototype.addToItemBook = function (type, dataId) {
         if (!this._ItemBookFlags) {
             this.clearItemBook();
         }
@@ -117,7 +114,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             this._ItemBookFlags[typeIndex][dataId] = true;
         }
     };
-    _Game_System_Ex_prototype.removeFromItemBook = function (type, dataId) {
+    Game_System.prototype.removeFromItemBook = function (type, dataId) {
         if (this._ItemBookFlags) {
             var typeIndex = this.itemBookTypeToIndex(type);
             if (typeIndex >= 0) {
@@ -125,7 +122,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             }
         }
     };
-    _Game_System_Ex_prototype.itemBookTypeToIndex = function (type) {
+    Game_System.prototype.itemBookTypeToIndex = function (type) {
         switch (type) {
             case "item":
                 return 0;
@@ -137,7 +134,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 return -1;
         }
     };
-    _Game_System_Ex_prototype.completeItemBook = function () {
+    Game_System.prototype.completeItemBook = function () {
         this.clearItemBook();
         for (var i = 1; i < $dataItems.length; i++) {
             this._ItemBookFlags[0][i] = true;
@@ -149,10 +146,10 @@ var __extends = (this && this.__extends) || function (d, b) {
             this._ItemBookFlags[2][i] = true;
         }
     };
-    _Game_System_Ex_prototype.clearItemBook = function () {
+    Game_System.prototype.clearItemBook = function () {
         this._ItemBookFlags = [[], [], []];
     };
-    _Game_System_Ex_prototype.isInItemBook = function (item) {
+    Game_System.prototype.isInItemBook = function (item) {
         if (this._ItemBookFlags && item) {
             var typeIndex = -1;
             if (DataManager.isItem(item)) {
@@ -190,7 +187,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 type = "armor";
             }
             console.log($gameSystem);
-            $gameSystem_ex.addToItemBook(type, item.id);
+            $gameSystem.addToItemBook(type, item.id);
         }
     };
     var Scene_ItemBook = (function (_super) {
@@ -278,7 +275,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             var item = this._list[index];
             var rect = this.itemRect(index);
             var width = rect.width - this.textPadding();
-            if ($gameSystem_ex.isInItemBook(item)) {
+            if ($gameSystem.isInItemBook(item)) {
                 this.drawItemName(item, rect.x, rect.y, width);
             }
             else {
@@ -319,7 +316,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             var y = 0;
             var lineHeight = this.lineHeight();
             this.contents.clear();
-            if (!item || !$gameSystem_ex.isInItemBook(item)) {
+            if (!item || !$gameSystem.isInItemBook(item)) {
                 return;
             }
             this.drawItemName(item, x, y);

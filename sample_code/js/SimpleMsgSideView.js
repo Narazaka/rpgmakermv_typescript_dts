@@ -47,8 +47,7 @@
         }
         _Window_BattleLog_addText.call(this, text);
     };
-    var _Window_BattleLog_Ex_prototype = Window_BattleLog.prototype;
-    _Window_BattleLog_Ex_prototype.addItemNameText = function (itemName) {
+    Window_BattleLog.prototype.addItemNameText = function (itemName) {
         this._lines.push(itemName);
         this.refresh();
         this.wait();

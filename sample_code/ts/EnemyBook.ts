@@ -1,7 +1,6 @@
 //=============================================================================
 // EnemyBook.js
 //=============================================================================
-
 /*:
  * @plugindesc Displays detailed statuses of enemies.
  * @author Yoji Ojima
@@ -24,7 +23,6 @@
  *   <desc2:blahblah>       # Description text in the enemy book, line 2
  *   <book:no>              # This enemy does not appear in the enemy book
  */
-
 /*:ja
  * @plugindesc モンスター図鑑です。敵キャラの詳細なステータスを表示します。
  * @author Yoji Ojima
@@ -48,18 +46,25 @@
  *   <book:no>              # 図鑑に載せない場合
  */
 
+interface Game_System
+{
+    _enemyBookFlags?: boolean[];
+
+    addToEnemyBook?(enemyId: number): void;
+    removeFromEnemyBook?(enemyId: number): void;
+    completeEnemyBook?(): void;
+    clearEnemyBook?(): void;
+    isInEnemyBook?(enemy: IDataEnemy): boolean;
+}
+
 (function() {
 
     let parameters: PluginParameters = PluginManager.parameters("EnemyBook");
     let unknownData: string = String(parameters["Unknown Data"] || "??????");
 
-    let $gameSystem_ex: IGame_System_Ex;
-
     let _Game_Interpreter_pluginCommand: Function = Game_Interpreter.prototype.pluginCommand;
     Game_Interpreter.prototype.pluginCommand = function(command: string, args: string[])
     {
-        $gameSystem_ex = $gameSystem;
-
         _Game_Interpreter_pluginCommand.call(this, command, args);
         if (command === "EnemyBook")
         {
@@ -69,16 +74,16 @@
                     SceneManager.push(Scene_EnemyBook);
                     break;
                 case "add":
-                    $gameSystem_ex.addToEnemyBook(Number(args[1]));
+                    $gameSystem.addToEnemyBook(Number(args[1]));
                     break;
                 case "remove":
-                    $gameSystem_ex.removeFromEnemyBook(Number(args[1]));
+                    $gameSystem.removeFromEnemyBook(Number(args[1]));
                     break;
                 case "complete":
-                    $gameSystem_ex.completeEnemyBook();
+                    $gameSystem.completeEnemyBook();
                     break;
                 case "clear":
-                    $gameSystem_ex.clearEnemyBook();
+                    $gameSystem.clearEnemyBook();
                     break;
                 default:
                     break;
@@ -86,19 +91,7 @@
         }
     };
 
-    interface IGame_System_Ex extends Game_System
-    {
-        _enemyBookFlags?: boolean[];
-
-        addToEnemyBook?(enemyId: number): void;
-        removeFromEnemyBook?(enemyId: number): void;
-        completeEnemyBook?(): void;
-        clearEnemyBook?(): void;
-        isInEnemyBook?(enemy: IDataEnemy): boolean;
-    }
-    let _Game_System_Ex_prototype: IGame_System_Ex = Game_System.prototype;
-
-    _Game_System_Ex_prototype.addToEnemyBook = function(this: IGame_System_Ex, enemyId: number): void
+    Game_System.prototype.addToEnemyBook = function(this: Game_System, enemyId: number): void
     {
         if (!this._enemyBookFlags)
         {
@@ -107,7 +100,7 @@
         this._enemyBookFlags[enemyId] = true;
     };
 
-    _Game_System_Ex_prototype.removeFromEnemyBook = function(this: IGame_System_Ex, enemyId: number): void
+    Game_System.prototype.removeFromEnemyBook = function(this: Game_System, enemyId: number): void
     {
         if (this._enemyBookFlags)
         {
@@ -115,7 +108,7 @@
         }
     };
 
-    _Game_System_Ex_prototype.completeEnemyBook = function(this: IGame_System_Ex): void
+    Game_System.prototype.completeEnemyBook = function(this: Game_System): void
     {
         this.clearEnemyBook();
         for (let i: number = 1; i < $dataEnemies.length; i++)
@@ -124,12 +117,12 @@
         }
     };
 
-    _Game_System_Ex_prototype.clearEnemyBook = function(this: IGame_System_Ex): void
+    Game_System.prototype.clearEnemyBook = function(this: Game_System): void
     {
         this._enemyBookFlags = [];
     };
 
-    _Game_System_Ex_prototype.isInEnemyBook = function(this: IGame_System_Ex, enemy: IDataEnemy): boolean
+    Game_System.prototype.isInEnemyBook = function(this: Game_System, enemy: IDataEnemy): boolean
     {
         if (this._enemyBookFlags && enemy)
         {
@@ -151,7 +144,7 @@
             {
                 if (enemy.isAppeared())
                 {
-                    $gameSystem_ex.addToEnemyBook(enemy.enemyId());
+                    $gameSystem.addToEnemyBook(enemy.enemyId());
                 }
             },
             this
@@ -162,14 +155,14 @@
     Game_Enemy.prototype.appear = function(): void
     {
         _Game_Enemy_appear.call(this);
-        $gameSystem_ex.addToEnemyBook(this._enemyId);
+        $gameSystem.addToEnemyBook(this._enemyId);
     };
 
     let _Game_Enemy_transform: Function = Game_Enemy.prototype.transform;
     Game_Enemy.prototype.transform = function(enemyId: number): void
     {
         _Game_Enemy_transform.call(this, enemyId);
-        $gameSystem_ex.addToEnemyBook(enemyId);
+        $gameSystem.addToEnemyBook(enemyId);
     };
 
     class Scene_EnemyBook extends Scene_MenuBase
@@ -273,7 +266,7 @@
             let enemy: IDataEnemy = this._list[index];
             let rect: Rectangle = this.itemRectForText(index);
             let name: string;
-            if ($gameSystem_ex.isInEnemyBook(enemy))
+            if ($gameSystem.isInEnemyBook(enemy))
             {
                 name = enemy.name;
             }
@@ -351,7 +344,7 @@
 
             this.contents.clear();
 
-            if (!enemy || !$gameSystem_ex.isInEnemyBook(enemy))
+            if (!enemy || !$gameSystem.isInEnemyBook(enemy))
             {
                 this._enemySprite.bitmap = null;
                 return;

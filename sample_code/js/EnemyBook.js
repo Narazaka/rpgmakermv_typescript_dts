@@ -53,10 +53,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 (function () {
     var parameters = PluginManager.parameters("EnemyBook");
     var unknownData = String(parameters["Unknown Data"] || "??????");
-    var $gameSystem_ex;
     var _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
     Game_Interpreter.prototype.pluginCommand = function (command, args) {
-        $gameSystem_ex = $gameSystem;
         _Game_Interpreter_pluginCommand.call(this, command, args);
         if (command === "EnemyBook") {
             switch (args[0]) {
@@ -64,44 +62,43 @@ var __extends = (this && this.__extends) || function (d, b) {
                     SceneManager.push(Scene_EnemyBook);
                     break;
                 case "add":
-                    $gameSystem_ex.addToEnemyBook(Number(args[1]));
+                    $gameSystem.addToEnemyBook(Number(args[1]));
                     break;
                 case "remove":
-                    $gameSystem_ex.removeFromEnemyBook(Number(args[1]));
+                    $gameSystem.removeFromEnemyBook(Number(args[1]));
                     break;
                 case "complete":
-                    $gameSystem_ex.completeEnemyBook();
+                    $gameSystem.completeEnemyBook();
                     break;
                 case "clear":
-                    $gameSystem_ex.clearEnemyBook();
+                    $gameSystem.clearEnemyBook();
                     break;
                 default:
                     break;
             }
         }
     };
-    var _Game_System_Ex_prototype = Game_System.prototype;
-    _Game_System_Ex_prototype.addToEnemyBook = function (enemyId) {
+    Game_System.prototype.addToEnemyBook = function (enemyId) {
         if (!this._enemyBookFlags) {
             this.clearEnemyBook();
         }
         this._enemyBookFlags[enemyId] = true;
     };
-    _Game_System_Ex_prototype.removeFromEnemyBook = function (enemyId) {
+    Game_System.prototype.removeFromEnemyBook = function (enemyId) {
         if (this._enemyBookFlags) {
             this._enemyBookFlags[enemyId] = false;
         }
     };
-    _Game_System_Ex_prototype.completeEnemyBook = function () {
+    Game_System.prototype.completeEnemyBook = function () {
         this.clearEnemyBook();
         for (var i = 1; i < $dataEnemies.length; i++) {
             this._enemyBookFlags[i] = true;
         }
     };
-    _Game_System_Ex_prototype.clearEnemyBook = function () {
+    Game_System.prototype.clearEnemyBook = function () {
         this._enemyBookFlags = [];
     };
-    _Game_System_Ex_prototype.isInEnemyBook = function (enemy) {
+    Game_System.prototype.isInEnemyBook = function (enemy) {
         if (this._enemyBookFlags && enemy) {
             return !!this._enemyBookFlags[enemy.id];
         }
@@ -114,19 +111,19 @@ var __extends = (this && this.__extends) || function (d, b) {
         _Game_Troop_setup.call(this, troopId);
         this.members().forEach(function (enemy) {
             if (enemy.isAppeared()) {
-                $gameSystem_ex.addToEnemyBook(enemy.enemyId());
+                $gameSystem.addToEnemyBook(enemy.enemyId());
             }
         }, this);
     };
     var _Game_Enemy_appear = Game_Enemy.prototype.appear;
     Game_Enemy.prototype.appear = function () {
         _Game_Enemy_appear.call(this);
-        $gameSystem_ex.addToEnemyBook(this._enemyId);
+        $gameSystem.addToEnemyBook(this._enemyId);
     };
     var _Game_Enemy_transform = Game_Enemy.prototype.transform;
     Game_Enemy.prototype.transform = function (enemyId) {
         _Game_Enemy_transform.call(this, enemyId);
-        $gameSystem_ex.addToEnemyBook(enemyId);
+        $gameSystem.addToEnemyBook(enemyId);
     };
     var Scene_EnemyBook = (function (_super) {
         __extends(Scene_EnemyBook, _super);
@@ -200,7 +197,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             var enemy = this._list[index];
             var rect = this.itemRectForText(index);
             var name;
-            if ($gameSystem_ex.isInEnemyBook(enemy)) {
+            if ($gameSystem.isInEnemyBook(enemy)) {
                 name = enemy.name;
             }
             else {
@@ -260,7 +257,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             var y = 0;
             var lineHeight = this.lineHeight();
             this.contents.clear();
-            if (!enemy || !$gameSystem_ex.isInEnemyBook(enemy)) {
+            if (!enemy || !$gameSystem.isInEnemyBook(enemy)) {
                 this._enemySprite.bitmap = null;
                 return;
             }

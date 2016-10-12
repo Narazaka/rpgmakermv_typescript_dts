@@ -1,7 +1,6 @@
 //=============================================================================
 // SimpleMsgSideView.js
 //=============================================================================
-
 /*:
  * @plugindesc at sideview battle, only display item/skill names.
  * @author Sasuke KANNAZUKI
@@ -19,7 +18,6 @@
  * By not displaying the log and only displaying the skill name,
  * the speed of battle will increase slightly. 
  */
-
 /*:ja
  * @plugindesc サイドビューバトルで技/アイテムの名前のみ表示します。
  * @author 神無月サスケ
@@ -36,6 +34,11 @@
  *
  * ログを表示せず、技名のみを表示することで、戦闘のテンポが若干高速になります。
  */
+
+interface Window_BattleLog
+{
+    addItemNameText?(itemName: string): void;
+}
 
 (function() {
 
@@ -55,12 +58,7 @@
         _Window_BattleLog_addText.call(this, text);
     };
 
-    interface IWindow_BattleLog_Ex extends Window_BattleLog
-    {
-        addItemNameText?(itemName: string): void;
-    }
-    let _Window_BattleLog_Ex_prototype: IWindow_BattleLog_Ex = Window_BattleLog.prototype;
-    _Window_BattleLog_Ex_prototype.addItemNameText = function(this: IWindow_BattleLog_Ex, itemName: string): void
+    Window_BattleLog.prototype.addItemNameText = function(this: Window_BattleLog, itemName: string): void
     {
         this._lines.push(itemName);
         this.refresh();
@@ -98,5 +96,4 @@
         }
         _Window_BattleLog_drawLineText.call(this, index);
     };
-
 })();

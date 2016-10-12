@@ -1,7 +1,6 @@
 //=============================================================================
 // WeaponSkill.js
 //=============================================================================
-
 /*:
  * @plugindesc Change skill id of attack for each weapon.
  * @author Sasuke KANNAZUKI
@@ -24,7 +23,6 @@
  * - If healing skill is set when actor attacks, you can choose a friend to heal.
  * - It is possible to make a weapon that functions similar to a guard command. 
  */
-
 /*:ja
  * @plugindesc 武器ごとに通常攻撃のスキルIDを変更します。
  * @author 神無月サスケ

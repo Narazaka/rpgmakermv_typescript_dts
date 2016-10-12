@@ -1,7 +1,6 @@
 //=============================================================================
 // ItemBook.js
 //=============================================================================
-
 /*:
  * @plugindesc Displays detailed statuses of items.
  * @author Yoji Ojima
@@ -36,7 +35,6 @@
  * Item (Weapon, Armor) Note:
  *   <book:no>                # This item does not appear in the item book
  */
-
 /*:ja
  * @plugindesc アイテム図鑑です。アイテムの詳細なステータスを表示します。
  * @author Yoji Ojima
@@ -72,6 +70,19 @@
  *   <book:no>                # 図鑑に載せない場合
  */
 
+interface Game_System
+{
+    _ItemBookFlags?: boolean[][];
+
+    addToItemBook?(type: string, dataId: number): void;
+    removeFromItemBook?(type: string, dataId: number): void;
+    itemBookTypeToIndex?(type: string): number;
+    completeItemBook?(): void;
+    clearItemBook?(): void;
+    isInItemBook?(item: IDataAllItem): boolean;
+    test?(): void;
+}
+
 (function()
 {
     let parameters: PluginParameters = PluginManager.parameters("ItemBook");
@@ -80,13 +91,9 @@
     let equipText: string = String(parameters["Equip Text"] || "Equip");
     let typeText: string = String(parameters["Type Text"] || "Type");
 
-    let $gameSystem_ex: IGame_System_Ex;
-
     let _Game_Interpreter_pluginCommand: Function = Game_Interpreter.prototype.pluginCommand;
     Game_Interpreter.prototype.pluginCommand = function(command: string, args: string[]): void
     {
-        $gameSystem_ex = $gameSystem;
-
         _Game_Interpreter_pluginCommand.call(this, command, args);
         if (command === "ItemBook")
         {
@@ -96,16 +103,16 @@
                     SceneManager.push(Scene_ItemBook);
                     break;
                 case "add":
-                    $gameSystem_ex.addToItemBook(args[1], Number(args[2]));
+                    $gameSystem.addToItemBook(args[1], Number(args[2]));
                     break;
                 case "remove":
-                    $gameSystem_ex.removeFromItemBook(args[1], Number(args[2]));
+                    $gameSystem.removeFromItemBook(args[1], Number(args[2]));
                     break;
                 case "complete":
-                    $gameSystem_ex.completeItemBook();
+                    $gameSystem.completeItemBook();
                     break;
                 case "clear":
-                    $gameSystem_ex.clearItemBook();
+                    $gameSystem.clearItemBook();
                     break;
                 default:
                     break;
@@ -113,21 +120,7 @@
         }
     };
 
-    interface IGame_System_Ex extends Game_System
-    {
-        _ItemBookFlags?: boolean[][];
-
-        addToItemBook?(type: string, dataId: number): void;
-        removeFromItemBook?(type: string, dataId: number): void;
-        itemBookTypeToIndex?(type: string): number;
-        completeItemBook?(): void;
-        clearItemBook?(): void;
-        isInItemBook?(item: IDataAllItem): boolean;
-        test?(): void;
-    }
-    let _Game_System_Ex_prototype: IGame_System_Ex = Game_System.prototype;
-
-    _Game_System_Ex_prototype.addToItemBook = function(this: IGame_System_Ex, type: string, dataId: number): void
+    Game_System.prototype.addToItemBook = function(this: Game_System, type: string, dataId: number): void
     {
         if (!this._ItemBookFlags)
         {
@@ -140,7 +133,7 @@
         }
     };
 
-    _Game_System_Ex_prototype.removeFromItemBook = function(this: IGame_System_Ex, type: string, dataId: number): void
+    Game_System.prototype.removeFromItemBook = function(this: Game_System, type: string, dataId: number): void
     {
         if (this._ItemBookFlags)
         {
@@ -152,7 +145,7 @@
         }
     };
 
-    _Game_System_Ex_prototype.itemBookTypeToIndex = function(type: string): number
+    Game_System.prototype.itemBookTypeToIndex = function(type: string): number
     {
         switch (type)
         {
@@ -167,7 +160,7 @@
         }
     };
 
-    _Game_System_Ex_prototype.completeItemBook = function(this: IGame_System_Ex): void
+    Game_System.prototype.completeItemBook = function(this: Game_System): void
     {
         this.clearItemBook();
         for (let i: number = 1; i < $dataItems.length; i++)
@@ -184,12 +177,12 @@
         }
     };
 
-    _Game_System_Ex_prototype.clearItemBook = function(this: IGame_System_Ex): void
+    Game_System.prototype.clearItemBook = function(this: Game_System): void
     {
         this._ItemBookFlags = [[], [], []];
     };
 
-    _Game_System_Ex_prototype.isInItemBook = function(this: IGame_System_Ex, item: IDataAllItem): boolean
+    Game_System.prototype.isInItemBook = function(this: Game_System, item: IDataAllItem): boolean
     {
         if (this._ItemBookFlags && item)
         {
@@ -242,7 +235,7 @@
                 type = "armor";
             }
             console.log($gameSystem);
-            $gameSystem_ex.addToItemBook(type, item.id);
+            $gameSystem.addToItemBook(type, item.id);
         }
     };
 
@@ -363,7 +356,7 @@
             let item: IDataAllItem = this._list[index];
             let rect: Rectangle = this.itemRect(index);
             let width: number = rect.width - this.textPadding();
-            if ($gameSystem_ex.isInItemBook(item))
+            if ($gameSystem.isInItemBook(item))
             {
                 this.drawItemName(item, rect.x, rect.y, width);
             }
@@ -415,7 +408,7 @@
 
             this.contents.clear();
 
-            if (!item || !$gameSystem_ex.isInItemBook(item))
+            if (!item || !$gameSystem.isInItemBook(item))
             {
                 return;
             }
