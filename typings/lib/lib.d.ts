@@ -1077,12 +1077,6 @@ interface ReadonlyArray<T> {
       */
     map<U>(callbackfn: (value: T, index: number, array: ReadonlyArray<T>) => U, thisArg?: any): U[];
     /**
-     * Returns the elements of an array that meet the condition specified in a callback function.
-     * @param callbackfn A function that accepts up to three arguments. The filter method calls the callbackfn function one time for each element in the array.
-     * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
-     */
-    filter<S extends T>(callbackfn: (value: T, index: number, array: ReadonlyArray<T>) => value is S, thisArg?: any): S[];
-    /**
       * Returns the elements of an array that meet the condition specified in a callback function.
       * @param callbackfn A function that accepts up to three arguments. The filter method calls the callbackfn function one time for each element in the array.
       * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
@@ -1287,44 +1281,13 @@ declare type PromiseConstructorLike = new <T>(executor: (resolve: (value?: T | P
 
 interface PromiseLike<T> {
     /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then(
-        onfulfilled?: ((value: T) => T | PromiseLike<T>) | undefined | null,
-        onrejected?: ((reason: any) => T | PromiseLike<T>) | undefined | null): PromiseLike<T>;
-
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult>(
-        onfulfilled: ((value: T) => T | PromiseLike<T>) | undefined | null,
-        onrejected: (reason: any) => TResult | PromiseLike<TResult>): PromiseLike<T | TResult>;
-
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult>(
-        onfulfilled: (value: T) => TResult | PromiseLike<TResult>,
-        onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): PromiseLike<TResult>;
-
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1, TResult2>(
-        onfulfilled: (value: T) => TResult1 | PromiseLike<TResult1>,
-        onrejected: (reason: any) => TResult2 | PromiseLike<TResult2>): PromiseLike<TResult1 | TResult2>;
+    * Attaches callbacks for the resolution and/or rejection of the Promise.
+    * @param onfulfilled The callback to execute when the Promise is resolved.
+    * @param onrejected The callback to execute when the Promise is rejected.
+    * @returns A Promise for the completion of which ever callback is executed.
+    */
+    then<TResult>(onfulfilled?: (value: T) => TResult | PromiseLike<TResult>, onrejected?: (reason: any) => TResult | PromiseLike<TResult>): PromiseLike<TResult>;
+    then<TResult>(onfulfilled?: (value: T) => TResult | PromiseLike<TResult>, onrejected?: (reason: any) => void): PromiseLike<TResult>;
 }
 
 interface ArrayLike<T> {
@@ -1584,7 +1547,7 @@ interface Int8Array {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -1592,7 +1555,7 @@ interface Int8Array {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -1857,7 +1820,7 @@ interface Uint8Array {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -1865,7 +1828,7 @@ interface Uint8Array {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -2131,7 +2094,7 @@ interface Uint8ClampedArray {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -2139,7 +2102,7 @@ interface Uint8ClampedArray {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -2404,7 +2367,7 @@ interface Int16Array {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -2412,7 +2375,7 @@ interface Int16Array {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -2678,7 +2641,7 @@ interface Uint16Array {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -2686,7 +2649,7 @@ interface Uint16Array {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -2951,7 +2914,7 @@ interface Int32Array {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -2959,7 +2922,7 @@ interface Int32Array {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -3224,7 +3187,7 @@ interface Uint32Array {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -3232,7 +3195,7 @@ interface Uint32Array {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -3497,7 +3460,7 @@ interface Float32Array {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -3505,7 +3468,7 @@ interface Float32Array {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -3771,7 +3734,7 @@ interface Float64Array {
     find(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number | undefined;
 
     /**
-      * Returns the index of the first element in the array where predicate is true, and -1
+      * Returns the index of the first element in the array where predicate is true, and undefined
       * otherwise.
       * @param predicate find calls predicate once for each element of the array, in ascending
       * order, until it finds one where predicate returns true. If such an element is found,
@@ -3779,7 +3742,7 @@ interface Float64Array {
       * @param thisArg If provided, it will be used as the this value for each invocation of
       * predicate. If it is not provided, undefined is used instead.
       */
-    findIndex(predicate: (value: number, index: number, obj: Array<number>) => boolean, thisArg?: any): number;
+    findIndex(predicate: (value: number) => boolean, thisArg?: any): number;
 
     /**
       * Performs the specified action for each element in an array.
@@ -3996,9 +3959,12 @@ declare module Intl {
         resolvedOptions(): ResolvedCollatorOptions;
     }
     var Collator: {
-        new (locales?: string | string[], options?: CollatorOptions): Collator;
-        (locales?: string | string[], options?: CollatorOptions): Collator;
-        supportedLocalesOf(locales: string | string[], options?: CollatorOptions): string[];
+        new (locales?: string[], options?: CollatorOptions): Collator;
+        new (locale?: string, options?: CollatorOptions): Collator;
+        (locales?: string[], options?: CollatorOptions): Collator;
+        (locale?: string, options?: CollatorOptions): Collator;
+        supportedLocalesOf(locales: string[], options?: CollatorOptions): string[];
+        supportedLocalesOf(locale: string, options?: CollatorOptions): string[];
     }
 
     interface NumberFormatOptions {
@@ -4033,9 +3999,12 @@ declare module Intl {
         resolvedOptions(): ResolvedNumberFormatOptions;
     }
     var NumberFormat: {
-        new (locales?: string | string[], options?: NumberFormatOptions): NumberFormat;
-        (locales?: string | string[], options?: NumberFormatOptions): NumberFormat;
-        supportedLocalesOf(locales: string | string[], options?: NumberFormatOptions): string[];
+        new (locales?: string[], options?: NumberFormatOptions): NumberFormat;
+        new (locale?: string, options?: NumberFormatOptions): NumberFormat;
+        (locales?: string[], options?: NumberFormatOptions): NumberFormat;
+        (locale?: string, options?: NumberFormatOptions): NumberFormat;
+        supportedLocalesOf(locales: string[], options?: NumberFormatOptions): string[];
+        supportedLocalesOf(locale: string, options?: NumberFormatOptions): string[];
     }
 
     interface DateTimeFormatOptions {
@@ -4076,51 +4045,90 @@ declare module Intl {
         resolvedOptions(): ResolvedDateTimeFormatOptions;
     }
     var DateTimeFormat: {
-        new (locales?: string | string[], options?: DateTimeFormatOptions): DateTimeFormat;
-        (locales?: string | string[], options?: DateTimeFormatOptions): DateTimeFormat;
-        supportedLocalesOf(locales: string | string[], options?: DateTimeFormatOptions): string[];
+        new (locales?: string[], options?: DateTimeFormatOptions): DateTimeFormat;
+        new (locale?: string, options?: DateTimeFormatOptions): DateTimeFormat;
+        (locales?: string[], options?: DateTimeFormatOptions): DateTimeFormat;
+        (locale?: string, options?: DateTimeFormatOptions): DateTimeFormat;
+        supportedLocalesOf(locales: string[], options?: DateTimeFormatOptions): string[];
+        supportedLocalesOf(locale: string, options?: DateTimeFormatOptions): string[];
     }
 }
 
 interface String {
     /**
-      * Determines whether two strings are equivalent in the current or specified locale.
+      * Determines whether two strings are equivalent in the current locale.
       * @param that String to compare to target string
-      * @param locales A locale string or array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used. This parameter must conform to BCP 47 standards; see the Intl.Collator object for details.
+      * @param locales An array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used. This parameter must conform to BCP 47 standards; see the Intl.Collator object for details.
       * @param options An object that contains one or more properties that specify comparison options. see the Intl.Collator object for details.
       */
-    localeCompare(that: string, locales?: string | string[], options?: Intl.CollatorOptions): number;
+    localeCompare(that: string, locales: string[], options?: Intl.CollatorOptions): number;
+
+    /**
+      * Determines whether two strings are equivalent in the current locale.
+      * @param that String to compare to target string
+      * @param locale Locale tag. If you omit this parameter, the default locale of the JavaScript runtime is used. This parameter must conform to BCP 47 standards; see the Intl.Collator object for details.
+      * @param options An object that contains one or more properties that specify comparison options. see the Intl.Collator object for details.
+      */
+    localeCompare(that: string, locale: string, options?: Intl.CollatorOptions): number;
 }
 
 interface Number {
     /**
       * Converts a number to a string by using the current or specified locale.
-      * @param locales A locale string or array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used.
+      * @param locales An array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used.
       * @param options An object that contains one or more properties that specify comparison options.
       */
-    toLocaleString(locales?: string | string[], options?: Intl.NumberFormatOptions): string;
+    toLocaleString(locales?: string[], options?: Intl.NumberFormatOptions): string;
+
+    /**
+      * Converts a number to a string by using the current or specified locale.
+      * @param locale Locale tag. If you omit this parameter, the default locale of the JavaScript runtime is used.
+      * @param options An object that contains one or more properties that specify comparison options.
+      */
+    toLocaleString(locale?: string, options?: Intl.NumberFormatOptions): string;
 }
 
 interface Date {
     /**
       * Converts a date and time to a string by using the current or specified locale.
-      * @param locales A locale string or array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used.
+      * @param locales An array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used.
       * @param options An object that contains one or more properties that specify comparison options.
       */
-    toLocaleString(locales?: string | string[], options?: Intl.DateTimeFormatOptions): string;
+    toLocaleString(locales?: string[], options?: Intl.DateTimeFormatOptions): string;
     /**
       * Converts a date to a string by using the current or specified locale.
-      * @param locales A locale string or array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used.
+      * @param locales An array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used.
       * @param options An object that contains one or more properties that specify comparison options.
       */
-    toLocaleDateString(locales?: string | string[], options?: Intl.DateTimeFormatOptions): string;
+    toLocaleDateString(locales?: string[], options?: Intl.DateTimeFormatOptions): string;
 
     /**
       * Converts a time to a string by using the current or specified locale.
-      * @param locales A locale string or array of locale strings that contain one or more language or locale tags. If you include more than one locale string, list them in descending order of priority so that the first entry is the preferred locale. If you omit this parameter, the default locale of the JavaScript runtime is used.
+      * @param locale Locale tag. If you omit this parameter, the default locale of the JavaScript runtime is used.
       * @param options An object that contains one or more properties that specify comparison options.
       */
-    toLocaleTimeString(locales?: string | string[], options?: Intl.DateTimeFormatOptions): string;
+    toLocaleTimeString(locale?: string[], options?: Intl.DateTimeFormatOptions): string;
+
+    /**
+      * Converts a date and time to a string by using the current or specified locale.
+      * @param locale Locale tag. If you omit this parameter, the default locale of the JavaScript runtime is used.
+      * @param options An object that contains one or more properties that specify comparison options.
+      */
+    toLocaleString(locale?: string, options?: Intl.DateTimeFormatOptions): string;
+
+    /**
+      * Converts a date to a string by using the current or specified locale.
+      * @param locale Locale tag. If you omit this parameter, the default locale of the JavaScript runtime is used.
+      * @param options An object that contains one or more properties that specify comparison options.
+      */
+    toLocaleDateString(locale?: string, options?: Intl.DateTimeFormatOptions): string;
+
+    /**
+      * Converts a time to a string by using the current or specified locale.
+      * @param locale Locale tag. If you omit this parameter, the default locale of the JavaScript runtime is used.
+      * @param options An object that contains one or more properties that specify comparison options.
+      */
+    toLocaleTimeString(locale?: string, options?: Intl.DateTimeFormatOptions): string;
 }
 
 /////////////////////////////
@@ -4971,7 +4979,7 @@ interface StoreSiteSpecificExceptionsInformation extends StoreExceptionsInformat
 }
 
 interface UIEventInit extends EventInit {
-    view?: Window;
+    view?: IWindow;
     detail?: number;
 }
 
@@ -6036,7 +6044,7 @@ declare var Comment: {
 interface CompositionEvent extends UIEvent {
     readonly data: string;
     readonly locale: string;
-    initCompositionEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, dataArg: string, locale: string): void;
+    initCompositionEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, dataArg: string, locale: string): void;
 }
 
 declare var CompositionEvent: {
@@ -6465,7 +6473,7 @@ interface Document extends Node, GlobalEventHandlers, NodeSelector, DocumentEven
       * Gets the default character set from the current regional language settings.
       */
     readonly defaultCharset: string;
-    readonly defaultView: Window;
+    readonly defaultView: IWindow;
     /**
       * Sets or gets a value that indicates whether the document can be edited.
       */
@@ -7075,7 +7083,7 @@ interface Document extends Node, GlobalEventHandlers, NodeSelector, DocumentEven
       * @param data String that specifies the nodeValue property of the text node.
       */
     createTextNode(data: string): Text;
-    createTouch(view: Window, target: EventTarget, identifier: number, pageX: number, pageY: number, screenX: number, screenY: number): Touch;
+    createTouch(view: IWindow, target: EventTarget, identifier: number, pageX: number, pageY: number, screenX: number, screenY: number): Touch;
     createTouchList(...touches: Touch[]): TouchList;
     /**
       * Creates a TreeWalker object that you can use to traverse filtered lists of nodes or elements in a document.
@@ -7502,7 +7510,7 @@ declare var DocumentType: {
 
 interface DragEvent extends MouseEvent {
     readonly dataTransfer: DataTransfer;
-    initDragEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, dataTransferArg: DataTransfer): void;
+    initDragEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, dataTransferArg: DataTransfer): void;
     msConvertURL(file: File, targetType: string, targetURL?: string): void;
 }
 
@@ -7955,7 +7963,7 @@ declare var FileReader: {
 
 interface FocusEvent extends UIEvent {
     readonly relatedTarget: EventTarget;
-    initFocusEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, relatedTargetArg: EventTarget): void;
+    initFocusEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number, relatedTargetArg: EventTarget): void;
 }
 
 declare var FocusEvent: {
@@ -9066,7 +9074,7 @@ interface HTMLFrameElement extends HTMLElement, GetSVGDocument {
     /**
       * Retrieves the object of the specified.
       */
-    readonly contentWindow: Window;
+    readonly contentWindow: IWindow;
     /**
       * Sets or retrieves whether to display a border for the frame.
       */
@@ -9471,7 +9479,7 @@ interface HTMLIFrameElement extends HTMLElement, GetSVGDocument {
     /**
       * Retrieves the object of the specified.
       */
-    readonly contentWindow: Window;
+    readonly contentWindow: IWindow;
     /**
       * Sets or retrieves whether to display a border for the frame.
       */
@@ -11891,7 +11899,7 @@ interface KeyboardEvent extends UIEvent {
     readonly which: number;
     readonly code: string;
     getModifierState(keyArg: string): boolean;
-    initKeyboardEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, keyArg: string, locationArg: number, modifiersListArg: string, repeat: boolean, locale: string): void;
+    initKeyboardEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, keyArg: string, locationArg: number, modifiersListArg: string, repeat: boolean, locale: string): void;
     readonly DOM_KEY_LOCATION_JOYSTICK: number;
     readonly DOM_KEY_LOCATION_LEFT: number;
     readonly DOM_KEY_LOCATION_MOBILE: number;
@@ -12089,7 +12097,7 @@ interface MSGestureEvent extends UIEvent {
     readonly velocityExpansion: number;
     readonly velocityX: number;
     readonly velocityY: number;
-    initGestureEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, offsetXArg: number, offsetYArg: number, translationXArg: number, translationYArg: number, scaleArg: number, expansionArg: number, rotationArg: number, velocityXArg: number, velocityYArg: number, velocityExpansionArg: number, velocityAngularArg: number, hwTimestampArg: number): void;
+    initGestureEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, offsetXArg: number, offsetYArg: number, translationXArg: number, translationYArg: number, scaleArg: number, expansionArg: number, rotationArg: number, velocityXArg: number, velocityYArg: number, velocityExpansionArg: number, velocityAngularArg: number, hwTimestampArg: number): void;
     readonly MSGESTURE_FLAG_BEGIN: number;
     readonly MSGESTURE_FLAG_CANCEL: number;
     readonly MSGESTURE_FLAG_END: number;
@@ -12175,7 +12183,7 @@ interface MSManipulationEvent extends UIEvent {
     readonly inertiaDestinationX: number;
     readonly inertiaDestinationY: number;
     readonly lastState: number;
-    initMSManipulationEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, lastState: number, currentState: number): void;
+    initMSManipulationEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number, lastState: number, currentState: number): void;
     readonly MS_MANIPULATION_STATE_ACTIVE: number;
     readonly MS_MANIPULATION_STATE_CANCELLED: number;
     readonly MS_MANIPULATION_STATE_COMMITTED: number;
@@ -12280,7 +12288,7 @@ interface MSPointerEvent extends MouseEvent {
     readonly width: number;
     getCurrentPoint(element: Element): void;
     getIntermediatePoints(element: Element): void;
-    initPointerEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, offsetXArg: number, offsetYArg: number, widthArg: number, heightArg: number, pressure: number, rotation: number, tiltX: number, tiltY: number, pointerIdArg: number, pointerType: any, hwTimestampArg: number, isPrimary: boolean): void;
+    initPointerEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, offsetXArg: number, offsetYArg: number, widthArg: number, heightArg: number, pressure: number, rotation: number, tiltX: number, tiltY: number, pointerIdArg: number, pointerType: any, hwTimestampArg: number, isPrimary: boolean): void;
 }
 
 declare var MSPointerEvent: {
@@ -12652,8 +12660,8 @@ interface MessageEvent extends Event {
     readonly data: any;
     readonly origin: string;
     readonly ports: any;
-    readonly source: Window;
-    initMessageEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, dataArg: any, originArg: string, lastEventIdArg: string, sourceArg: Window): void;
+    readonly source: IWindow;
+    initMessageEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, dataArg: any, originArg: string, lastEventIdArg: string, sourceArg: IWindow): void;
 }
 
 declare var MessageEvent: {
@@ -12725,7 +12733,7 @@ interface MouseEvent extends UIEvent {
     readonly x: number;
     readonly y: number;
     getModifierState(keyArg: string): boolean;
-    initMouseEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget): void;
+    initMouseEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget): void;
 }
 
 declare var MouseEvent: {
@@ -13342,7 +13350,7 @@ interface PointerEvent extends MouseEvent {
     readonly width: number;
     getCurrentPoint(element: Element): void;
     getIntermediatePoints(element: Element): void;
-    initPointerEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, offsetXArg: number, offsetYArg: number, widthArg: number, heightArg: number, pressure: number, rotation: number, tiltX: number, tiltY: number, pointerIdArg: number, pointerType: any, hwTimestampArg: number, isPrimary: boolean): void;
+    initPointerEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, offsetXArg: number, offsetYArg: number, widthArg: number, heightArg: number, pressure: number, rotation: number, tiltX: number, tiltY: number, pointerIdArg: number, pointerType: any, hwTimestampArg: number, isPrimary: boolean): void;
 }
 
 declare var PointerEvent: {
@@ -15653,7 +15661,7 @@ interface TextEvent extends UIEvent {
     readonly data: string;
     readonly inputMethod: number;
     readonly locale: string;
-    initTextEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, dataArg: string, inputMethod: number, locale: string): void;
+    initTextEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, dataArg: string, inputMethod: number, locale: string): void;
     readonly DOM_INPUT_METHOD_DROP: number;
     readonly DOM_INPUT_METHOD_HANDWRITING: number;
     readonly DOM_INPUT_METHOD_IME: number;
@@ -15870,8 +15878,8 @@ declare var TreeWalker: {
 
 interface UIEvent extends Event {
     readonly detail: number;
-    readonly view: Window;
-    initUIEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number): void;
+    readonly view: IWindow;
+    initUIEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number): void;
 }
 
 declare var UIEvent: {
@@ -16953,7 +16961,7 @@ interface WheelEvent extends MouseEvent {
     readonly wheelDeltaX: number;
     readonly wheelDeltaY: number;
     getCurrentPoint(element: Element): void;
-    initWheelEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, buttonArg: number, relatedTargetArg: EventTarget, modifiersListArg: string, deltaXArg: number, deltaYArg: number, deltaZArg: number, deltaMode: number): void;
+    initWheelEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: IWindow, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, buttonArg: number, relatedTargetArg: EventTarget, modifiersListArg: string, deltaXArg: number, deltaYArg: number, deltaZArg: number, deltaMode: number): void;
     readonly DOM_DELTA_LINE: number;
     readonly DOM_DELTA_PAGE: number;
     readonly DOM_DELTA_PIXEL: number;
@@ -16965,6 +16973,278 @@ declare var WheelEvent: {
     readonly DOM_DELTA_LINE: number;
     readonly DOM_DELTA_PAGE: number;
     readonly DOM_DELTA_PIXEL: number;
+}
+
+interface IWindow extends EventTarget, WindowTimers, WindowSessionStorage, WindowLocalStorage, WindowConsole, GlobalEventHandlers, IDBEnvironment, WindowBase64 {
+    readonly applicationCache: ApplicationCache;
+    readonly clientInformation: Navigator;
+    readonly closed: boolean;
+    readonly crypto: Crypto;
+    defaultStatus: string;
+    readonly devicePixelRatio: number;
+    readonly doNotTrack: string;
+    readonly document: Document;
+    event: Event;
+    readonly external: External;
+    readonly frameElement: Element;
+    readonly frames: IWindow;
+    readonly history: History;
+    readonly innerHeight: number;
+    readonly innerWidth: number;
+    readonly length: number;
+    readonly location: Location;
+    readonly locationbar: BarProp;
+    readonly menubar: BarProp;
+    readonly msCredentials: MSCredentials;
+    name: string;
+    readonly navigator: Navigator;
+    offscreenBuffering: string | boolean;
+    onabort: (this: this, ev: UIEvent) => any;
+    onafterprint: (this: this, ev: Event) => any;
+    onbeforeprint: (this: this, ev: Event) => any;
+    onbeforeunload: (this: this, ev: BeforeUnloadEvent) => any;
+    onblur: (this: this, ev: FocusEvent) => any;
+    oncanplay: (this: this, ev: Event) => any;
+    oncanplaythrough: (this: this, ev: Event) => any;
+    onchange: (this: this, ev: Event) => any;
+    onclick: (this: this, ev: MouseEvent) => any;
+    oncompassneedscalibration: (this: this, ev: Event) => any;
+    oncontextmenu: (this: this, ev: PointerEvent) => any;
+    ondblclick: (this: this, ev: MouseEvent) => any;
+    ondevicelight: (this: this, ev: DeviceLightEvent) => any;
+    ondevicemotion: (this: this, ev: DeviceMotionEvent) => any;
+    ondeviceorientation: (this: this, ev: DeviceOrientationEvent) => any;
+    ondrag: (this: this, ev: DragEvent) => any;
+    ondragend: (this: this, ev: DragEvent) => any;
+    ondragenter: (this: this, ev: DragEvent) => any;
+    ondragleave: (this: this, ev: DragEvent) => any;
+    ondragover: (this: this, ev: DragEvent) => any;
+    ondragstart: (this: this, ev: DragEvent) => any;
+    ondrop: (this: this, ev: DragEvent) => any;
+    ondurationchange: (this: this, ev: Event) => any;
+    onemptied: (this: this, ev: Event) => any;
+    onended: (this: this, ev: MediaStreamErrorEvent) => any;
+    onerror: ErrorEventHandler;
+    onfocus: (this: this, ev: FocusEvent) => any;
+    onhashchange: (this: this, ev: HashChangeEvent) => any;
+    oninput: (this: this, ev: Event) => any;
+    oninvalid: (this: this, ev: Event) => any;
+    onkeydown: (this: this, ev: KeyboardEvent) => any;
+    onkeypress: (this: this, ev: KeyboardEvent) => any;
+    onkeyup: (this: this, ev: KeyboardEvent) => any;
+    onload: (this: this, ev: Event) => any;
+    onloadeddata: (this: this, ev: Event) => any;
+    onloadedmetadata: (this: this, ev: Event) => any;
+    onloadstart: (this: this, ev: Event) => any;
+    onmessage: (this: this, ev: MessageEvent) => any;
+    onmousedown: (this: this, ev: MouseEvent) => any;
+    onmouseenter: (this: this, ev: MouseEvent) => any;
+    onmouseleave: (this: this, ev: MouseEvent) => any;
+    onmousemove: (this: this, ev: MouseEvent) => any;
+    onmouseout: (this: this, ev: MouseEvent) => any;
+    onmouseover: (this: this, ev: MouseEvent) => any;
+    onmouseup: (this: this, ev: MouseEvent) => any;
+    onmousewheel: (this: this, ev: WheelEvent) => any;
+    onmsgesturechange: (this: this, ev: MSGestureEvent) => any;
+    onmsgesturedoubletap: (this: this, ev: MSGestureEvent) => any;
+    onmsgestureend: (this: this, ev: MSGestureEvent) => any;
+    onmsgesturehold: (this: this, ev: MSGestureEvent) => any;
+    onmsgesturestart: (this: this, ev: MSGestureEvent) => any;
+    onmsgesturetap: (this: this, ev: MSGestureEvent) => any;
+    onmsinertiastart: (this: this, ev: MSGestureEvent) => any;
+    onmspointercancel: (this: this, ev: MSPointerEvent) => any;
+    onmspointerdown: (this: this, ev: MSPointerEvent) => any;
+    onmspointerenter: (this: this, ev: MSPointerEvent) => any;
+    onmspointerleave: (this: this, ev: MSPointerEvent) => any;
+    onmspointermove: (this: this, ev: MSPointerEvent) => any;
+    onmspointerout: (this: this, ev: MSPointerEvent) => any;
+    onmspointerover: (this: this, ev: MSPointerEvent) => any;
+    onmspointerup: (this: this, ev: MSPointerEvent) => any;
+    onoffline: (this: this, ev: Event) => any;
+    ononline: (this: this, ev: Event) => any;
+    onorientationchange: (this: this, ev: Event) => any;
+    onpagehide: (this: this, ev: PageTransitionEvent) => any;
+    onpageshow: (this: this, ev: PageTransitionEvent) => any;
+    onpause: (this: this, ev: Event) => any;
+    onplay: (this: this, ev: Event) => any;
+    onplaying: (this: this, ev: Event) => any;
+    onpopstate: (this: this, ev: PopStateEvent) => any;
+    onprogress: (this: this, ev: ProgressEvent) => any;
+    onratechange: (this: this, ev: Event) => any;
+    onreadystatechange: (this: this, ev: ProgressEvent) => any;
+    onreset: (this: this, ev: Event) => any;
+    onresize: (this: this, ev: UIEvent) => any;
+    onscroll: (this: this, ev: UIEvent) => any;
+    onseeked: (this: this, ev: Event) => any;
+    onseeking: (this: this, ev: Event) => any;
+    onselect: (this: this, ev: UIEvent) => any;
+    onstalled: (this: this, ev: Event) => any;
+    onstorage: (this: this, ev: StorageEvent) => any;
+    onsubmit: (this: this, ev: Event) => any;
+    onsuspend: (this: this, ev: Event) => any;
+    ontimeupdate: (this: this, ev: Event) => any;
+    ontouchcancel: (ev: TouchEvent) => any;
+    ontouchend: (ev: TouchEvent) => any;
+    ontouchmove: (ev: TouchEvent) => any;
+    ontouchstart: (ev: TouchEvent) => any;
+    onunload: (this: this, ev: Event) => any;
+    onvolumechange: (this: this, ev: Event) => any;
+    onwaiting: (this: this, ev: Event) => any;
+    opener: any;
+    orientation: string | number;
+    readonly outerHeight: number;
+    readonly outerWidth: number;
+    readonly pageXOffset: number;
+    readonly pageYOffset: number;
+    readonly parent: IWindow;
+    readonly performance: Performance;
+    readonly personalbar: BarProp;
+    readonly screen: Screen;
+    readonly screenLeft: number;
+    readonly screenTop: number;
+    readonly screenX: number;
+    readonly screenY: number;
+    readonly scrollX: number;
+    readonly scrollY: number;
+    readonly scrollbars: BarProp;
+    readonly self: IWindow;
+    status: string;
+    readonly statusbar: BarProp;
+    readonly styleMedia: StyleMedia;
+    readonly toolbar: BarProp;
+    readonly top: IWindow;
+    readonly window: IWindow;
+    URL: typeof URL;
+    Blob: typeof Blob;
+    alert(message?: any): void;
+    blur(): void;
+    cancelAnimationFrame(handle: number): void;
+    captureEvents(): void;
+    close(): void;
+    confirm(message?: string): boolean;
+    focus(): void;
+    getComputedStyle(elt: Element, pseudoElt?: string): CSSStyleDeclaration;
+    getMatchedCSSRules(elt: Element, pseudoElt?: string): CSSRuleList;
+    getSelection(): Selection;
+    matchMedia(mediaQuery: string): MediaQueryList;
+    moveBy(x?: number, y?: number): void;
+    moveTo(x?: number, y?: number): void;
+    msWriteProfilerMark(profilerMarkName: string): void;
+    open(url?: string, target?: string, features?: string, replace?: boolean): IWindow;
+    postMessage(message: any, targetOrigin: string, transfer?: any[]): void;
+    print(): void;
+    prompt(message?: string, _default?: string): string | null;
+    releaseEvents(): void;
+    requestAnimationFrame(callback: FrameRequestCallback): number;
+    resizeBy(x?: number, y?: number): void;
+    resizeTo(x?: number, y?: number): void;
+    scroll(x?: number, y?: number): void;
+    scrollBy(x?: number, y?: number): void;
+    scrollTo(x?: number, y?: number): void;
+    webkitCancelAnimationFrame(handle: number): void;
+    webkitConvertPointFromNodeToPage(node: Node, pt: WebKitPoint): WebKitPoint;
+    webkitConvertPointFromPageToNode(node: Node, pt: WebKitPoint): WebKitPoint;
+    webkitRequestAnimationFrame(callback: FrameRequestCallback): number;
+    scroll(options?: ScrollToOptions): void;
+    scrollTo(options?: ScrollToOptions): void;
+    scrollBy(options?: ScrollToOptions): void;
+    addEventListener(type: "MSGestureChange", listener: (this: this, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSGestureDoubleTap", listener: (this: this, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSGestureEnd", listener: (this: this, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSGestureHold", listener: (this: this, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSGestureStart", listener: (this: this, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSGestureTap", listener: (this: this, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSInertiaStart", listener: (this: this, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSPointerCancel", listener: (this: this, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSPointerDown", listener: (this: this, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSPointerEnter", listener: (this: this, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSPointerLeave", listener: (this: this, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSPointerMove", listener: (this: this, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSPointerOut", listener: (this: this, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSPointerOver", listener: (this: this, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "MSPointerUp", listener: (this: this, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "abort", listener: (this: this, ev: UIEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "afterprint", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "beforeprint", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "beforeunload", listener: (this: this, ev: BeforeUnloadEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "blur", listener: (this: this, ev: FocusEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "canplay", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "canplaythrough", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "change", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "click", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "compassneedscalibration", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "contextmenu", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "dblclick", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "devicelight", listener: (this: this, ev: DeviceLightEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "devicemotion", listener: (this: this, ev: DeviceMotionEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "deviceorientation", listener: (this: this, ev: DeviceOrientationEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "drag", listener: (this: this, ev: DragEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "dragend", listener: (this: this, ev: DragEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "dragenter", listener: (this: this, ev: DragEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "dragleave", listener: (this: this, ev: DragEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "dragover", listener: (this: this, ev: DragEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "dragstart", listener: (this: this, ev: DragEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "drop", listener: (this: this, ev: DragEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "durationchange", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "emptied", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "ended", listener: (this: this, ev: MediaStreamErrorEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "focus", listener: (this: this, ev: FocusEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "hashchange", listener: (this: this, ev: HashChangeEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "input", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "invalid", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "keydown", listener: (this: this, ev: KeyboardEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "keypress", listener: (this: this, ev: KeyboardEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "keyup", listener: (this: this, ev: KeyboardEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "load", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "loadeddata", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "loadedmetadata", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "loadstart", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "message", listener: (this: this, ev: MessageEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "mousedown", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "mouseenter", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "mouseleave", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "mousemove", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "mouseout", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "mouseover", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "mouseup", listener: (this: this, ev: MouseEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "mousewheel", listener: (this: this, ev: WheelEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "offline", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "online", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "orientationchange", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "pagehide", listener: (this: this, ev: PageTransitionEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pageshow", listener: (this: this, ev: PageTransitionEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pause", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "play", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "playing", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "pointercancel", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pointerdown", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pointerenter", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pointerleave", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pointermove", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pointerout", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pointerover", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "pointerup", listener: (this: this, ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "popstate", listener: (this: this, ev: PopStateEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "progress", listener: (this: this, ev: ProgressEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "ratechange", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "readystatechange", listener: (this: this, ev: ProgressEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "reset", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "resize", listener: (this: this, ev: UIEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "scroll", listener: (this: this, ev: UIEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "seeked", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "seeking", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "select", listener: (this: this, ev: UIEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "stalled", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "storage", listener: (this: this, ev: StorageEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: "submit", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "suspend", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "timeupdate", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "unload", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "volumechange", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "waiting", listener: (this: this, ev: Event) => any, useCapture?: boolean): void;
+    addEventListener(type: "wheel", listener: (this: this, ev: WheelEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
+    [index: number]: IWindow;
 }
 
 interface Worker extends EventTarget, AbstractWorker {
@@ -18151,7 +18431,7 @@ declare var document: Document;
 declare var event: Event;
 declare var external: External;
 declare var frameElement: Element;
-declare var frames: Window;
+declare var frames: IWindow;
 declare var history: History;
 declare var innerHeight: number;
 declare var innerWidth: number;
@@ -18163,104 +18443,104 @@ declare var msCredentials: MSCredentials;
 declare const name: never;
 declare var navigator: Navigator;
 declare var offscreenBuffering: string | boolean;
-declare var onabort: (this: Window, ev: UIEvent) => any;
-declare var onafterprint: (this: Window, ev: Event) => any;
-declare var onbeforeprint: (this: Window, ev: Event) => any;
-declare var onbeforeunload: (this: Window, ev: BeforeUnloadEvent) => any;
-declare var onblur: (this: Window, ev: FocusEvent) => any;
-declare var oncanplay: (this: Window, ev: Event) => any;
-declare var oncanplaythrough: (this: Window, ev: Event) => any;
-declare var onchange: (this: Window, ev: Event) => any;
-declare var onclick: (this: Window, ev: MouseEvent) => any;
-declare var oncompassneedscalibration: (this: Window, ev: Event) => any;
-declare var oncontextmenu: (this: Window, ev: PointerEvent) => any;
-declare var ondblclick: (this: Window, ev: MouseEvent) => any;
-declare var ondevicelight: (this: Window, ev: DeviceLightEvent) => any;
-declare var ondevicemotion: (this: Window, ev: DeviceMotionEvent) => any;
-declare var ondeviceorientation: (this: Window, ev: DeviceOrientationEvent) => any;
-declare var ondrag: (this: Window, ev: DragEvent) => any;
-declare var ondragend: (this: Window, ev: DragEvent) => any;
-declare var ondragenter: (this: Window, ev: DragEvent) => any;
-declare var ondragleave: (this: Window, ev: DragEvent) => any;
-declare var ondragover: (this: Window, ev: DragEvent) => any;
-declare var ondragstart: (this: Window, ev: DragEvent) => any;
-declare var ondrop: (this: Window, ev: DragEvent) => any;
-declare var ondurationchange: (this: Window, ev: Event) => any;
-declare var onemptied: (this: Window, ev: Event) => any;
-declare var onended: (this: Window, ev: MediaStreamErrorEvent) => any;
+declare var onabort: (this: IWindow, ev: UIEvent) => any;
+declare var onafterprint: (this: IWindow, ev: Event) => any;
+declare var onbeforeprint: (this: IWindow, ev: Event) => any;
+declare var onbeforeunload: (this: IWindow, ev: BeforeUnloadEvent) => any;
+declare var onblur: (this: IWindow, ev: FocusEvent) => any;
+declare var oncanplay: (this: IWindow, ev: Event) => any;
+declare var oncanplaythrough: (this: IWindow, ev: Event) => any;
+declare var onchange: (this: IWindow, ev: Event) => any;
+declare var onclick: (this: IWindow, ev: MouseEvent) => any;
+declare var oncompassneedscalibration: (this: IWindow, ev: Event) => any;
+declare var oncontextmenu: (this: IWindow, ev: PointerEvent) => any;
+declare var ondblclick: (this: IWindow, ev: MouseEvent) => any;
+declare var ondevicelight: (this: IWindow, ev: DeviceLightEvent) => any;
+declare var ondevicemotion: (this: IWindow, ev: DeviceMotionEvent) => any;
+declare var ondeviceorientation: (this: IWindow, ev: DeviceOrientationEvent) => any;
+declare var ondrag: (this: IWindow, ev: DragEvent) => any;
+declare var ondragend: (this: IWindow, ev: DragEvent) => any;
+declare var ondragenter: (this: IWindow, ev: DragEvent) => any;
+declare var ondragleave: (this: IWindow, ev: DragEvent) => any;
+declare var ondragover: (this: IWindow, ev: DragEvent) => any;
+declare var ondragstart: (this: IWindow, ev: DragEvent) => any;
+declare var ondrop: (this: IWindow, ev: DragEvent) => any;
+declare var ondurationchange: (this: IWindow, ev: Event) => any;
+declare var onemptied: (this: IWindow, ev: Event) => any;
+declare var onended: (this: IWindow, ev: MediaStreamErrorEvent) => any;
 declare var onerror: ErrorEventHandler;
-declare var onfocus: (this: Window, ev: FocusEvent) => any;
-declare var onhashchange: (this: Window, ev: HashChangeEvent) => any;
-declare var oninput: (this: Window, ev: Event) => any;
-declare var oninvalid: (this: Window, ev: Event) => any;
-declare var onkeydown: (this: Window, ev: KeyboardEvent) => any;
-declare var onkeypress: (this: Window, ev: KeyboardEvent) => any;
-declare var onkeyup: (this: Window, ev: KeyboardEvent) => any;
-declare var onload: (this: Window, ev: Event) => any;
-declare var onloadeddata: (this: Window, ev: Event) => any;
-declare var onloadedmetadata: (this: Window, ev: Event) => any;
-declare var onloadstart: (this: Window, ev: Event) => any;
-declare var onmessage: (this: Window, ev: MessageEvent) => any;
-declare var onmousedown: (this: Window, ev: MouseEvent) => any;
-declare var onmouseenter: (this: Window, ev: MouseEvent) => any;
-declare var onmouseleave: (this: Window, ev: MouseEvent) => any;
-declare var onmousemove: (this: Window, ev: MouseEvent) => any;
-declare var onmouseout: (this: Window, ev: MouseEvent) => any;
-declare var onmouseover: (this: Window, ev: MouseEvent) => any;
-declare var onmouseup: (this: Window, ev: MouseEvent) => any;
-declare var onmousewheel: (this: Window, ev: WheelEvent) => any;
-declare var onmsgesturechange: (this: Window, ev: MSGestureEvent) => any;
-declare var onmsgesturedoubletap: (this: Window, ev: MSGestureEvent) => any;
-declare var onmsgestureend: (this: Window, ev: MSGestureEvent) => any;
-declare var onmsgesturehold: (this: Window, ev: MSGestureEvent) => any;
-declare var onmsgesturestart: (this: Window, ev: MSGestureEvent) => any;
-declare var onmsgesturetap: (this: Window, ev: MSGestureEvent) => any;
-declare var onmsinertiastart: (this: Window, ev: MSGestureEvent) => any;
-declare var onmspointercancel: (this: Window, ev: MSPointerEvent) => any;
-declare var onmspointerdown: (this: Window, ev: MSPointerEvent) => any;
-declare var onmspointerenter: (this: Window, ev: MSPointerEvent) => any;
-declare var onmspointerleave: (this: Window, ev: MSPointerEvent) => any;
-declare var onmspointermove: (this: Window, ev: MSPointerEvent) => any;
-declare var onmspointerout: (this: Window, ev: MSPointerEvent) => any;
-declare var onmspointerover: (this: Window, ev: MSPointerEvent) => any;
-declare var onmspointerup: (this: Window, ev: MSPointerEvent) => any;
-declare var onoffline: (this: Window, ev: Event) => any;
-declare var ononline: (this: Window, ev: Event) => any;
-declare var onorientationchange: (this: Window, ev: Event) => any;
-declare var onpagehide: (this: Window, ev: PageTransitionEvent) => any;
-declare var onpageshow: (this: Window, ev: PageTransitionEvent) => any;
-declare var onpause: (this: Window, ev: Event) => any;
-declare var onplay: (this: Window, ev: Event) => any;
-declare var onplaying: (this: Window, ev: Event) => any;
-declare var onpopstate: (this: Window, ev: PopStateEvent) => any;
-declare var onprogress: (this: Window, ev: ProgressEvent) => any;
-declare var onratechange: (this: Window, ev: Event) => any;
-declare var onreadystatechange: (this: Window, ev: ProgressEvent) => any;
-declare var onreset: (this: Window, ev: Event) => any;
-declare var onresize: (this: Window, ev: UIEvent) => any;
-declare var onscroll: (this: Window, ev: UIEvent) => any;
-declare var onseeked: (this: Window, ev: Event) => any;
-declare var onseeking: (this: Window, ev: Event) => any;
-declare var onselect: (this: Window, ev: UIEvent) => any;
-declare var onstalled: (this: Window, ev: Event) => any;
-declare var onstorage: (this: Window, ev: StorageEvent) => any;
-declare var onsubmit: (this: Window, ev: Event) => any;
-declare var onsuspend: (this: Window, ev: Event) => any;
-declare var ontimeupdate: (this: Window, ev: Event) => any;
+declare var onfocus: (this: IWindow, ev: FocusEvent) => any;
+declare var onhashchange: (this: IWindow, ev: HashChangeEvent) => any;
+declare var oninput: (this: IWindow, ev: Event) => any;
+declare var oninvalid: (this: IWindow, ev: Event) => any;
+declare var onkeydown: (this: IWindow, ev: KeyboardEvent) => any;
+declare var onkeypress: (this: IWindow, ev: KeyboardEvent) => any;
+declare var onkeyup: (this: IWindow, ev: KeyboardEvent) => any;
+declare var onload: (this: IWindow, ev: Event) => any;
+declare var onloadeddata: (this: IWindow, ev: Event) => any;
+declare var onloadedmetadata: (this: IWindow, ev: Event) => any;
+declare var onloadstart: (this: IWindow, ev: Event) => any;
+declare var onmessage: (this: IWindow, ev: MessageEvent) => any;
+declare var onmousedown: (this: IWindow, ev: MouseEvent) => any;
+declare var onmouseenter: (this: IWindow, ev: MouseEvent) => any;
+declare var onmouseleave: (this: IWindow, ev: MouseEvent) => any;
+declare var onmousemove: (this: IWindow, ev: MouseEvent) => any;
+declare var onmouseout: (this: IWindow, ev: MouseEvent) => any;
+declare var onmouseover: (this: IWindow, ev: MouseEvent) => any;
+declare var onmouseup: (this: IWindow, ev: MouseEvent) => any;
+declare var onmousewheel: (this: IWindow, ev: WheelEvent) => any;
+declare var onmsgesturechange: (this: IWindow, ev: MSGestureEvent) => any;
+declare var onmsgesturedoubletap: (this: IWindow, ev: MSGestureEvent) => any;
+declare var onmsgestureend: (this: IWindow, ev: MSGestureEvent) => any;
+declare var onmsgesturehold: (this: IWindow, ev: MSGestureEvent) => any;
+declare var onmsgesturestart: (this: IWindow, ev: MSGestureEvent) => any;
+declare var onmsgesturetap: (this: IWindow, ev: MSGestureEvent) => any;
+declare var onmsinertiastart: (this: IWindow, ev: MSGestureEvent) => any;
+declare var onmspointercancel: (this: IWindow, ev: MSPointerEvent) => any;
+declare var onmspointerdown: (this: IWindow, ev: MSPointerEvent) => any;
+declare var onmspointerenter: (this: IWindow, ev: MSPointerEvent) => any;
+declare var onmspointerleave: (this: IWindow, ev: MSPointerEvent) => any;
+declare var onmspointermove: (this: IWindow, ev: MSPointerEvent) => any;
+declare var onmspointerout: (this: IWindow, ev: MSPointerEvent) => any;
+declare var onmspointerover: (this: IWindow, ev: MSPointerEvent) => any;
+declare var onmspointerup: (this: IWindow, ev: MSPointerEvent) => any;
+declare var onoffline: (this: IWindow, ev: Event) => any;
+declare var ononline: (this: IWindow, ev: Event) => any;
+declare var onorientationchange: (this: IWindow, ev: Event) => any;
+declare var onpagehide: (this: IWindow, ev: PageTransitionEvent) => any;
+declare var onpageshow: (this: IWindow, ev: PageTransitionEvent) => any;
+declare var onpause: (this: IWindow, ev: Event) => any;
+declare var onplay: (this: IWindow, ev: Event) => any;
+declare var onplaying: (this: IWindow, ev: Event) => any;
+declare var onpopstate: (this: IWindow, ev: PopStateEvent) => any;
+declare var onprogress: (this: IWindow, ev: ProgressEvent) => any;
+declare var onratechange: (this: IWindow, ev: Event) => any;
+declare var onreadystatechange: (this: IWindow, ev: ProgressEvent) => any;
+declare var onreset: (this: IWindow, ev: Event) => any;
+declare var onresize: (this: IWindow, ev: UIEvent) => any;
+declare var onscroll: (this: IWindow, ev: UIEvent) => any;
+declare var onseeked: (this: IWindow, ev: Event) => any;
+declare var onseeking: (this: IWindow, ev: Event) => any;
+declare var onselect: (this: IWindow, ev: UIEvent) => any;
+declare var onstalled: (this: IWindow, ev: Event) => any;
+declare var onstorage: (this: IWindow, ev: StorageEvent) => any;
+declare var onsubmit: (this: IWindow, ev: Event) => any;
+declare var onsuspend: (this: IWindow, ev: Event) => any;
+declare var ontimeupdate: (this: IWindow, ev: Event) => any;
 declare var ontouchcancel: (ev: TouchEvent) => any;
 declare var ontouchend: (ev: TouchEvent) => any;
 declare var ontouchmove: (ev: TouchEvent) => any;
 declare var ontouchstart: (ev: TouchEvent) => any;
-declare var onunload: (this: Window, ev: Event) => any;
-declare var onvolumechange: (this: Window, ev: Event) => any;
-declare var onwaiting: (this: Window, ev: Event) => any;
+declare var onunload: (this: IWindow, ev: Event) => any;
+declare var onvolumechange: (this: IWindow, ev: Event) => any;
+declare var onwaiting: (this: IWindow, ev: Event) => any;
 declare var opener: any;
 declare var orientation: string | number;
 declare var outerHeight: number;
 declare var outerWidth: number;
 declare var pageXOffset: number;
 declare var pageYOffset: number;
-declare var parent: Window;
+declare var parent: IWindow;
 declare var performance: Performance;
 declare var personalbar: BarProp;
 declare var screen: Screen;
@@ -18271,13 +18551,13 @@ declare var screenY: number;
 declare var scrollX: number;
 declare var scrollY: number;
 declare var scrollbars: BarProp;
-declare var self: Window;
+declare var self: IWindow;
 declare var status: string;
 declare var statusbar: BarProp;
 declare var styleMedia: StyleMedia;
 declare var toolbar: BarProp;
-declare var top: Window;
-declare var window: Window;
+declare var top: IWindow;
+declare var window: IWindow;
 declare function alert(message?: any): void;
 declare function blur(): void;
 declare function cancelAnimationFrame(handle: number): void;
@@ -18292,7 +18572,7 @@ declare function matchMedia(mediaQuery: string): MediaQueryList;
 declare function moveBy(x?: number, y?: number): void;
 declare function moveTo(x?: number, y?: number): void;
 declare function msWriteProfilerMark(profilerMarkName: string): void;
-declare function open(url?: string, target?: string, features?: string, replace?: boolean): Window;
+declare function open(url?: string, target?: string, features?: string, replace?: boolean): IWindow;
 declare function postMessage(message: any, targetOrigin: string, transfer?: any[]): void;
 declare function print(): void;
 declare function prompt(message?: string, _default?: string): string | null;
@@ -18326,113 +18606,113 @@ declare function setImmediate(handler: any, ...args: any[]): number;
 declare var sessionStorage: Storage;
 declare var localStorage: Storage;
 declare var console: Console;
-declare var onpointercancel: (this: Window, ev: PointerEvent) => any;
-declare var onpointerdown: (this: Window, ev: PointerEvent) => any;
-declare var onpointerenter: (this: Window, ev: PointerEvent) => any;
-declare var onpointerleave: (this: Window, ev: PointerEvent) => any;
-declare var onpointermove: (this: Window, ev: PointerEvent) => any;
-declare var onpointerout: (this: Window, ev: PointerEvent) => any;
-declare var onpointerover: (this: Window, ev: PointerEvent) => any;
-declare var onpointerup: (this: Window, ev: PointerEvent) => any;
-declare var onwheel: (this: Window, ev: WheelEvent) => any;
+declare var onpointercancel: (this: IWindow, ev: PointerEvent) => any;
+declare var onpointerdown: (this: IWindow, ev: PointerEvent) => any;
+declare var onpointerenter: (this: IWindow, ev: PointerEvent) => any;
+declare var onpointerleave: (this: IWindow, ev: PointerEvent) => any;
+declare var onpointermove: (this: IWindow, ev: PointerEvent) => any;
+declare var onpointerout: (this: IWindow, ev: PointerEvent) => any;
+declare var onpointerover: (this: IWindow, ev: PointerEvent) => any;
+declare var onpointerup: (this: IWindow, ev: PointerEvent) => any;
+declare var onwheel: (this: IWindow, ev: WheelEvent) => any;
 declare var indexedDB: IDBFactory;
 declare function atob(encodedString: string): string;
 declare function btoa(rawString: string): string;
-declare function addEventListener(type: "MSGestureChange", listener: (this: Window, ev: MSGestureEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSGestureDoubleTap", listener: (this: Window, ev: MSGestureEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSGestureEnd", listener: (this: Window, ev: MSGestureEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSGestureHold", listener: (this: Window, ev: MSGestureEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSGestureStart", listener: (this: Window, ev: MSGestureEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSGestureTap", listener: (this: Window, ev: MSGestureEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSInertiaStart", listener: (this: Window, ev: MSGestureEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSPointerCancel", listener: (this: Window, ev: MSPointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSPointerDown", listener: (this: Window, ev: MSPointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSPointerEnter", listener: (this: Window, ev: MSPointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSPointerLeave", listener: (this: Window, ev: MSPointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSPointerMove", listener: (this: Window, ev: MSPointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSPointerOut", listener: (this: Window, ev: MSPointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSPointerOver", listener: (this: Window, ev: MSPointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "MSPointerUp", listener: (this: Window, ev: MSPointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "abort", listener: (this: Window, ev: UIEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "afterprint", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "beforeprint", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "beforeunload", listener: (this: Window, ev: BeforeUnloadEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "blur", listener: (this: Window, ev: FocusEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "canplay", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "canplaythrough", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "change", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "click", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "compassneedscalibration", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "contextmenu", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "dblclick", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "devicelight", listener: (this: Window, ev: DeviceLightEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "devicemotion", listener: (this: Window, ev: DeviceMotionEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "deviceorientation", listener: (this: Window, ev: DeviceOrientationEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "drag", listener: (this: Window, ev: DragEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "dragend", listener: (this: Window, ev: DragEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "dragenter", listener: (this: Window, ev: DragEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "dragleave", listener: (this: Window, ev: DragEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "dragover", listener: (this: Window, ev: DragEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "dragstart", listener: (this: Window, ev: DragEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "drop", listener: (this: Window, ev: DragEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "durationchange", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "emptied", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "ended", listener: (this: Window, ev: MediaStreamErrorEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "focus", listener: (this: Window, ev: FocusEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "hashchange", listener: (this: Window, ev: HashChangeEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "input", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "invalid", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "keydown", listener: (this: Window, ev: KeyboardEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "keypress", listener: (this: Window, ev: KeyboardEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "keyup", listener: (this: Window, ev: KeyboardEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "load", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "loadeddata", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "loadedmetadata", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "loadstart", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "message", listener: (this: Window, ev: MessageEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "mousedown", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "mouseenter", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "mouseleave", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "mousemove", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "mouseout", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "mouseover", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "mouseup", listener: (this: Window, ev: MouseEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "mousewheel", listener: (this: Window, ev: WheelEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "offline", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "online", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "orientationchange", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pagehide", listener: (this: Window, ev: PageTransitionEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pageshow", listener: (this: Window, ev: PageTransitionEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pause", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "play", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "playing", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pointercancel", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pointerdown", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pointerenter", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pointerleave", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pointermove", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pointerout", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pointerover", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "pointerup", listener: (this: Window, ev: PointerEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "popstate", listener: (this: Window, ev: PopStateEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "progress", listener: (this: Window, ev: ProgressEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "ratechange", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "readystatechange", listener: (this: Window, ev: ProgressEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "reset", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "resize", listener: (this: Window, ev: UIEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "scroll", listener: (this: Window, ev: UIEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "seeked", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "seeking", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "select", listener: (this: Window, ev: UIEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "stalled", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "storage", listener: (this: Window, ev: StorageEvent) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "submit", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "suspend", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "timeupdate", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "unload", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "volumechange", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "waiting", listener: (this: Window, ev: Event) => any, useCapture?: boolean): void;
-declare function addEventListener(type: "wheel", listener: (this: Window, ev: WheelEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSGestureChange", listener: (this: IWindow, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSGestureDoubleTap", listener: (this: IWindow, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSGestureEnd", listener: (this: IWindow, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSGestureHold", listener: (this: IWindow, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSGestureStart", listener: (this: IWindow, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSGestureTap", listener: (this: IWindow, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSInertiaStart", listener: (this: IWindow, ev: MSGestureEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSPointerCancel", listener: (this: IWindow, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSPointerDown", listener: (this: IWindow, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSPointerEnter", listener: (this: IWindow, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSPointerLeave", listener: (this: IWindow, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSPointerMove", listener: (this: IWindow, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSPointerOut", listener: (this: IWindow, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSPointerOver", listener: (this: IWindow, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "MSPointerUp", listener: (this: IWindow, ev: MSPointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "abort", listener: (this: IWindow, ev: UIEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "afterprint", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "beforeprint", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "beforeunload", listener: (this: IWindow, ev: BeforeUnloadEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "blur", listener: (this: IWindow, ev: FocusEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "canplay", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "canplaythrough", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "change", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "click", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "compassneedscalibration", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "contextmenu", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "dblclick", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "devicelight", listener: (this: IWindow, ev: DeviceLightEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "devicemotion", listener: (this: IWindow, ev: DeviceMotionEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "deviceorientation", listener: (this: IWindow, ev: DeviceOrientationEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "drag", listener: (this: IWindow, ev: DragEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "dragend", listener: (this: IWindow, ev: DragEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "dragenter", listener: (this: IWindow, ev: DragEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "dragleave", listener: (this: IWindow, ev: DragEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "dragover", listener: (this: IWindow, ev: DragEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "dragstart", listener: (this: IWindow, ev: DragEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "drop", listener: (this: IWindow, ev: DragEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "durationchange", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "emptied", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "ended", listener: (this: IWindow, ev: MediaStreamErrorEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "focus", listener: (this: IWindow, ev: FocusEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "hashchange", listener: (this: IWindow, ev: HashChangeEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "input", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "invalid", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "keydown", listener: (this: IWindow, ev: KeyboardEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "keypress", listener: (this: IWindow, ev: KeyboardEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "keyup", listener: (this: IWindow, ev: KeyboardEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "load", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "loadeddata", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "loadedmetadata", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "loadstart", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "message", listener: (this: IWindow, ev: MessageEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "mousedown", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "mouseenter", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "mouseleave", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "mousemove", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "mouseout", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "mouseover", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "mouseup", listener: (this: IWindow, ev: MouseEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "mousewheel", listener: (this: IWindow, ev: WheelEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "offline", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "online", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "orientationchange", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pagehide", listener: (this: IWindow, ev: PageTransitionEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pageshow", listener: (this: IWindow, ev: PageTransitionEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pause", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "play", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "playing", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pointercancel", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pointerdown", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pointerenter", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pointerleave", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pointermove", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pointerout", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pointerover", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "pointerup", listener: (this: IWindow, ev: PointerEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "popstate", listener: (this: IWindow, ev: PopStateEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "progress", listener: (this: IWindow, ev: ProgressEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "ratechange", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "readystatechange", listener: (this: IWindow, ev: ProgressEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "reset", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "resize", listener: (this: IWindow, ev: UIEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "scroll", listener: (this: IWindow, ev: UIEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "seeked", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "seeking", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "select", listener: (this: IWindow, ev: UIEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "stalled", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "storage", listener: (this: IWindow, ev: StorageEvent) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "submit", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "suspend", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "timeupdate", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "unload", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "volumechange", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "waiting", listener: (this: IWindow, ev: Event) => any, useCapture?: boolean): void;
+declare function addEventListener(type: "wheel", listener: (this: IWindow, ev: WheelEvent) => any, useCapture?: boolean): void;
 declare function addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void;
 type AAGUID = string;
 type AlgorithmIdentifier = string | Algorithm;
