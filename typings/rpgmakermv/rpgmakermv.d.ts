@@ -3842,6 +3842,7 @@ declare class Game_Event extends Game_Character
     _interpreter: Game_Interpreter;
 
     constructor();
+    constructor(mapId: number, eventId: number);
     initialize();
     initialize(mapId: number, eventId: number): void;
     initMembers(): void;
@@ -4059,6 +4060,7 @@ declare class Scene_Base extends Stage
     _fadeDuration: number;
     _fadeSprite: ScreenSprite;
     _windowLayer: WindowLayer;
+    _spriteset: Spriteset_Map;
 
     constructor();
     initialize(): void;
@@ -4627,7 +4629,7 @@ declare class Sprite_Character extends Sprite_Base
     _isBigCharacter: boolean;
     _bushDepth: number;
 
-    constructor();
+    constructor(character?: Game_CharacterBase);
     initialize(character?: Game_CharacterBase): void;
     initMembers(): void;
     setCharacter(character: Game_CharacterBase): void;

@@ -921,6 +921,10 @@ declare namespace PIXI {
     export interface TextStyle {
 
         font?: string;
+        fontFamily?: string;
+        fontSize?: string;
+        fontStyle?: string;
+        fontWeight?: string;
         fill?: string | number;
         align?: string;
         stroke?: string | number;
@@ -936,7 +940,6 @@ declare namespace PIXI {
         textBaseline?: string;
         lineJoin?: string;
         miterLimit?: number;
-
     }
     export class Text extends Sprite {
 
