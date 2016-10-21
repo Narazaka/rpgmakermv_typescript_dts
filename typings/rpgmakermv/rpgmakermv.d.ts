@@ -162,6 +162,9 @@ declare class Bitmap
     _setDirty(): void;
 }
 
+declare var waitForLoading: boolean;
+declare var register: boolean;
+
 declare class Graphics
 {
     private constructor();
@@ -399,7 +402,7 @@ declare class Sprite extends PIXI.Sprite
     setBlendColor(color: number[]): void;
     getColorTone(): number[];
     setColorTone(tone: number[]): void;
-    updateTransform(): void;
+    // 1.3.2で削除 updateTransform(): void;
 
     _bitmap: Bitmap;
     _frame: Rectangle;
@@ -691,9 +694,10 @@ declare class WindowLayer extends PIXI.Container
     update(): void;
     renderCanvas(renderer: PIXI.CanvasRenderer): void;
     renderWebGL(renderer: PIXI.WebGLRenderer): void;
+    onRemoveAsAChild(): void;
 
     _canvasClearWindowRect(renderSession: PIXI.CanvasRenderer, window: Window): void;
-    _maskWindow(window: Window): void;
+    _maskWindow(window: Window, shift: PIXI.Point): void;
 }
 
 declare class Weather extends PIXI.Container
@@ -4060,7 +4064,7 @@ declare class Scene_Base extends Stage
     _fadeDuration: number;
     _fadeSprite: ScreenSprite;
     _windowLayer: WindowLayer;
-    _spriteset: Spriteset_Map;
+    _spriteset: Spriteset_Base;
 
     constructor();
     initialize(): void;
