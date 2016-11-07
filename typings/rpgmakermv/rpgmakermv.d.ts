@@ -5109,12 +5109,12 @@ declare class Spriteset_Battle extends Spriteset_Base
 
 declare interface ITextState
 {
-    index: number;
-    x: number;
-    y: number;
-    left: number;
-    text: string;
-    height: number;
+    index?: number;
+    x?: number;
+    y?: number;
+    left?: number;
+    text?: string;
+    height?: number;
 }
 
 declare class Window_Base extends Window
@@ -5133,6 +5133,7 @@ declare class Window_Base extends Window
     initialize(x?: number, y?: number, width?: number, height?: number): void;
     lineHeight(): number;
     standardFontFace(): string;
+    standardFontSize(): number;
     standardPadding(): number;
     textPadding(): number;
     standardBackOpacity(): number;
@@ -6001,6 +6002,7 @@ declare class Window_Message extends Window_Base
     canStart(): boolean;
     startMessage(): void;
     updatePlacement(): void;
+    updateBackground(): void;
     terminateMessage(): void;
     updateWait(): void;
     updateLoading(): void;
