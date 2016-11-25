@@ -2030,6 +2030,7 @@ declare class BattleManager
     static abort(): void;
     static checkBattleEnd(): boolean;
     static checkAbort(): boolean;
+    static checkAbort2(): boolean;
     static processVictory(): void;
     static processEscape(): boolean;
     static processAbort(): void;
@@ -3017,6 +3018,7 @@ declare class Game_Actor extends Game_Battler
     learnSkill(skillId: number): void;
     forgetSkill(skillId: number): void;
     isLearnedSkill(skillId: number): boolean;
+    hasSkill(skillId: number): boolean;
     changeClass(classId: number, keepExp: number): void;
     setCharacterImage(characterName: string, characterIndex: number): void;
     setFaceImage(faceName: string, faceIndex: number): void;
@@ -3059,6 +3061,8 @@ declare class Game_Actor extends Game_Battler
     setLastBattleSkill(skill: IDataSkill): void;
     lastCommandSymbol(): string;
     setLastCommandSymbol(symbol: string): void;
+    testEscape(item: IDataAllItem): boolean;
+    meetsUsableItemConditions(item: IDataAllItem): boolean;
 }
 
 declare class Game_Enemy extends Game_Battler
