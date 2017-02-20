@@ -532,8 +532,8 @@ declare class ShaderTilemap extends Tilemap
 {
     roundPixels: boolean;
     animationFrame: number;
-    lowerZLayer: any; // PIXI.tilemap.ZLayer;
-    upperZLayer: any; // PIXI.tilemap.ZLayer;
+    lowerZLayer: PIXI.tilemap.ZLayer;
+    upperZLayer: PIXI.tilemap.ZLayer;
 
     _lastBitmapLength: number;
     
@@ -550,15 +550,15 @@ declare class ShaderTilemap extends Tilemap
     _paintAllTiles(startX: number, startY: number): void;
     _paintTiles(startX: number, startY: number, x: number, y: number): void;
     _drawTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawTile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
+    _drawTile(layer: PIXI.tilemap.RectTileLayer, tileId: number, dx: number, dy: number): void;
     _drawNormalTile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawNormalTile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
+    _drawNormalTile(layer: PIXI.tilemap.RectTileLayer, tileId: number, dx: number, dy: number): void;
     _drawAutotile(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawAutotile(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
+    _drawAutotile(layer: PIXI.tilemap.RectTileLayer, tileId: number, dx: number, dy: number): void;
     _drawTableEdge(bitmap: Bitmap, tileId: number, dx: number, dy: number): void;
-    _drawTableEdge(layer: PIXI.RectTileLayer, tileId: number, dx: number, dy: number): void;
+    _drawTableEdge(layer: PIXI.tilemap.RectTileLayer, tileId: number, dx: number, dy: number): void;
     _drawShadow(bitmap: Bitmap, shadowBits: number, dx: number, dy: number): void;
-    _drawShadow(layer: PIXI.RectTileLayer, shadowBits: number, dx: number, dy: number): void;
+    _drawShadow(layer: PIXI.tilemap.RectTileLayer, shadowBits: number, dx: number, dy: number): void;
 }
 
 declare class TilingSprite extends PIXI.extras.TilingSprite
