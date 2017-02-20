@@ -339,6 +339,7 @@ declare class TouchInput
     static clear(): void;
     static update(): void;
     static isPressed(): boolean;
+    static isMousePressed(): boolean;
     static isTriggered(): boolean;
     static isRepeated(): boolean;
     static isLongPressed(): boolean;
