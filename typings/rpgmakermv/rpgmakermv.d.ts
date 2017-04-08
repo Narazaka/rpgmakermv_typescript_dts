@@ -100,7 +100,7 @@ declare class Bitmap
 {
     static load(url: string): Bitmap;
     static snap(stage: Stage): Bitmap;
-    
+
     url: string;
     baseTexture: PIXI.BaseTexture;
     canvas: HTMLCanvasElement;
@@ -224,7 +224,7 @@ declare class Graphics
     static _loadingImage: HTMLImageElement;
     static _loadingCount: number;
     static _fpsMeterToggled: boolean;
-    static _stretchEnabled
+    static _stretchEnabled: boolean;
     static _canUseDifferenceBlend: boolean;
     static _canUseSaturationBlend: boolean;
     static _hiddenCanvas: HTMLCanvasElement;
@@ -535,7 +535,7 @@ declare class ShaderTilemap extends Tilemap
     upperZLayer: PIXI.tilemap.ZLayer;
 
     _lastBitmapLength: number;
-    
+
     constructor();
     renderCanvas(renderer: PIXI.CanvasRenderer): void;
     renderWebGL(renderer: PIXI.WebGLRenderer): void;
@@ -571,7 +571,7 @@ declare class TilingSprite extends PIXI.extras.TilingSprite
     _width: number;
     _height: number;
     _frame: Rectangle;
-    
+
     _renderCanvas_PIXI(renderer: PIXI.CanvasRenderer): void;
     _renderWebGL_PIXI(renderer: PIXI.WebGLRenderer): void;
     _renderCanvas(renderer: PIXI.CanvasRenderer): void;
@@ -2231,7 +2231,7 @@ declare class Game_Message
     setChoicePositionType(positionType: number): void;
     setNumberInput(variableId: number, maxDigits: number): void;
     setItemChoice(variableId: number, itemType: number): void;
-    setScroll(speed: number, noFast: boolean);
+    setScroll(speed: number, noFast: boolean): void;
     setChoiceCallback(callback: Function): void;
     onChoice(n: number): void;
     hasText(): boolean;
@@ -2415,7 +2415,7 @@ declare class Game_Item
     isWeapon(): boolean;
     isArmor(): boolean;
     isEquipItem(): boolean;
-    isNull(): boolean;77
+    isNull(): boolean;
     itemId(): number;
     object(): IDataItem;
     setObject(item: IDataItem): void;
@@ -2944,7 +2944,7 @@ declare class Game_Actor extends Game_Battler
     nickname(): string;
     setNickname(nickname: string): void;
     profile(): string;
-    setProfile(profile: string);
+    setProfile(profile: string): void;
     characterName(): string;
     characterIndex(): number;
     faceName(): string;
@@ -3629,7 +3629,7 @@ declare class Game_Character extends Game_CharacterBase
     constructor();
     initialize(): void;
     initMembers(): void;
-    memorizeMoveRoute(); void;
+    memorizeMoveRoute(): void;
     restoreMoveRoute(): void;
     isMoveRouteForcing(): boolean;
     setMoveRoute(moveRoute: IDataMoveRoute): void;
@@ -3777,13 +3777,13 @@ declare class Game_Followers extends Game_Character
     show(): void;
     hide(): void;
     follower(index: number): Game_Follower;
-    forEach(callback: Function, thisObject: this);
-    reverseEach(callback: Function, thisObject: this);
+    forEach(callback: Function, thisObject: this): void;
+    reverseEach(callback: Function, thisObject: this): void;
     refresh(): void;
     update(): void;
     updateMove(): void;
     jumpAll(): void;
-    synchronize(x: number, y: number, d: number);
+    synchronize(x: number, y: number, d: number): void;
     gather(): void;
     areGathering(): boolean;
     visibleFollowers(): boolean;
@@ -3851,7 +3851,7 @@ declare class Game_Event extends Game_Character
 
     constructor();
     constructor(mapId: number, eventId: number);
-    initialize();
+    initialize(): void;
     initialize(mapId: number, eventId: number): void;
     initMembers(): void;
     eventId(): number;
@@ -4220,7 +4220,7 @@ declare class Scene_Menu extends Scene_MenuBase
     _statusWindow: Window_MenuStatus;
     _goldWindow: Window_Gold;
     _commandWindow: Window_MenuCommand;
-    
+
     constructor();
     initialize(): void;
     create(): void;
@@ -4324,7 +4324,7 @@ declare class Scene_Equip extends Scene_MenuBase
     commandEquip(): void;
     commandOptimize(): void;
     commandClear(): void;
-    onSlotOk(): void;4
+    onSlotOk(): void;
     onSlotCancel(): void;
     onItemOk(): void;
     onItemCancel(): void;
@@ -5133,7 +5133,7 @@ declare class Window_Base extends Window
     _dimmerSprite: Sprite;
 
     constructor(x?: number, y?: number, width?: number, height?: number);
-    initialize();
+    initialize(): void;
     initialize(x?: number, y?: number, width?: number, height?: number): void;
     lineHeight(): number;
     standardFontFace(): string;
@@ -5248,7 +5248,7 @@ declare class Window_Selectable extends Window_Base
     upArrowVisible: boolean;
 
     constructor(x?: number, y?: number, width?: number, height?: number);
-    initialize();
+    initialize(): void;
     initialize(x?: number, y?: number, width?: number, height?: number): void;
     index(): number;
     cursorFixed(): boolean;
@@ -5534,7 +5534,7 @@ declare class Window_SkillStatus extends Window_Base
     _actor: Game_Actor;
 
     constructor(x?: number, y?: number, width?: number, height?: number);
-    initialize();
+    initialize(): void;
     initialize(x?: number, y?: number, width?: number, height?: number): void;
     setActor(actor: Game_Actor): void;
     refresh(): void;
@@ -5547,7 +5547,7 @@ declare class Window_SkillList extends Window_Selectable
     _data: IDataAllItem[];
 
     constructor(x?: number, y?: number, width?: number, height?: number);
-    initialize();
+    initialize(): void;
     initialize(x?: number, y?: number, width?: number, height?: number): void;
     setActor(actor: Game_Actor): void;
     setStypeId(stypeId: number): void;
@@ -5573,7 +5573,7 @@ declare class Window_EquipStatus extends Window_Base
     _tempActor: Game_Actor;
 
     constructor(x?: number, y?: number);
-    initialize();
+    initialize(): void;
     initialize(x?: number, y?: number): void;
     windowWidth(): number;
     windowHeight(): number;
@@ -5593,7 +5593,7 @@ declare class Window_EquipCommand extends Window_HorzCommand
     _windowWidth: number;
 
     constructor(x?: number, y?: number, width?: number);
-    initialize();
+    initialize(): void;
     initialize(x?: number, y?: number, width?: number): void;
     windowWidth(): number;
     maxCols(): number;
@@ -5912,7 +5912,7 @@ declare class Window_ChoiceList extends Window_Command
     windowWidth(): number;
     numVisibleRows(): number;
     maxChoiceWidth(): number;
-    textWidthEx(text: string); number;
+    textWidthEx(text: string): number;
     contentsHeight(): number;
     makeCommandList(): void;
     drawItem(index: number): void;
@@ -5990,7 +5990,7 @@ declare class Window_Message extends Window_Base
     _itemWindow: Window_EventItem;
     _showFast: boolean;
     _lineShowFast: boolean;
-    _pauseSkip: boolean;1
+    _pauseSkip: boolean;
 
     constructor();
     initialize(): void;
