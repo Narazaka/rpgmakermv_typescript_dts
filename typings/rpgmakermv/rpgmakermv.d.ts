@@ -2165,6 +2165,7 @@ declare class Game_System
     replayBgm(): void;
     saveWalkingBgm(): void;
     replayWalkingBgm(): void;
+    saveWalkingBgm2(): void;
 }
 
 declare class Game_Timer
