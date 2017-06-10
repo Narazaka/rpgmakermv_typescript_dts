@@ -2,7 +2,7 @@
 RPGツクールMVに標準搭載されているJavaScriptを、TypeScriptで扱うための型定義ファイルです。
 
 # 対象バージョン
-1.4.1
+1.5.0
 
 # License
 MIT
