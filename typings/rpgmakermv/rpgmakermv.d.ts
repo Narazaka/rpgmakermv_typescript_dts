@@ -41,6 +41,44 @@ declare class Utils
     static isAndroidChrome(): boolean;
     static canReadGameFiles(): boolean;
     static rgbToCssColor(r: number, g: number, b: number): string;
+    static generateRuntimeId(): number;
+    static isSupportPassiveEvent(): boolean;
+
+    static _id: number;
+    static _supportPassiveEvent: boolean;
+}
+
+declare interface IImageCacheItem
+{
+    bitmap: Bitmap;
+    touch: number;
+    key: string;
+}
+
+declare class ImageCache
+{
+    static limit: number;
+
+    initialize(): void;
+    add(key: string, value: Bitmap): void;
+    get(key: string): Bitmap;
+    reserve(key: string, value: Bitmap, reservationId: number): void;
+    releaseReservation(reservationId: number): void;
+    isReady(): boolean;
+    getErrorBitmap(): Bitmap;
+
+    _truncateCache(): void;
+    _mustBeHeld(item: IImageCacheItem): boolean;
+}
+
+declare class RequestQueue
+{
+    constructor();
+    initialize(): void;
+    enqueue(key: string, value: Bitmap): void;
+    update(): void;
+    raisePriority(key: string): void;
+    clear(): void;
 }
 
 declare class CacheEntry
@@ -98,8 +136,10 @@ declare class Rectangle extends PIXI.Rectangle
 
 declare class Bitmap
 {
+    static _reuseImages: HTMLImageElement[];
     static load(url: string): Bitmap;
     static snap(stage: Stage): Bitmap;
+    static request(url: string): Bitmap;
 
     url: string;
     baseTexture: PIXI.BaseTexture;
@@ -141,6 +181,9 @@ declare class Bitmap
     blur(): void;
     addLoadListener(listener: Function): void;
     checkDirty(): void;
+    isRequestOnly(): boolean;
+    isRequestReady(): boolean;
+    startRequest(): void;
 
     _canvas: HTMLCanvasElement;
     _context: CanvasRenderingContext2D;
@@ -150,8 +193,8 @@ declare class Bitmap
     _paintOpacity: number;
     _smooth: boolean;
     _loadListeners: Function[];
-    _isLoading: boolean;
-    _hasError: boolean;
+    _loadingState: string;
+    _decodeAfterRequest: boolean;
 
     _makeFontNameText(): string;
     _drawTextOutline(text: string, tx: number, ty: number, maxWidth: number): void;
@@ -160,6 +203,11 @@ declare class Bitmap
     _callLoadListeners(): void;
     _onError(): void;
     _setDirty(): void;
+    _createCanvas(width: number, height: number): void;
+    _createBaseTexture(source: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement): void;
+    _clearImgInstance(): void;
+    _renewCanvas(): void;
+    _requestImage(url: string): void;
 }
 
 declare var waitForLoading: boolean;
@@ -200,9 +248,15 @@ declare class Graphics
     static isVideoPlaying(): boolean;
     static canPlayVideoType(type: string): boolean;
     static pageToCanvasX(x: number): number;
-    static pageToCanvasY(y : number): number;
+    static pageToCanvasY(y: number): number;
     static isInsideCanvas(x: number, y: number): boolean;
     static callGC(): void;
+    static canUseCssFontLoading(): boolean;
+    static printLoadingError(url: string): void;
+    static eraseLoadingError(): void;
+    static setVideoVolume(value: number): void;
+    static _setupCssFontLoading(): void;
+    static _onTouchEnd(event: TouchEvent): void;
 
     static _width: number;
     static _height: number;
@@ -211,9 +265,12 @@ declare class Graphics
     static _boxHeight: number;
     static _scale: number;
     static _realScale: number;
+    static _errorShowed: boolean;
     static _errorPrinter: HTMLParagraphElement;
     static _canvas: HTMLCanvasElement;
     static _video: HTMLVideoElement;
+    static _videoUnlocked: boolean;
+    static _videoLoading: boolean;
     static _upperCanvas: HTMLCanvasElement;
     static _renderer: PIXI.SystemRenderer;
     static _fpsMeter: any;
@@ -228,6 +285,9 @@ declare class Graphics
     static _canUseDifferenceBlend: boolean;
     static _canUseSaturationBlend: boolean;
     static _hiddenCanvas: HTMLCanvasElement;
+    static _cssFontLoading: boolean;
+    static _fontLoaded: any; // FontFaceSet
+    static _videoVolume: number;
 
     static _createAllElements(): void;
     static _updateAllElements(): void;
@@ -414,7 +474,7 @@ declare class Sprite extends PIXI.Sprite
     _context: CanvasRenderingContext2D;
     _tintTexture: PIXI.BaseTexture;
 
-    _onBitmapLoad(): void;
+    _onBitmapLoad(bitmapLoaded: Bitmap): void;
     _refresh(): void;
     _isInBitmapRect(x: number, y: number, w: number, h: number): boolean;
     _needsTint(): boolean;
@@ -763,16 +823,20 @@ declare class Stage extends PIXI.Container
 
 declare class WebAudio
 {
+    static _masterVolume: number;
     static _context: AudioContext;
     static _masterGainNode: GainNode;
     static _initialized: boolean;
     static _unlocked: boolean;
     static _canPlayOgg: boolean;
     static _canPlayM4a: boolean;
+    static _standAlone: typeof ResourceHandler;
 
     static initialize(noAudio: boolean): boolean;
     static canPlayOgg(): boolean;
     static canPlayM4a(): boolean;
+    static setMasterVolume(value: number): void;
+
     static _createContext(): void;
     static _detectCodecs(): void;
     static _createMasterGainNode(): void;
@@ -905,10 +969,16 @@ declare class JsonEx
     static parse(json: string): any;
     static makeDeepCopy(object: any): any;
 
-    static _encode(value: any, depth: number): any;
-    static _decode(value: any): any;
+    static _id: number;
+
+    static _encode(value: any, circular: any[], depth: number): any;
+    static _decode(value: any, circular: any[], registry: any): any;
     static _getConstructorName(value: any): any;
     static _resetPrototype(value: any, prototype: any): any;
+    static _generateId(): number;
+    static _restoreCircularReference(circulars: any[]): void;
+    static _linkCircularReference(contents: any, circulars: any[], registry: any[]): void;
+    static _cleanMetadata(object: any): void;
 }
 
 declare class Decrypter
@@ -935,6 +1005,18 @@ declare class Decrypter
     static createBlobUrl(arrayBuffer: ArrayBuffer): string;
     static extToEncryptExt(url: string): string;
     static readEncryptionkey(): void;
+}
+
+declare class ResourceHandler
+{
+    private constructor();
+
+    static _reloaders: Function[];
+    static _defaultRetryInterval: number[];
+
+    static createLoader(url: string, retryMethod: Function, resignMethod: Function, retryInterval: number): void;
+    static exists(): boolean;
+    static retry(): void;
 }
 
 declare interface IDataSound
@@ -1638,6 +1720,12 @@ declare class ImageManager
 {
     private constructor();
 
+    static _imageCache: ImageCache;
+    static _requestQueue: RequestCache;
+    static _systemReservationId: number;
+
+    static _generateCacheKey(): string;
+
     static cache: CacheMap;
 
     static loadAnimation(filename: string, hue?: number): Bitmap;
@@ -1659,9 +1747,45 @@ declare class ImageManager
     static loadNormalBitmap(path: string, hue: number): Bitmap;
     static clear(): void;
     static isReady(): boolean;
-    static isObjectCharacter: boolean;
-    static isBigCharacter: boolean;
-    static isZeroParallax: boolean;
+    static isObjectCharacter(): boolean;
+    static isBigCharacter(): boolean;
+    static isZeroParallax(): boolean;
+    static reserveAnimation(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveBattleback1(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveBattleback2(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveEnemy(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveCharacter(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveFace(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveParallax(filename: string, hue: number, reservationId: number): Bitmap;
+    static reservePicture(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveSvActor(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveSvEnemy(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveSystem(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveTileset(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveTitle1(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveTitle2(filename: string, hue: number, reservationId: number): Bitmap;
+    static reserveBitmap(folder: string, filename: string, hue: number, smooth: boolean, reservationId: number): Bitmap;
+    static reserveNormalBitmap(path: string, hue: number, reservationId: number): Bitmap;
+    static releaseReservation(reservationId: number): void;
+    static setDefaultReservationId(reservationId: number): void;
+    static requestAnimation(filename: string, hue: number): Bitmap;
+    static requestBattleback1(filename: string, hue: number): Bitmap;
+    static requestBattleback2(filename: string, hue: number): Bitmap;
+    static requestEnemy(filename: string, hue: number): Bitmap;
+    static requestCharacter(filename: string, hue: number): Bitmap;
+    static requestFace(filename: string, hue: number): Bitmap;
+    static requestParallax(filename: string, hue: number): Bitmap;
+    static requestPicture(filename: string, hue: number): Bitmap;
+    static requestSvActor(filename: string, hue: number): Bitmap;
+    static requestSvEnemy(filename: string, hue: number): Bitmap;
+    static requestSystem(filename: string, hue: number): Bitmap;
+    static requestTileset(filename: string, hue: number): Bitmap;
+    static requestTitle1(filename: string, hue: number): Bitmap;
+    static requestTitle2(filename: string, hue: number): Bitmap;
+    static requestBitmap(folder: string, filename: string, hue: number, smooth: boolean): Bitmap;
+    static requestNormalBitmap(path: string, hue: number): Bitmap;
+    static update(): void;
+    static clearRequest(): void;
 }
 
 interface IAudioObject
@@ -1677,6 +1801,7 @@ declare class AudioManager
 {
     private constructor();
 
+    static _masterVolume   : number;
     static _bgmVolume      : number;
     static _bgsVolume      : number;
     static _meVolume       : number;
@@ -1872,7 +1997,7 @@ declare class SceneManager
 {
     private constructor();
 
-    static _getTimeInMs: number;
+    static _getTimeInMsWithoutMobileSafari: number;
     static _scene: Scene_Base;
     static _nextScene: Scene_Base;
     static _stack: typeof Scene_Base[];
@@ -1911,7 +2036,7 @@ declare class SceneManager
     static tickEnd(): void;
     static updateInputData(): void;
     static updateMain(): void;
-    static updateManagers(ticks: number, delta: number): void;
+    static updateManagers(): void;
     static changeScene(): void;
     static updateScene(): void;
     static renderScene(): void;
@@ -1933,6 +2058,7 @@ declare class SceneManager
     static snap(): void;
     static snapForBackground(): void;
     static backgroundBitmap(): Bitmap;
+    static resume(): void;
 }
 
 declare interface IDataRewards
@@ -4060,6 +4186,7 @@ declare class Game_Interpreter
     command355(): boolean;
     command356(): boolean;
     pluginCommand(command: string, args: string[]): void;
+    requestImages(list: any, commonList: any): void;
 }
 
 declare class Scene_Base extends Stage
@@ -4093,6 +4220,8 @@ declare class Scene_Base extends Stage
     fadeOutAll(): void;
     fadeSpeed(): number;
     slowFadeSpeed(): number;
+    attachReservation(): void;
+    detachReservation(): void;
 }
 
 declare class Scene_Boot extends Scene_Base
@@ -4294,6 +4423,7 @@ declare class Scene_Skill extends Scene_ItemBase
     constructor();
     initialize(): void;
     create(): void;
+    start(): void;
     createSkillTypeWindow(): void;
     createStatusWindow(): void;
     createItemWindow(): void;
@@ -4622,6 +4752,7 @@ declare class Sprite_Button extends Sprite
     isButtonTouched(): boolean;
     canvasToLocalX(x: number): number;
     canvasToLocalY(y: number): number;
+    reserveFaceImages(): void;
 }
 
 declare class Sprite_Character extends Sprite_Base
