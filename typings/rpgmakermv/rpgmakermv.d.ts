@@ -1,3 +1,7 @@
+/// <reference path="../lib/lib.d.ts" />
+/// <reference path="../pixi.js/pixi-filters.d.ts" />
+/// <reference path="../pixi.js/pixi-tilemap.d.ts" />
+
 declare class JsExtensions
 {
     private constructor();
