@@ -1,0 +1,17 @@
+{
+  "name": "rpgmakermv_typescript_dts",
+  "version": "1.0.0",
+  "description": "RPGツクールMVに標準搭載されているJavaScriptを、TypeScriptで扱うための型定義ファイルです。",
+  "main": "index.js",
+  "types": "typings/rpgmakermv/rpgmakermv.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Narazaka/rpgmakermv_typescript_dts.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Narazaka/rpgmakermv_typescript_dts/issues"
+  },
+  "homepage": "https://github.com/Narazaka/rpgmakermv_typescript_dts#readme"
+}
