@@ -1725,7 +1725,7 @@ declare class ImageManager
     private constructor();
 
     static _imageCache: ImageCache;
-    static _requestQueue: RequestCache;
+    // static _requestQueue: RequestCache;
     static _systemReservationId: number;
 
     static _generateCacheKey(): string;
