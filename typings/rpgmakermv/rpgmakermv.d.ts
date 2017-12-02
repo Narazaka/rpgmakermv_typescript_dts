@@ -1038,6 +1038,7 @@ declare interface IDataTrait
     value?: number;
 }
 
+/** 使用効果 */
 declare interface IDataEffect
 {
     code?: number;
@@ -1081,6 +1082,7 @@ declare interface IDataMoveRoute
     wait?: boolean;
 }
 
+/** アクター */
 declare interface IDataActor
 {
     id?: number;
@@ -1101,6 +1103,7 @@ declare interface IDataActor
     meta?: any;
 }
 
+/** 職業 */
 declare interface IDataClass
 {
     id?: number;
@@ -1117,6 +1120,7 @@ declare interface IDataClass
     meta?: any;
 }
 
+/** スキル */
 declare interface IDataSkill
 {
     /** ID */
@@ -1178,6 +1182,7 @@ declare interface IDataSkill
     meta?: any;
 }
 
+/** 全アイテム共通 */
 declare interface IDataAllItem
 {
     id?: number;
@@ -1189,6 +1194,7 @@ declare interface IDataAllItem
     meta?: any;
 }
 
+/** アイテム */
 declare interface IDataItem extends IDataAllItem
 {
     animationId?: number;
@@ -1211,6 +1217,7 @@ declare interface IDataItem extends IDataAllItem
     tpGain?: number;
 }
 
+/** 装備アイテム */
 declare interface IDataEquipItem extends IDataAllItem
 {
     etypeId?: number;
@@ -1218,17 +1225,20 @@ declare interface IDataEquipItem extends IDataAllItem
     params?: number[];
 }
 
+/** 武器 */
 declare interface IDataWeapon extends IDataEquipItem
 {
     animationId?: number;
     wtypeId?: number;
 }
 
+/** 防具 */
 declare interface IDataArmor extends IDataEquipItem
 {
     atypeId?: number;
 }
 
+/** ドロップアイテム */
 declare interface IDataDropItem
 {
     kind?: number;
@@ -1236,6 +1246,7 @@ declare interface IDataDropItem
     denominator?: number;
 }
 
+/** 敵 */
 declare interface IDataEnemy
 {
     id?: number;
@@ -1276,6 +1287,7 @@ declare interface IDataPage
     span?: number;
 }
 
+/** 敵グループ */
 declare interface IDataTroop
 {
     id?: number;
@@ -1290,6 +1302,7 @@ declare interface IDataTroop
     meta?: any;
 }
 
+/** ステート */
 declare interface IDataState
 {
     id?: number;
@@ -1326,6 +1339,7 @@ declare interface IDataAnimationTiming
     se?: IDataSound;
 }
 
+/** アニメーション */
 declare interface IDataAnimation
 {
     id?: number;
@@ -1340,6 +1354,7 @@ declare interface IDataAnimation
     meta?: any;
 }
 
+/** タイルセット */
 declare interface IDataTileset
 {
     id?: number;
@@ -1351,6 +1366,7 @@ declare interface IDataTileset
     meta?: any;
 }
 
+/** コモンイベント */
 declare interface IDataCommonEvent
 {
     id?: number;
