@@ -4,6 +4,9 @@
   "description": "RPGツクールMVに標準搭載されているJavaScriptを、TypeScriptで扱うための型定義ファイルです。",
   "main": "index.js",
   "types": "typings/rpgmakermv/rpgmakermv.d.ts",
+  "files": [
+    "typings"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Narazaka/rpgmakermv_typescript_dts.git"
