@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "baseUrl": "sample_code/ts",
+    "outDir": "sample_code/js",
+    "inlineSourceMap": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "removeComments": false,
+    "experimentalDecorators": true,
+    "lib": [
+      "es5"
+    ]
+  },
+  "include": [
+    "sample_code/ts/**/*",
+    "typings/**/*"
+  ]
+}
