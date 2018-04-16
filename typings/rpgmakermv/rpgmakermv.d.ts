@@ -4233,7 +4233,7 @@ declare class Game_Interpreter
     command355(): boolean;
     command356(): boolean;
     pluginCommand(command: string, args: string[]): void;
-    requestImages(list: any, commonList: any): void;
+    static requestImages(list: IDataMapEventPageList[], commonList: number[]): void;
 }
 
 declare class Scene_Base extends Stage
