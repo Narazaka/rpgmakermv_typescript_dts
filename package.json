@@ -1,6 +1,6 @@
 {
   "name": "rpgmakermv_typescript_dts",
-  "version": "1.0.0",
+  "version": "1.5.2",
   "description": "RPGツクールMVに標準搭載されているJavaScriptを、TypeScriptで扱うための型定義ファイルです。",
   "main": "index.js",
   "types": "typings/rpgmakermv/rpgmakermv.d.ts",
