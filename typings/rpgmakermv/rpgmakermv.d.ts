@@ -1,5 +1,5 @@
-/// <reference path="../lib/lib.d.ts" />
 /// <reference types="pixi-tilemap" />
+/// <reference path="../lib/lib.dom.d.ts" />
 
 declare class JsExtensions
 {
