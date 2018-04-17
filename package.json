@@ -17,7 +17,7 @@
     "url": "https://github.com/Narazaka/rpgmakermv_typescript_dts/issues"
   },
   "homepage": "https://github.com/Narazaka/rpgmakermv_typescript_dts#readme",
-  "devDependencies": {
+  "dependencies": {
     "@types/pixi.js": "4.5.4",
     "pixi-tilemap": "^1.2.3"
   }
