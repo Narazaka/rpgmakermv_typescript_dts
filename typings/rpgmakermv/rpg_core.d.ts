@@ -5,26 +5,99 @@ declare class JsExtensions
 
 declare interface Number
 {
+    /**
+     * Returns a number whose value is limited to the given range.
+     *
+     * @method Number.prototype.clamp
+     * @param {Number} min The lower boundary
+     * @param {Number} max The upper boundary
+     * @return {Number} A number in the range (min, max)
+     */
     clamp(min: number, max: number): number;
+
+    /**
+     * Returns a modulo value which is always positive.
+     *
+     * @method Number.prototype.mod
+     * @param {Number} n The divisor
+     * @return {Number} A modulo value
+     */
     mod(n: number): number;
+    /**
+     * Makes a number string with leading zeros.
+     *
+     * @method Number.prototype.padZero
+     * @param {Number} length The length of the output string
+     * @return {String} A string with leading zeros
+     */
+    padZero(length: number): string;
 }
 
 declare interface String
 {
+    /**
+     * Replaces %1, %2 and so on in the string to the arguments.
+     *
+     * @method String.prototype.format
+     * @param {Any} ...args The objects to format
+     * @return {String} A formatted string
+     */
     format(): string;
+    /**
+     * Makes a number string with leading zeros.
+     *
+     * @method String.prototype.padZero
+     * @param {Number} length The length of the output string
+     * @return {String} A string with leading zeros
+     */
     padZero(length: number): string;
+    /**
+     * Checks whether the string contains a given string.
+     *
+     * @method String.prototype.contains
+     * @param {String} string The string to search for
+     * @return {Boolean} True if the string contains a given string
+     */
     contains(string: string): boolean;
 }
 
 declare interface Array<T>
 {
-    equals(array: T): boolean;
+    /**
+     * Checks whether the two arrays are same.
+     *
+     * @method Array.prototype.equals
+     * @param {Array} array The array to compare to
+     * @return {Boolean} True if the two arrays are same
+     */
+    equals(array: T[]): boolean;
+    /**
+     * Makes a shallow copy of the array.
+     *
+     * @method Array.prototype.clone
+     * @return {Array} A shallow copy of the array
+     */
     clone(): T;
-    contains(): boolean;
+    /**
+     * Checks whether the array contains a given element.
+     *
+     * @method Array.prototype.contains
+     * @param {Any} element The element to search for
+     * @return {Boolean} True if the array contains a given element
+     */
+    contains(element: T): boolean;
 }
 
 declare interface Math
 {
+    /**
+     * Generates a random integer in the range (0, max-1).
+     *
+     * @static
+     * @method Math.randomInt
+     * @param {Number} max The upper boundary (excluded)
+     * @return {Number} A random integer
+     */
     randomInt(max: number): number;
 }
 
@@ -32,16 +105,76 @@ declare class Utils
 {
     private constructor();
 
-    static RPGMAKER_NAME: string;
+    static RPGMAKER_NAME: "MV";
     static RPGMAKER_VERSION: string;
+    /**
+     * Checks whether the option is in the query string.
+     *
+     * @static
+     * @method isOptionValid
+     * @param {String} name The option name
+     * @return {Boolean} True if the option is in the query string
+     */
     static isOptionValid(name: string): boolean;
+    /**
+     * Checks whether the platform is NW.js.
+     *
+     * @static
+     * @method isNwjs
+     * @return {Boolean} True if the platform is NW.js
+     */
     static isNwjs(): boolean;
+    /**
+     * Checks whether the platform is a mobile device.
+     *
+     * @static
+     * @method isMobileDevice
+     * @return {Boolean} True if the platform is a mobile device
+     */
     static isMobileDevice(): boolean;
+    /**
+     * Checks whether the browser is Mobile Safari.
+     *
+     * @static
+     * @method isMobileSafari
+     * @return {Boolean} True if the browser is Mobile Safari
+     */
     static isMobileSafari(): boolean;
+    /**
+     * Checks whether the browser is Android Chrome.
+     *
+     * @static
+     * @method isAndroidChrome
+     * @return {Boolean} True if the browser is Android Chrome
+     */
     static isAndroidChrome(): boolean;
+    /**
+     * Checks whether the browser can read files in the game folder.
+     *
+     * @static
+     * @method canReadGameFiles
+     * @return {Boolean} True if the browser can read files in the game folder
+     */
     static canReadGameFiles(): boolean;
+    /**
+     * Makes a CSS color string from RGB values.
+     *
+     * @static
+     * @method rgbToCssColor
+     * @param {Number} r The red value in the range (0, 255)
+     * @param {Number} g The green value in the range (0, 255)
+     * @param {Number} b The blue value in the range (0, 255)
+     * @return {String} CSS color string
+     */
     static rgbToCssColor(r: number, g: number, b: number): string;
     static generateRuntimeId(): number;
+    /**
+     * Test this browser support passive event feature
+     *
+     * @static
+     * @method isSupportPassiveEvent
+     * @return {Boolean} this browser support passive event or not
+     */
     static isSupportPassiveEvent(): boolean;
 
     static _id: number;
@@ -81,6 +214,9 @@ declare class RequestQueue
     clear(): void;
 }
 
+/**
+ * The resource class. Allows to be collected as a garbage if not use for some time or ticks
+ */
 declare class CacheEntry
 {
     cache: CacheMap;
@@ -93,14 +229,39 @@ declare class CacheEntry
     ttlSeconds: number;
     freedByTTL: boolean;
 
+    /**
+     * @param {CacheMap} cache manager
+     * @param {string} key, url of the resource
+     * @param {string} item - Bitmap, HTML5Audio, WebAudio - whatever you want to store in the cache
+     */
     constructor(cache: CacheMap, key: string, item: Bitmap | Html5Audio | WebAudio);
+    /**
+     * frees the resource
+     */
     free(byTTL?: boolean): void;
+    /**
+     * Allocates the resource
+     * @returns {CacheEntry}
+     */
     allocate(): CacheEntry;
+    /**
+     * Sets the time to live
+     * @param {number} ticks TTL in ticks, 0 if not set
+     * @param {number} time TTL in seconds, 0 if not set
+     * @returns {CacheEntry}
+     */
     setTimeToLive(ticks?: number, seconds?: number): CacheEntry;
     isStillAlive(): boolean;
+    /**
+     * makes sure that resource wont freed by Time To Live
+     * if resource was already freed by TTL, put it in cache again
+     */
     touch(): void;
 }
 
+/**
+ * Cache for images, audio, or any other kind of resource
+ */
 declare class CacheMap
 {
     _inner: { [key: string]: CacheEntry };
@@ -112,56 +273,237 @@ declare class CacheMap
     delayCheckTTL: number;
     updateSeconds: number;
 
+    /**
+     * @param manager
+     * @constructor
+     */
     constructor(manager: typeof DataManager | typeof ConfigManager | typeof StorageManager | typeof ImageManager | typeof AudioManager | typeof SoundManager | typeof TextManager | typeof SceneManager | typeof BattleManager | typeof PluginManager);
+    /**
+     * checks ttl of all elements and removes dead ones
+     */
     checkTTL(): void;
+    /**
+     * cache item
+     * @param key url of cache element
+     * @returns {*|null}
+     */
     getItem(key: string): any;
     clear(): void;
     setItem(key: string, item: any): CacheEntry;
     update(ticks: number, delta: number): void;
 }
 
+/**
+ * The point class.
+ */
 declare class Point extends PIXI.Point
 {
+    /**
+     * @param {Number} x The x coordinate
+     * @param {Number} y The y coordinate
+     */
     constructor(x?: number, y?: number);
     initialize(x?: number, y?: number): void;
 }
 
+/**
+ * The rectangle class.
+ */
 declare class Rectangle extends PIXI.Rectangle
 {
+    /**
+     * @static
+     * @property emptyRectangle
+     * @type Rectangle
+     * @private
+     */
     static emptyRectangle: Rectangle;
 
+    /**
+     * @param {Number} x The x coordinate for the upper-left corner
+     * @param {Number} y The y coordinate for the upper-left corner
+     * @param {Number} width The width of the rectangle
+     * @param {Number} height The height of the rectangle
+     */
     constructor(x?: number, y?: number, width?: number, height?: number);
     initialize(x?: number, y?: number, width?: number, height?: number): void;
 }
 
+/**
+ * Bitmap states(Bitmap._loadingState)
+ */
+declare type BitmapLoadingState =
+    "none" |
+    "pending" |
+    "purged" |
+    "requesting" |
+    "requestCompleted" |
+    "decrypting" |
+    "decryptCompleted" |
+    "loaded" |
+    "error";
+
+/**
+ * The basic object that represents an image.
+ */
 declare class Bitmap
 {
     static _reuseImages: HTMLImageElement[];
+    /**
+     * Loads a image file and returns a new bitmap object.
+     *
+     * @static
+     * @method load
+     * @param {String} url The image url of the texture
+     * @return Bitmap
+     */
     static load(url: string): Bitmap;
+    /**
+     * Takes a snapshot of the game screen and returns a new bitmap object.
+     *
+     * @static
+     * @method snap
+     * @param {Stage} stage The stage object
+     * @return Bitmap
+     */
     static snap(stage: Stage): Bitmap;
     static request(url: string): Bitmap;
 
-    url: string;
-    baseTexture: PIXI.BaseTexture;
-    canvas: HTMLCanvasElement;
-    context: CanvasRenderingContext2D;
-    width: number;
-    height: number;
-    rect: Rectangle;
+    /**
+     * [read-only] The url of the image file.
+     *
+     * @property url
+     * @type String
+     */
+    readonly url: string;
+    /**
+     * [read-only] The base texture that holds the image.
+     *
+     * @property baseTexture
+     * @type PIXI.BaseTexture
+     */
+    readonly baseTexture: PIXI.BaseTexture;
+    /**
+     * [read-only] The bitmap canvas.
+     *
+     * @property canvas
+     * @type HTMLCanvasElement
+     */
+    readonly canvas: HTMLCanvasElement;
+    /**
+     * [read-only] The 2d context of the bitmap canvas.
+     *
+     * @property context
+     * @type CanvasRenderingContext2D
+     */
+    readonly context: CanvasRenderingContext2D;
+    /**
+     * [read-only] The width of the bitmap.
+     *
+     * @property width
+     * @type Number
+     */
+    readonly width: number;
+    /**
+     * [read-only] The height of the bitmap.
+     *
+     * @property height
+     * @type Number
+     */
+    readonly height: number;
+    /**
+     * [read-only] The rectangle of the bitmap.
+     *
+     * @property rect
+     * @type Rectangle
+     */
+    readonly rect: Rectangle;
+    /**
+     * Whether the smooth scaling is applied.
+     *
+     * @property smooth
+     * @type Boolean
+     */
     smooth: boolean;
+    /**
+     * The opacity of the drawing object in the range (0, 255).
+     *
+     * @property paintOpacity
+     * @type Number
+     */
     paintOpacity: number;
+    /**
+     * Cache entry, for images. In all cases _url is the same as cacheEntry.key
+     * @type CacheEntry
+     */
     cacheEntry: CacheEntry;
+    /**
+     * The face name of the font.
+     *
+     * @property fontFace
+     * @type String
+     */
     fontFace: string;
+    /**
+     * The size of the font in pixels.
+     *
+     * @property fontSize
+     * @type Number
+     */
     fontSize: number;
+    /**
+     * Whether the font is italic.
+     *
+     * @property fontItalic
+     * @type Boolean
+     */
     fontItalic: boolean;
+    /**
+     * The color of the text in CSS format.
+     *
+     * @property textColor
+     * @type String
+     */
     textColor: string;
+    /**
+     * The color of the outline of the text in CSS format.
+     *
+     * @property outlineColor
+     * @type String
+     */
     outlineColor: string;
+    /**
+     * The width of the outline of the text.
+     *
+     * @property outlineWidth
+     * @type Number
+     */
     outlineWidth: number;
 
+    /**
+     * @param {Number} width The width of the bitmap
+     * @param {Number} height The height of the bitmap
+     */
     constructor(width?: number, height?: number);
     initialize(width?: number, height?: number): void;
+    /**
+     * Checks whether the bitmap is ready to render.
+     *
+     * @method isReady
+     * @return {Boolean} True if the bitmap is ready to render
+     */
     isReady(): boolean;
+    /**
+     * Checks whether a loading error has occurred.
+     *
+     * @method isError
+     * @return {Boolean} True if a loading error has occurred
+     */
     isError(): boolean;
+    /**
+     * touch the resource
+     * @method touch
+     */
     touch(): void;
     resize(width: number, height: number): void;
     blt(source: Bitmap, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw?: number, dh?: number): void;
@@ -193,7 +535,7 @@ declare class Bitmap
     _paintOpacity: number;
     _smooth: boolean;
     _loadListeners: Function[];
-    _loadingState: string;
+    _loadingState: BitmapLoadingState;
     _decodeAfterRequest: boolean;
 
     _makeFontNameText(): string;

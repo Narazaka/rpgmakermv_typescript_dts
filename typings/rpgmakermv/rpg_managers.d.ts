@@ -1,17 +1,32 @@
+/** アクターのデータ */
 declare var $dataActors      : IDataActor[];
+/** 職業のデータ */
 declare var $dataClasses     : IDataClass[];
+/** スキルのデータ */
 declare var $dataSkills      : IDataSkill[];
+/** アイテムのデータ */
 declare var $dataItems       : IDataItem[];
+/** 武器のデータ */
 declare var $dataWeapons     : IDataWeapon[];
+/** 防具のデータ */
 declare var $dataArmors      : IDataArmor[];
+/** 敵のデータ */
 declare var $dataEnemies     : IDataEnemy[];
+/** 敵グループのデータ */
 declare var $dataTroops      : IDataTroop[];
+/** ステートのデータ */
 declare var $dataStates      : IDataState[];
+/** アニメーションのデータ */
 declare var $dataAnimations  : IDataAnimation[];
+/** タイルセットのデータ */
 declare var $dataTilesets    : IDataTileset[];
+/** コモンイベントのデータ */
 declare var $dataCommonEvents: IDataCommonEvent[];
+/** システムのデータ */
 declare var $dataSystem      : IDataSystem;
+/** マップ情報のデータ */
 declare var $dataMapInfos    : IDataMapInfo[];
+/** マップのデータ */
 declare var $dataMap         : IDataMap;
 declare var $gameTemp        : Game_Temp;
 declare var $gameSystem      : Game_System;
@@ -52,80 +67,260 @@ declare interface ISaveContents
     player?         : Game_Player;
 }
 
+/** データマネージャー */
 declare class DataManager
 {
     private constructor();
 
-    static _globalId       : number;
+    static _globalId       : "RPGMV";
     static _lastAccessedId : number;
     static _errorUrl       : string;
 
     static _databaseFiles: {name: string, src: string}[];
+    /**
+     * データベースを読む
+     *
+     * バトルテストとイベントテストの場合はActors.jsonなどではなくTest_Actors.jsonなどをよむ
+     */
     static loadDatabase(): void;
+    /**
+     * データファイルを読む
+     * @param name 格納する変数名
+     * @param src ファイルのURL部分 `data/${src}`が使われる
+     */
     static loadDataFile(name: string, src: string): void;
     static isDatabaseLoaded(): boolean;
+    /**
+     * マップデータを読む
+     *
+     * `Map${mapId}.json`
+     * @param mapId マップID 3桁にゼロパディングされて使われる
+     */
     static loadMapData(mapId: number) : void;
+    /**
+     * $dataMapに空のデータをセットする
+     */
     static makeEmptyMap(): void;
     static isMapLoaded(): boolean;
     static onLoad(object: IDataActor[] | IDataClass[] | IDataSkill[] | IDataItem[] | IDataWeapon[] | IDataArmor[] | IDataEnemy[] | IDataTroop[] | IDataState[] | IDataAnimation[] | IDataTileset[] | IDataCommonEvent[] | IDataSystem[] | IDataMapInfo[] | IDataMap[]): void;
+    /**
+     * メタ情報を展開し、metaプロパティに入れる
+     *
+     * `<foo>`は`{foo: true}`, `<foo:bar>`は`{foo: "bar"}`と展開される
+     * @param data データ
+     */
     static extractMetadata(data: IDataActor[] | IDataClass[] | IDataSkill[] | IDataItem[] | IDataWeapon[] | IDataArmor[] | IDataEnemy[] | IDataTroop[] | IDataState[] | IDataAnimation[] | IDataTileset[] | IDataCommonEvent[] | IDataSystem[] | IDataMapInfo[] | IDataMap[]): void;
+    /**
+     * _errorUrlがあれば例外を投げる
+     */
     static checkError(): void;
+    /**
+     * バトルテストか？
+     *
+     * クエリに"btest"が存在するか
+     */
     static isBattleTest(): boolean;
+    /**
+     * イベントテストか？
+     *
+     * クエリに"etest"が存在するか
+     */
     static isEventTest(): boolean;
     static isSkill(item: IDataSkill): boolean;
     static isItem(item: IDataItem): boolean;
     static isWeapon(item: IDataWeapon): boolean;
     static isArmor(item: IDataArmor): boolean;
+    /**
+     * ゲームオブジェクト(`$game*`)を初期化する
+     */
     static createGameObjects(): void;
+    /**
+     * 新規ゲーム用にデータを初期化する
+     *
+     * 1. ゲームオブジェクト初期化 `this.createGameObjects()`
+     * 2. 新規ゲーム用の空きセーブデータ番号を取得 `this.selectSavefileForNewGame()`
+     * 3. 開始パーティーメンバーを設定 `$gameParty.setupStartingMembers()`
+     * 4. 初期位置への移動を予約 `$gamePlayer.reserveTransfer(...)`
+     * 5. フレームカウントを初期化 `Graphics.frameCount = 0`
+     */
     static setupNewGame(): void;
+    /**
+     * バトルテスト用にデータを初期化する
+     *
+     * 1. ゲームオブジェクト初期化 `this.createGameObjects()`
+     * 2. バトルテスト用パーティーメンバーを設定 `$gameParty.setupBattleTest()`
+     * 3. バトルマネージャーをバトルテスト用に設定
+     */
     static setupBattleTest(): void;
+    /**
+     * イベントテスト用にデータを初期化する
+     *
+     * 1. ゲームオブジェクト初期化 `this.createGameObjects()`
+     * 2. 新規ゲーム用の空きセーブデータ番号を取得 `this.selectSavefileForNewGame()`
+     * 3. 開始パーティーメンバーを設定 `$gameParty.setupStartingMembers()`
+     * 4. マップ-1の(8, 6)に移動予約 `$gamePlayer.reserveTransfer(-1, 8, 6)`
+     * 5. 透明化を無効に `$gamePlayer.setTransparent(false)`
+     */
     static setupEventTest(): void;
-    static loadGlobalInfo(): void;
+    /**
+     * セーブファイル情報(`global.rpgsave`)をロード
+     *
+     * 存在しないセーブデータの情報は削除されてから返される
+     */
+    static loadGlobalInfo(): ISavefileInfo[];
+    /**
+     * セーブファイル情報(`global.rpgsave`)をセーブ
+     * @param info セーブファイル情報
+     */
     static saveGlobalInfo(info: ISavefileInfo[]): void;
+    /**
+     * このゲームのセーブデータか？
+     * @param savefileId セーブファイルID
+     */
     static isThisGameFile(savefileId: number): boolean;
+    /**
+     * セーブが存在するか？
+     *
+     * セーブファイル情報に存在し、かつこのゲームのセーブデータファイルが存在するか
+     */
     static isAnySavefileExists(): boolean;
+    /**
+     * 最新のセーブファイルID
+     *
+     * タイムスタンプが一番新しいもの ない場合は1が返される
+     */
     static latestSavefileId(): number;
+    /**
+     * 全てのセーブファイル画像をロードする
+     */
     static loadAllSavefileImages(): void;
+    /**
+     * セーブファイル画像をロードする
+     */
     static loadSavefileImages(info: ISavefileInfo): void;
+    /**
+     * セーブファイル数上限
+     */
     static maxSavefiles(): number;
+    /**
+     * セーブする
+     * @param savefileId セーブファイルID
+     * @return 成功したか？
+     */
     static saveGame(savefileId: number): boolean;
+    /**
+     * ロードする
+     * @param savefileId セーブファイルID
+     * @return 成功したか？
+     */
     static loadGame(savefileId: number): boolean;
+    /**
+     * セーブファイル情報をロードする
+     * @param savefileId セーブファイルID
+     */
     static loadSavefileInfo(savefileId: number): ISavefileInfo;
+    /**
+     * 最後にアクセスされたセーブファイルID
+     */
     static lastAccessedSavefileId(): number;
+    /**
+     * 例外処理なしのセーブ
+     * @param savefileId セーブファイルID
+     * @return 成功したか？
+     */
     static saveGameWithoutRescue(savefileId: number): boolean;
+    /**
+     * 例外処理なしのロード
+     * @param savefileId セーブファイルID
+     * @return 成功したか？
+     */
     static loadGameWithoutRescue(savefileId: number): boolean;
+    /**
+     * 新規ゲーム用の空きセーブデータ番号を`lastAccessedSavefileId`にセット
+     */
     static selectSavefileForNewGame(): void;
+    /**
+     * セーブファイル情報を生成
+     */
     static makeSavefileInfo(): ISavefileInfo;
+    /**
+     * セーブデータを生成
+     */
     static makeSaveContents(): ISaveContents;
+    /**
+     * セーブデータを`$game*`に展開
+     * @param contents セーブデータ
+     */
     static extractSaveContents(contents: ISaveContents): void;
 }
 
+/** オプションデータ */
 declare interface IConfig
 {
+    /** 常時ダッシュ */
     alwaysDash?: boolean;
+    /** コマンド記憶 */
     commandRemember?: boolean;
+    /** BGM 音量 */
     bgmVolume?: number;
+    /** BGS 音量 */
     bgsVolume?: number;
+    /** ME 音量 */
     meVolume?: number;
+    /** SE 音量 */
     seVolume?: number;
 }
 
+/** オプションマネージャ */
 declare class ConfigManager
 {
     private constructor();
 
+    /** 常時ダッシュ */
     static alwaysDash: boolean;
+    /** コマンド記憶 */
     static commandRemember: boolean;
 
+    /** BGM 音量 */
     static bgmVolume: number;
+    /** BGS 音量 */
     static bgsVolume: number;
+    /** ME 音量 */
     static meVolume: number;
+    /** SE 音量 */
     static seVolume: number;
+    /**
+     * ロード (`config.rpgsave`)
+     */
     static load(): void;
+    /**
+     * セーブ (`config.rpgsave`)
+     */
     static save(): void;
+    /**
+     * データを作成
+     */
     static makeData(): IConfig;
+    /**
+     * データを適用
+     */
     static applyData(config: IConfig): void;
+    /**
+     * オプションデータからフラグを取得
+     *
+     * - キーがなければfalse
+     * @param config オプション
+     * @param name キー名
+     */
     static readFlag(config: IConfig, name: string): boolean;
+    /**
+     * オプションデータから音量を取得
+     *
+     * - 0から100に丸められる
+     * - キーがなければ100
+     * @param config オプション
+     * @param name キー名
+     */
     static readVolume(config: IConfig, name: string): number;
 }
 
@@ -133,14 +328,63 @@ declare class StorageManager
 {
     private constructor();
 
-    static save(savefileId: number, json: any): void;
-    static load(savefileId: number): any;
+    /**
+     * セーブする
+     * @param savefileId セーブファイルID
+     * @param json JSON文字列
+     */
+    static save(savefileId: number, json: string): void;
+    /**
+     * ロードする
+     * @param savefileId セーブファイルID
+     * @return JSON文字列
+     */
+    static load(savefileId: number): string;
+    /**
+     * 存在確認
+     * @param savefileId セーブファイルID
+     */
     static exists(savefileId: number): boolean;
+    /**
+     * 削除
+     *
+     * （セーブ中に利用する）
+     * @param savefileId セーブファイルID
+     */
     static remove(savefileId: number): void;
+    /**
+     * バックアップ
+     *
+     * （セーブ中に利用する）
+     * @param savefileId セーブファイルID
+     */
     static backup(savefileId: number): void;
+    /**
+     * バックアップ存在確認
+     *
+     * （セーブ中に利用する）
+     * @param savefileId セーブファイルID
+     */
     static backupExists(savefileId: number): void;
+    /**
+     * バックアップを削除する
+     *
+     * （セーブ中に利用する）
+     * @param savefileId セーブファイルID
+     */
     static cleanBackup(savefileId: number): void;
+    /**
+     * バックアップを戻す
+     *
+     * （セーブ中に利用する）
+     * @param savefileId セーブファイルID
+     */
     static restoreBackup(savefileId: number): void;
+    /**
+     * ローカルモードか？
+     *
+     * `Utils.isNwjs()`
+     */
     static isLocalMode(): boolean;
     static saveToLocalFile(savefileId: number, json: any): void;
     static loadFromLocalFile(savefileId: number): any;
@@ -154,11 +398,33 @@ declare class StorageManager
     static webStorageBackupExists(savefileId: number): boolean;
     static webStorageExists(savefileId: number): boolean;
     static removeWebStorage(savefileId: number): void;
+    /**
+     * ローカルファイルのディレクトリパス
+     */
     static localFileDirectoryPath(): string;
+    /**
+     * ローカルファイルパス
+     *
+     * - `savefileId < 0` なら `config.rpgsave`
+     * - `savefileId === 0` なら `global.rpgsave`
+     * - `savefileId > 0` なら `file${savefileId}.rpgsave`
+     * @param savefileId セーブファイルID
+     */
     static localFilePath(savefileId: number): string;
+    /**
+     * ウェブストレージキー
+     *
+     * - `savefileId < 0` なら `RPG Config`
+     * - `savefileId === 0` なら `RPG Global`
+     * - `savefileId > 0` なら `RPG File${savefileId}`
+     * @param savefileId セーブファイルID
+     */
     static webStorageKey(savefileId: number): string;
 }
 
+/**
+ * 画像マネージャー(キャッシュやリクエストキュー付き)
+ */
 declare class ImageManager
 {
     private constructor();
@@ -190,9 +456,27 @@ declare class ImageManager
     static loadNormalBitmap(path: string, hue: number): Bitmap;
     static clear(): void;
     static isReady(): boolean;
-    static isObjectCharacter(): boolean;
-    static isBigCharacter(): boolean;
-    static isZeroParallax(): boolean;
+    /**
+     * ObjectCharacterか
+     *
+     * ファイル名に`!`が存在するか
+     * @param filename ファイル名
+     */
+    static isObjectCharacter(filename: string): boolean;
+    /**
+     * BigCharacterか
+     *
+     * ファイル名に`$`が存在するか
+     * @param filename ファイル名
+     */
+    static isBigCharacter(filename: string): boolean;
+    /**
+     * ZeroParallaxか
+     *
+     * ファイル名の先頭が`!`であるか
+     * @param filename ファイル名
+     */
+    static isZeroParallax(filename: string): boolean;
     static reserveAnimation(filename: string, hue: number, reservationId: number): Bitmap;
     static reserveBattleback1(filename: string, hue: number, reservationId: number): Bitmap;
     static reserveBattleback2(filename: string, hue: number, reservationId: number): Bitmap;
@@ -240,6 +524,7 @@ interface IAudioObject
     pos: number;
 }
 
+/** オーディオマネージャー */
 declare class AudioManager
 {
     private constructor();
@@ -260,9 +545,15 @@ declare class AudioManager
     static _path           : string;
     static _blobUrl        : string;
 
+    /** マスター音量を設定・取得 */
+    static masterVolume: number;
+    /** BGM 音量を設定・取得 */
     static bgmVolume: number;
+    /** BGS 音量を設定・取得 */
     static bgsVolume: number;
+    /** ME 音量を設定・取得 */
     static meVolume: number;
+    /** SE 音量を設定・取得 */
     static seVolume: number;
 
     static playBgm(bgm: IAudioObject, pos: number): void;
@@ -299,18 +590,30 @@ declare class AudioManager
     static makeEmptyAudioObject(): IAudioObject;
     static createBuffer(folder: number, name: string): Html5Audio | WebAudio;
     static updateBufferParameters(buffer: IAudioObject, configVolume: number, audio: IAudioObject): void;
-    static audioFileExt(): string;
+    static audioFileExt(): "ogg" | "m4a";
     static shouldUseHtml5Audio(): boolean;
     static checkErrors(): void;
     static checkWebAudioError(webAudio: WebAudio): void;
 }
 
+/** システムSEマネージャー */
 declare class SoundManager
 {
     private constructor();
 
+    /**
+     * システムSE 0～3(カーソル・決定・キャンセル・ブザー)をロード
+     */
     static preloadImportantSounds(): void;
+    /**
+     * システムSEをロード
+     * @param n システムサウンド番号
+     */
     static loadSystemSound(n: number): void;
+    /**
+     * システムSEを再生
+     * @param n システムサウンド番号
+     */
     static playSystemSound(n: number): void;
     static playCursor(): void;
     static playOk(): void;
@@ -338,6 +641,7 @@ declare class SoundManager
     static playUseSkill(): void;
 }
 
+/** システムテキストマネージャー */
 declare class TextManager
 {
     private constructor();
@@ -436,81 +740,261 @@ declare class TextManager
     static actionFailure: string;
 }
 
+/** シーンマネージャー */
 declare class SceneManager
 {
     private constructor();
 
     static _getTimeInMsWithoutMobileSafari: number;
+    /** 現在のシーン */
     static _scene: Scene_Base;
+    /** 次のシーン */
     static _nextScene: Scene_Base;
+    /** シーンスタック */
     static _stack: typeof Scene_Base[];
+    /** 描画停止中 */
     static _stopped: boolean;
+    /** シーンが開始したか */
     static _sceneStarted: boolean;
+    /** 終了中 */
     static _exiting: boolean;
+    /** 前のシーン */
     static _previousClass: typeof Scene_Base;
+    /** ブラーのかけられた背景 */
     static _backgroundBitmap: Bitmap;
+    /** 描画領域横幅 */
     static _screenWidth: number;
+    /** 描画領域縦幅 */
     static _screenHeight: number;
+    /** ボックス横幅(描画領域と同じ) */
     static _boxWidth: number;
+    /** ボックス縦幅(描画領域と同じ) */
     static _boxHeight: number;
     static _deltaTime: number;
     static _currentTime: number;
     static _accumulator: number;
 
+    /**
+     * シーンマネージャーを実行
+     *
+     * 1. 初期化 initialize
+     * 2. シーン移動 goto(sceneClass)
+     * 3. 描画開始 requestUpdate
+     * @param sceneClass シーンクラス
+     */
     static run(sceneClass: typeof Scene_Base): void;
+    /**
+     * 初期化
+     *
+     * 1. initGraphics
+     * 1. checkFileAccess
+     * 1. initAudio
+     * 1. initInput
+     * 1. initNwjs
+     * 1. checkPluginErrors
+     * 1. setupErrorHandlers
+     */
     static initialize(): void;
+    /**
+     * Graphicsを初期化
+     *
+     * 1. Graphicsの大きさを設定
+     * 1. Graphicsのローディング画像を設定
+     * 1. showfpsが有効ならfpsを表示する
+     * 1. 強制WebGLが使えない場合エラー
+     */
     static initGraphics(): void;
-    static preferableRendererType(): string;
+    /**
+     * レンダリング方式
+     *
+     * - クエリにwebglまたはcanvasがあれば強制的に選択
+     * - そうでなければ自動選択
+     */
+    static preferableRendererType(): "canvas" | "webgl" | "auto";
+    /**
+     * canvasを利用するべきか
+     *
+     * モバイルデバイスの場合true
+     */
     static shouldUseCanvasRenderer(): boolean;
+    /**
+     * ブラウザのWebGL機能を調べる
+     */
     static checkWebGL(): void;
+    /**
+     * ブラウザのファイルアクセス機能を調べる
+     */
     static checkFileAccess(): void;
+    /**
+     * オーディオを初期化
+     *
+     * クエリにnoaudioがなく初期化不能ならエラー
+     */
     static initAudio(): void;
+    /**
+     * Input・TouchInputを初期化
+     */
     static initInput(): void;
+    /**
+     * NW.JSならそれを初期化
+     */
     static initNwjs(): void;
+    /**
+     * PluginManagerのエラーがないか？
+     */
     static checkPluginErrors(): void;
+    /**
+     * 以下のイベントハンドラを設定
+     *
+     * - windowのerrorハンドラ
+     * - F5リロード
+     * - F8デバッグ(クエリにtestがあるときのみ)
+     */
     static setupErrorHandlers(): void;
+    /**
+     * 描画停止中でなければrequestAnimationFrame(this.update)
+     */
     static requestUpdate(): void;
+    /**
+     * 1. tickStart
+     * 1. updateInputData (MobileSafariのみ)
+     * 1. updateManagers = `ImageManager.update()`
+     * 1. updateMain
+     * 1. tickEnd
+     */
     static update(): void;
+    /** ウインドウを閉じる */
     static terminate(): void;
+    /** エラーハンドラ */
     static onError(e: ErrorEvent): void;
+    /** キーハンドラ */
     static onKeyDown(event: KeyboardEvent): void;
+    /**
+     * 例外ハンドラ
+     *
+     * - 画面上にエラーを表示
+     * - オーディオを停止
+     * - 描画停止
+     */
     static catchException(e: ErrorEvent): void;
+    /** `Graphics.tickStart()` */
     static tickStart(): void;
+    /** `Graphics.tickEnd()` */
     static tickEnd(): void;
+    /** `Input.update()` `TouchInput.update()` */
     static updateInputData(): void;
+    /**
+     * 1. 何回か
+     *   1. updateInputData (MobileSafari以外)
+     *   1. changeScene
+     *   1. updateScene
+     * 1. renderScene
+     * 1. requestUpdate
+     */
     static updateMain(): void;
+    /**
+     * `ImageManager.update()`
+     */
     static updateManagers(): void;
+    /**
+     * シーン変更をハンドルする
+     *
+     * - シーン変更中かつ現在のシーンがbusyでないなら
+     *   1. 現在のシーン.terminate()
+     *   1. 現在のシーンから次のシーンに非同期ロードのハンドルを付け替える
+     *   1. 次のシーン.create()
+     *   1. 次のシーン.onSceneCreate() = Graphics ローディング開始
+     * - 終了中なら
+     *   1. 上記の次のシーンが無い版
+     *   1. this.terminate()
+     */
     static changeScene(): void;
+    /**
+     * シーンをupdateする
+     *
+     * - シーンがreadyかつstartしていないなら
+     *   1. シーン.start()
+     *   1. onSceneStart = Graphics ローディング終了
+     * - シーンがstartしているなら
+     *   1. シーン.update()
+     */
     static updateScene(): void;
+    /**
+     * シーンをレンダリングする
+     *
+     * - シーンがスタートしているなら
+     *   - Graphics.render(scene)
+     * - そうでなければ
+     *   - onSceneLoading = Graphics ローディング継続
+     */
     static renderScene(): void;
+    /** シーン作成=ローディング開始 Graphics.startLoading() */
     static onSceneCreate(): void;
+    /** シーン開始=ローディング終了 Graphics.endLoading() */
     static onSceneStart(): void;
+    /** シーンローディング=ローディング継続 Graphics.updateLoading() */
     static onSceneLoading(): void;
+    /**
+     * シーン変更中
+     *
+     * 終了中か次のシーンが存在
+     */
     static isSceneChanging(): boolean;
+    /** 現在のシーンがbusy */
     static isCurrentSceneBusy(): boolean;
+    /** 現在のシーンが開始済み */
     static isCurrentSceneStarted(): boolean;
+    /** 次のシーンか */
     static isNextScene(sceneClass: typeof Scene_Base): boolean;
+    /** 前のシーンか */
     static isPreviousScene(sceneClass: typeof Scene_Base): boolean;
+
+    /**
+     * シーンを移動する
+     *
+     * 次のシーンを設定し、現在のシーンがあれば停止する
+     * @param sceneClass シーンクラス
+     */
     static goto(sceneClass: typeof Scene_Base): void;
+    /**
+     * シーンを移動する（スタックに乗せる）
+     * @param sceneClass シーンクラス
+     */
     static push(sceneClass: typeof Scene_Base): void;
+    /**
+     * シーンを移動する（スタックから下ろす）
+     */
     static pop(): void;
+    /** 終了する */
     static exit(): void;
+    /** スタックをクリアする */
     static clearStack(): void;
+    /** 描画停止する */
     static stop(): void;
+    /** 次のシーンのprepareを呼ぶ */
     static prepareNextScene(): void;
-    static snap(): void;
+    /** シーンのスナップショットを返す */
+    static snap(): Bitmap;
+    /** 背景のスナップショットをとりブラーをかける */
     static snapForBackground(): void;
+    /** ブラーのかけられた背景 */
     static backgroundBitmap(): Bitmap;
+    /** 描画再開する */
     static resume(): void;
 }
 
+/** バトル報酬 */
 declare interface IDataRewards
 {
+    /** ゴールド */
     gold: number;
+    /** 経験値 */
     exp: number;
+    /** アイテム */
     items: IDataAllItem[];
 }
 
+/** バトルマネージャー */
 declare class BattleManager
 {
     private constructor();
@@ -621,16 +1105,23 @@ declare class BattleManager
     static gainDropItems(): void;
 }
 
+/** プラグイン指定 */
 declare interface IDataPlugin
 {
+    /** 名前 */
     name: string;
+    /** 状態(ON/OFF) */
     status: boolean;
+    /** 説明 */
     description: string;
+    /** プラグインパラメーター */
     parameters: PluginParameters;
 }
 
+/** プラグインパラメーター */
 declare type PluginParameters = { [key: string]: string; };
 
+/** プラグインマネージャー */
 declare class PluginManager
 {
     private constructor();
@@ -640,10 +1131,28 @@ declare class PluginManager
     static _errorUrls: string[];
     static _parameters: PluginParameters;
 
+    /** プラグインを読み込む */
     static setup(plugins: IDataPlugin[]): void;
+    /** 読み込みエラーがあれば例外 */
     static checkErrors(): void;
+    /**
+     * プラグインパラメーター
+     * @param name プラグイン名
+     */
     static parameters(name: string): PluginParameters;
+    /**
+     * プラグインパラメーターを設定
+     * @param name プラグイン名
+     * @param parameters プラグインパラメーター
+     */
     static setParameters(name: string, parameters: PluginParameters): void;
+    /**
+     * プラグインスクリプトをファイルからロードする
+     * @param name プラグイン名
+     */
     static loadScript(name: string): void;
+    /**
+     * ロード時のエラーで呼ばれる内部関数
+     */
     static onError(e: ErrorEvent): void;
 }
