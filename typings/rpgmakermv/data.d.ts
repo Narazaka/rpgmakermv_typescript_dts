@@ -8,6 +8,20 @@
  */
 declare type JsonDataOf<T> = Pick<T, ({[P in keyof T]: P } & {[P in "meta"]: never })[keyof T]>;
 
+/** "id"をもつデータ */
+declare interface IHasId {
+  /** ID */
+  id: number;
+}
+
+/** "note"をもつデータ */
+declare interface IHasNote {
+  /** メモ */
+  note: string;
+  /** メタ情報 */
+  meta: IDataMeta;
+}
+
 declare interface IDataSound
 {
     name: string;
@@ -64,9 +78,8 @@ declare interface IDataMoveRoute
 }
 
 /** アクター */
-declare interface IDataActor
+declare interface IDataActor extends IHasId, IHasNote
 {
-    id: number;
     battlerName: string;
     characterIndex: number;
     characterName: string;
@@ -79,15 +92,12 @@ declare interface IDataActor
     maxLevel: number;
     name: string;
     nickname: string;
-    note: string;
     profile: string;
-    meta: IDataMeta;
 }
 
 /** 職業 */
-declare interface IDataClass
+declare interface IDataClass extends IHasId, IHasNote
 {
-    id: number;
     expParams: number[];
     traits: IDataTrait[];
     learnings: {
@@ -96,16 +106,12 @@ declare interface IDataClass
         skillId: number;
     }[];
     name: string;
-    note: string;
     params: number[][];
-    meta: IDataMeta;
 }
 
 /** スキル */
-declare interface IDataSkill
+declare interface IDataSkill extends IHasId, IHasNote
 {
-    /** ID */
-    id: number;
     /** アニメーション */
     animationId: number;
     /** ダメージ */
@@ -137,8 +143,6 @@ declare interface IDataSkill
     mpCost: number;
     /** 名前 */
     name: string;
-    /** メモ */
-    note: string;
     /** 使用可能時 */
     occasion: number;
     /** 連続回数 */
@@ -159,20 +163,15 @@ declare interface IDataSkill
     tpCost: number;
     /** 得TP */
     tpGain: number;
-    /** メタ情報 */
-    meta: IDataMeta;
 }
 
 /** 全アイテム共通 */
-declare interface IDataAllItem
+declare interface IDataAllItem extends IHasId, IHasNote
 {
-    id: number;
     description: string;
     name: string;
-    note: string;
     iconIndex: number;
     price: number;
-    meta: IDataMeta;
 }
 
 /** アイテム */
@@ -228,9 +227,8 @@ declare interface IDataDropItem
 }
 
 /** 敵 */
-declare interface IDataEnemy
+declare interface IDataEnemy extends IHasId, IHasNote
 {
-    id: number;
     actions: IDataAction[];
     battlerHue: number;
     battlerName: string;
@@ -239,9 +237,7 @@ declare interface IDataEnemy
     traits: IDataTrait[];
     gold: number;
     name: string;
-    note: string;
     params: number[];
-    meta: IDataMeta;
 }
 
 declare interface IDataPage
@@ -265,9 +261,8 @@ declare interface IDataPage
 }
 
 /** 敵グループ */
-declare interface IDataTroop
+declare interface IDataTroop extends IHasId
 {
-    id: number;
     members: {
         enemyId: number;
         x: number;
@@ -279,9 +274,8 @@ declare interface IDataTroop
 }
 
 /** ステート */
-declare interface IDataState
+declare interface IDataState extends IHasId, IHasNote
 {
-    id: number;
     autoRemovalTiming: number;
     chanceByDamage: number;
     iconIndex: number;
@@ -293,7 +287,6 @@ declare interface IDataState
     minTurns: number;
     motion: number;
     name: string;
-    note: string;
     overlay: number;
     priority: number;
     releaseByDamage: boolean;
@@ -304,7 +297,6 @@ declare interface IDataState
     restriction: number;
     stepsToRemove: number;
     traits: IDataTrait[];
-    meta: IDataMeta;
 }
 
 declare interface IDataAnimationTiming
@@ -317,9 +309,8 @@ declare interface IDataAnimationTiming
 }
 
 /** アニメーション */
-declare interface IDataAnimation
+declare interface IDataAnimation extends IHasId
 {
-    id: number;
     animation1Hue: number;
     animation1Name: string;
     animation2Hue: number;
@@ -331,21 +322,17 @@ declare interface IDataAnimation
 }
 
 /** タイルセット */
-declare interface IDataTileset
+declare interface IDataTileset extends IHasId, IHasNote
 {
-    id: number;
     flags: number[];
     mode: number;
     name: string;
-    note: string;
     tilesetNames: string[];
-    meta: IDataMeta;
 }
 
 /** コモンイベント */
-declare interface IDataCommonEvent
+declare interface IDataCommonEvent extends IHasId
 {
-    id: number;
     list: IDataList[];
     name: string;
     switchId: number;
@@ -476,9 +463,8 @@ declare interface IDataSystem
     windowTone: number[];
 }
 
-declare interface IDataMapInfo
+declare interface IDataMapInfo extends IHasId
 {
-    id: number;
     expanded: boolean;
     name: string;
     order: number;
@@ -539,16 +525,13 @@ declare interface IDataMapEventPage
     walkAnime: boolean;
 }
 
-declare interface IDataMapEvent
+declare interface IDataMapEvent extends IHasId, IHasNote
 {
-    id: number;
     name: string;
-    note: string;
     pages: IDataMapEventPage[];
-    meta: IDataMeta;
 }
 
-declare interface IDataMap
+declare interface IDataMap extends IHasNote
 {
     autoplayBgm: boolean;
     autoplayBgs: boolean;
@@ -561,7 +544,6 @@ declare interface IDataMap
     encounterList: IDataEncounterList[];
     encounterStep: number;
     height: number;
-    note: string;
     parallaxLoopX: boolean;
     parallaxLoopY: boolean;
     parallaxName: string;
@@ -574,9 +556,9 @@ declare interface IDataMap
     width: number;
     data: number[];
     events: IDataMapEvent[];
-    meta: IDataMeta;
 }
 
+/** メタ情報 */
 declare interface IDataMeta {
   [name: string]: string | true;
 }
