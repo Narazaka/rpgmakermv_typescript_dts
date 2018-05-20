@@ -339,6 +339,7 @@ declare interface IDataCommonEvent extends IHasId
     trigger: number;
 }
 
+/** 乗り物 */
 declare interface IVehicle
 {
     bgm: IDataSound;
@@ -349,6 +350,7 @@ declare interface IVehicle
     startY: number;
 }
 
+/** システム */
 declare interface IDataSystem
 {
     airship: IVehicle;
@@ -463,6 +465,7 @@ declare interface IDataSystem
     windowTone: number[];
 }
 
+/** マップ情報 */
 declare interface IDataMapInfo extends IHasId
 {
     expanded: boolean;
@@ -531,6 +534,7 @@ declare interface IDataMapEvent extends IHasId, IHasNote
     pages: IDataMapEventPage[];
 }
 
+/** マップ */
 declare interface IDataMap extends IHasNote
 {
     autoplayBgm: boolean;
