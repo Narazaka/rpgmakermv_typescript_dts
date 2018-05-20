@@ -1777,7 +1777,7 @@ declare class Game_Event extends Game_Character
     eventId(): number;
     event(): IDataMapEvent;
     page(): IDataMapEventPage;
-    list(): IDataMapEventPageList;
+    list(): IDataList;
     isCollidedWithCharacters(): boolean;
     isCollidedWithEvents(): boolean;
     isCollidedWithPlayerCharacters(): boolean;
@@ -1822,7 +1822,7 @@ declare class Game_Interpreter
     _freezeChecker: number;
     _mapId: number;
     _eventId: number;
-    _list: IDataMapEventPageList[];
+    _list: IDataList[];
     _index: number;
     _childInterpreter: Game_Interpreter;
     _character: Game_Character;
@@ -1831,7 +1831,7 @@ declare class Game_Interpreter
     initialize(depth?: number): void;
     checkOverflow(): void;
     clear(): void;
-    setup(list: IDataMapEventPageList[], eventId?: number): void;
+    setup(list: IDataList[], eventId?: number): void;
     eventId(): number;
     isOnCurrentMap(): boolean;
     setupReservedCommonEvent(): boolean;
@@ -1848,7 +1848,7 @@ declare class Game_Interpreter
     checkFreeze(): boolean;
     terminate(): void;
     skipBranch(): void;
-    currentCommand(): IDataMapEventPageList;
+    currentCommand(): IDataList;
     nextEventCode(): number;
     iterateActorId(param: number, callback: Function): void;
     iterateActorEx(param1: number, param2: number, callback: Function): void;
@@ -1876,7 +1876,7 @@ declare class Game_Interpreter
     command113(): boolean;
     command115(): boolean;
     command117(): boolean;
-    setupChild(list: IDataMapEventPageList[], eventId: number): void;
+    setupChild(list: IDataList[], eventId: number): void;
     command118(): boolean;
     command119(): boolean;
     jumpTo(index: number): void;
@@ -1979,5 +1979,5 @@ declare class Game_Interpreter
     command355(): boolean;
     command356(): boolean;
     pluginCommand(command: string, args: string[]): void;
-    static requestImages(list: IDataMapEventPageList[], commonList: number[]): void;
+    static requestImages(list: IDataList[], commonList: number[]): void;
 }

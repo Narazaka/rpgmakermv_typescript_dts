@@ -31,16 +31,12 @@ declare interface IDataAction
     skillId: number;
 }
 
+/** イベントコマンド */
 declare interface IDataList
 {
     code: number;
     indent: number;
-    parameters: number[];
-}
-
-declare interface IDataMapEventPageList extends IDataList
-{
-    parameters: any[];
+    parameters: Array<number | string>;
 }
 
 declare interface IDataMoveRouteCommand
@@ -513,7 +509,7 @@ declare interface IDataMapEventPage
         pattern: number;
         characterIndex: number;
     }
-    list: IDataMapEventPageList[];
+    list: IDataList[];
     moveFrequency: number;
     moveRoute: {
         list: {
